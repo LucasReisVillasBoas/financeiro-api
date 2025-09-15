@@ -1,27 +1,25 @@
 import { defineConfig } from '@mikro-orm/postgresql';
-import { User } from '../entities/user/user.entity';
-import { Gender } from '../entities/gender/gender.entity';
-import { Goals } from '../entities/goals/goals.entity';
-import { MuscleGroup } from '../entities/muscle-group/muscle-group.entity';
-import { Restriction } from '../entities/restriction/restriction.entity';
-import { TrainingType } from '../entities/training/training-type.entity';
-import { Exercise } from '../entities/exercise/exercise.entity';
-import { Professionals } from '../entities/professionals/professionals.entity';
 import { DATABASE_NAME, DATABASE_PASSWORD, DATABASE_USER } from '../settings';
+import { Usuario } from '../entities/usuario/usuario.entity';
+import { Contato } from '../entities/contato/contato.entity';
+import { TipoContato } from '../entities/contato/tipo-contato.entity';
+import { Empresa } from '../entities/empresa/empresa.entity';
+import { EmpresaUsuario } from '../entities/empresa-usuario/empresa-usuario.entity';
+import { Endereco } from '../entities/endereco/endereco.entity';
+import { Pessoa } from '../entities/pessoa/pessoa.entity';
 
 export default defineConfig({
   dbName: DATABASE_NAME,
   user: DATABASE_USER,
   password: DATABASE_PASSWORD,
   entities: [
-    User,
-    Gender,
-    Goals,
-    MuscleGroup,
-    Restriction,
-    TrainingType,
-    Exercise,
-    Professionals,
+    Usuario,
+    Contato,
+    TipoContato,
+    Empresa,
+    EmpresaUsuario,
+    Endereco,
+    Pessoa,
   ],
   migrations: {
     path: 'src/database/migrations',

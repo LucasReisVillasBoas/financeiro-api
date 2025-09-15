@@ -1,3 +1,50 @@
 {
-    "postman.settings.dotenv-detection-notification-visibility": false
+    "editor.fontLigatures": true,
+    "boot-java.rewrite.reconcile": true,
+    "redhat.telemetry.enabled": true,
+    "editor.tabSize": 2,
+    "[typescriptreact]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "javascript.updateImportsOnFileMove.enabled": "always",
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "files.autoSave": "afterDelay",
+    "[html]": {
+        "editor.defaultFormatter": "vscode.html-language-features"
+    },
+    "diffEditor.codeLens": true,
+    "javascript.referencesCodeLens.enabled": true,
+    "javascript.referencesCodeLens.showOnAllFunctions": true,
+    "typescript.referencesCodeLens.enabled": true,
+    "typescript.referencesCodeLens.showOnAllFunctions": true,
+    "typescript.preferences.preferTypeOnlyAutoImports": true,
+    "typescript.updateImportsOnFileMove.enabled": "always",
+    "editor.inlineSuggest.suppressSuggestions": true,
+    "github.copilot.editor.enableAutoCompletions": true,
+    "remote.autoForwardPortsSource": "hybrid",
+    "editor.codeLensFontSize": 10,
+    "tabnine.experimentalAutoImports": true,
+    "eslint.format.enable": true,
+    "editor.formatOnSave": true,
+    "notebook.formatOnSave.enabled": true,
+    "typescript.preferences.importModuleSpecifier": "relative",
+    "typescript.preferences.useAliasesForRenames": false,
+    "javascript.preferences.useAliasesForRenames": false,
+    "javascript.inlayHints.parameterNames.enabled": "all",
+    "javascript.inlayHints.parameterTypes.enabled": true,
+    "typescript.inlayHints.parameterNames.enabled": "all",
+    //   "editor.fontSize": 12,
+    //   "window.zoomLevel": -0.5,
+    "codeium.enableConfig": {
+        "*": true
+    },
+    "window.menuBarVisibility": "compact",
+    "terminal.external.osxExec": "Warp.app",
+    "github.copilot.nextEditSuggestions.enabled": true,
+    "eslint.codeActionsOnSave.rules": null,
+    "typescript.suggest.autoImports": true,
+    "editor.codeActionsOnSave": {}
 }

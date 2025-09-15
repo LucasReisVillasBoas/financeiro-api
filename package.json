@@ -1,8 +1,8 @@
 {
-  "name": "my-personal-backend",
+  "name": "financeiro-api",
   "version": "0.0.1",
   "description": "",
-  "author": "",
+  "author": "Lucas Reis",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {

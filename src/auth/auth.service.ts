@@ -2,19 +2,19 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from './dto/login.dto';
 import { LoginResponseDto } from './dto/login-response.dto';
-import { User } from '../entities/user/user.entity';
 import * as bcrypt from 'bcryptjs';
-import { UserService } from '../user/user.service';
+import { UsuarioService } from '../usuario/usuario.service';
+import { Usuario } from '../entities/usuario/usuario.entity';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly userService: UserService,
+    private readonly usuarioService: UsuarioService,
   ) {}
 
   async login(loginDto: LoginDto): Promise<LoginResponseDto> {
-    const user: User = await this.validateLogin(loginDto);
+    const user: Usuario = await this.validateLogin(loginDto);
 
     if (!user) {
       throw new BadRequestException('error-user-not_found');
@@ -30,12 +30,12 @@ export class AuthService {
   /*
    * PRIVATE FUNCTIONS
    */
-  async validateLogin(loginDto: LoginDto): Promise<User> {
+  async validateLogin(loginDto: LoginDto): Promise<Usuario> {
     const { email, password } = loginDto;
 
-    const user = await this.userService.getByEmail(email);
+    const user = await this.usuarioService.getByEmail(email);
 
-    if (!user || !(await this.comparePasswords(password, user.password))) {
+    if (!user || !(await this.comparePasswords(password, user.senha))) {
       return null;
     }
 
