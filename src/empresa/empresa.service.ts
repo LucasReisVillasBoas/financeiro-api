@@ -11,6 +11,7 @@ import { CreateFilialDto } from './dto/create-filial.dto';
 import { UpdateFilialDto } from './dto/update-filial.dto';
 import { Empresa } from '../entities/empresa/empresa.entity';
 import { Filial } from '../entities/empresa/filial.entity';
+import { isValidCnpjCpf, normalizeCnpjCpf } from '../utils/empresa.util';
 
 @Injectable()
 export class EmpresaService {
@@ -19,21 +20,13 @@ export class EmpresaService {
     private readonly filialRepo: FilialRepository,
   ) {}
 
-  private normalizeCnpjCpf(value: string) {
-    return value ? value.replace(/\D/g, '') : '';
-  }
-
-  private isValidCnpjCpf(value: string): boolean {
-    const normalized = this.normalizeCnpjCpf(value);
-    return normalized.length === 11 || normalized.length === 14;
-  }
-
+  // TODO: Adicionar config de logs
   async create(dto: CreateEmpresaDto): Promise<Empresa> {
-    if (!this.isValidCnpjCpf(dto.cnpj_cpf)) {
+    if (!isValidCnpjCpf(dto.cnpj_cpf)) {
       throw new BadRequestException('CNPJ/CPF em formato inválido.');
     }
 
-    const cnpjNorm = this.normalizeCnpjCpf(dto.cnpj_cpf);
+    const cnpjNorm = normalizeCnpjCpf(dto.cnpj_cpf);
 
     const exists = await this.empresaRepo.findOne({
       cliente_id: dto.cliente_id,
@@ -64,12 +57,12 @@ export class EmpresaService {
 
   async update(id: string, dto: UpdateEmpresaDto): Promise<Empresa> {
     const empresa = await this.findOne(id);
-    if (dto.cnpj_cpf && !this.isValidCnpjCpf(dto.cnpj_cpf)) {
+    if (dto.cnpj_cpf && !isValidCnpjCpf(dto.cnpj_cpf)) {
       throw new BadRequestException('CNPJ/CPF em formato inválido.');
     }
 
     if (dto.cnpj_cpf) {
-      dto.cnpj_cpf = this.normalizeCnpjCpf(dto.cnpj_cpf);
+      dto.cnpj_cpf = normalizeCnpjCpf(dto.cnpj_cpf);
       const exists = await this.empresaRepo.findOne({
         cliente_id: dto.cliente_id ?? empresa.cliente_id,
         cnpj_cpf: dto.cnpj_cpf,
@@ -88,6 +81,7 @@ export class EmpresaService {
   }
 
   async softDelete(id: string): Promise<void> {
+    // TODO: Adicionar validação de admin
     const empresa = await this.findOne(id);
     empresa.ativo = false;
     empresa.deletadoEm = new Date();
@@ -97,10 +91,10 @@ export class EmpresaService {
   /* Filial operations */
 
   async createFilial(dto: CreateFilialDto): Promise<Filial> {
-    if (!this.isValidCnpjCpf(dto.cnpj_cpf)) {
+    if (!isValidCnpjCpf(dto.cnpj_cpf)) {
       throw new BadRequestException('CNPJ/CPF em formato inválido.');
     }
-    const cnpjNorm = this.normalizeCnpjCpf(dto.cnpj_cpf);
+    const cnpjNorm = normalizeCnpjCpf(dto.cnpj_cpf);
 
     // verifica empresa existe e ativa
     const empresa = await this.empresaRepo.findOne({
@@ -138,10 +132,10 @@ export class EmpresaService {
   async updateFilial(id: string, dto: UpdateFilialDto): Promise<Filial> {
     const filial = await this.findFilialById(id);
 
-    if (dto.cnpj_cpf && !this.isValidCnpjCpf(dto.cnpj_cpf)) {
+    if (dto.cnpj_cpf && !isValidCnpjCpf(dto.cnpj_cpf)) {
       throw new BadRequestException('CNPJ/CPF em formato inválido.');
     }
-    if (dto.cnpj_cpf) dto.cnpj_cpf = this.normalizeCnpjCpf(dto.cnpj_cpf);
+    if (dto.cnpj_cpf) dto.cnpj_cpf = normalizeCnpjCpf(dto.cnpj_cpf);
 
     if (dto.cnpj_cpf) {
       const exists = await this.filialRepo.findOne({
@@ -162,6 +156,7 @@ export class EmpresaService {
   }
 
   async softDeleteFilial(id: string): Promise<void> {
+    // TODO: Adicionar validação de admin
     const filial = await this.findFilialById(id);
     filial.ativo = false;
     filial.deletadoEm = new Date();

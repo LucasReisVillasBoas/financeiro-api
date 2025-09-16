@@ -9,6 +9,7 @@
     "seeder:run": "mikro-orm seeder:run --config ./src/config/mikro-orm.config.ts",
     "migration:create": "mikro-orm migration:create --config ./src/config/mikro-orm.config.ts",
     "migration:up": "mikro-orm migration:up --config ./src/config/mikro-orm.config.ts",
+    "migration:down": "mikro-orm migration:down --config ./src/config/mikro-orm.config.ts",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
