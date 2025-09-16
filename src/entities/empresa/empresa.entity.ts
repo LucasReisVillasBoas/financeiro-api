@@ -1,95 +1,85 @@
-import {
-  Entity,
-  EntityRepositoryType,
-  ManyToOne,
-  PrimaryKey,
-  Property,
-  Index,
-} from '@mikro-orm/core';
-import { Expose, Exclude } from 'class-transformer';
+import { Entity, PrimaryKey, Property, ManyToOne } from '@mikro-orm/core';
 import { ApiProperty } from '@nestjs/swagger';
 import { EmpresaRepository } from '../../empresa/empresa.repository';
-import { Endereco } from '../endereco/endereco.entity';
 
 @Entity({ repository: () => EmpresaRepository })
 export class Empresa {
-  [EntityRepositoryType]?: EmpresaRepository;
-
-  @Expose()
   @ApiProperty()
   @PrimaryKey({ type: 'uuid', defaultRaw: 'gen_random_uuid()' })
   id!: string;
 
-  @Expose()
-  @ApiProperty({ nullable: true })
-  @Index()
-  @ManyToOne(() => Empresa, { nullable: true })
-  matriz?: Empresa;
-
-  @Expose()
-  @ApiProperty()
-  @Index()
-  @ManyToOne(() => Endereco, { nullable: true })
-  endereco?: Endereco;
-
-  @Expose()
-  @ApiProperty()
-  @Property({ length: 60 })
-  razaoSocial!: string;
-
-  @Expose()
-  @ApiProperty({ nullable: true })
-  @Property({ length: 60, nullable: true })
-  nomeFantasia?: string;
-
-  @Expose()
-  @ApiProperty()
-  @Property({ length: 14 })
-  cnpjCpf!: string;
-
-  @Expose()
-  @ApiProperty({ nullable: true })
-  @Property({ length: 14, nullable: true })
-  inscricaoEstadual?: string;
-
-  @Expose()
-  @ApiProperty({ nullable: true })
-  @Property({ length: 15, nullable: true })
-  inscricaoMunicipal?: string;
-
-  @Expose()
-  @ApiProperty({ nullable: true })
-  @Property({ length: 60, nullable: true })
-  site?: string;
-
-  @Expose()
-  @ApiProperty({ nullable: true })
-  @Property({ nullable: true })
-  matrizFilial?: string;
-
-  @Expose()
-  @ApiProperty()
   @Property()
-  abertura!: Date;
+  @ApiProperty({
+    example: 123,
+    description: 'Referência ao cliente (cliente_id)',
+  })
+  cliente_id!: string;
 
-  @Expose()
-  @ApiProperty({ default: true })
+  @Property()
+  @ApiProperty({ example: 'Empresa LTDA', description: 'Razão social' })
+  razao_social!: string;
+
+  @Property()
+  @ApiProperty({ example: 'Nome Fantasia', description: 'Nome fantasia' })
+  nome_fantasia!: string;
+
+  @Property()
+  @ApiProperty({ example: '12.345.678/0001-90', description: 'CNPJ ou CPF' })
+  cnpj_cpf!: string;
+
+  @Property({ nullable: true })
+  @ApiProperty({ example: '123456789', required: false })
+  inscricao_estadual?: string;
+
+  @Property({ nullable: true })
+  @ApiProperty({ example: '987654321', required: false })
+  inscricao_municipal?: string;
+
+  // Endereço
+  @Property({ nullable: true })
+  cep?: string;
+
+  @Property({ nullable: true })
+  logradouro?: string;
+
+  @Property({ nullable: true })
+  numero?: string;
+
+  @Property({ nullable: true })
+  bairro?: string;
+
+  @Property({ nullable: true })
+  complemento?: string;
+
+  @Property({ nullable: true })
+  cidade?: string;
+
+  @Property({ nullable: true })
+  codigo_ibge?: string;
+
+  @Property({ nullable: true })
+  uf?: string;
+
+  // Contatos
+  @Property({ nullable: true })
+  telefone?: string;
+
+  @Property({ nullable: true })
+  celular?: string;
+
+  @Property({ nullable: true })
+  email?: string;
+
+  @Property({ nullable: true })
+  data_abertura?: Date;
+
+  @Property({ onCreate: () => new Date() })
+  data_inclusao: Date = new Date();
+
   @Property({ default: true })
+  @ApiProperty({ example: true })
   ativo: boolean = true;
 
-  @Exclude()
   @Property({ nullable: true })
-  deletadoEm?: Date;
-
-  @Expose()
-  @ApiProperty()
-  @Property({ onCreate: () => new Date() })
-  criadoEm!: Date;
-
-  @Expose()
-  @ApiProperty()
-  @Property({ onCreate: () => new Date(), onUpdate: () => new Date() })
-  atualizadoEm!: Date;
-
-  // Poderia ter relações OneToMany para contatos, documentos, etc, se desejar
+  deletadoEm?: Date | null;
 }
