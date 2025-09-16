@@ -31,7 +31,7 @@ export class EmpresaController {
   @Get('cliente/:clienteId')
   @ApiOperation({ summary: 'Listar empresas por cliente' })
   @ApiResponse({ status: 200, description: 'Empresas encontradas' })
-  async findByCliente(@Param('clienteId', ParseIntPipe) clienteId: string) {
+  async findByCliente(@Param('clienteId') clienteId: string) {
     const data = await this.service.findAllByCliente(clienteId);
     return { message: 'Empresas encontradas', statusCode: 200, data };
   }
@@ -39,7 +39,7 @@ export class EmpresaController {
   @Get(':id')
   @ApiOperation({ summary: 'Obter empresa por id' })
   @ApiResponse({ status: 200, description: 'Empresa encontrada' })
-  async findOne(@Param('id', ParseIntPipe) id: string) {
+  async findOne(@Param('id') id: string) {
     const data = await this.service.findOne(id);
     return { message: 'Empresa encontrada', statusCode: 200, data };
   }
@@ -47,10 +47,7 @@ export class EmpresaController {
   @Put(':id')
   @ApiOperation({ summary: 'Atualizar empresa' })
   @ApiResponse({ status: 200, description: 'Empresa atualizada' })
-  async update(
-    @Param('id', ParseIntPipe) id: string,
-    @Body() dto: UpdateEmpresaDto,
-  ) {
+  async update(@Param('id') id: string, @Body() dto: UpdateEmpresaDto) {
     const data = await this.service.update(id, dto);
     return { message: 'Empresa atualizada', statusCode: 200, data };
   }
@@ -58,7 +55,7 @@ export class EmpresaController {
   @Delete(':id')
   @ApiOperation({ summary: 'Remover (soft) empresa' })
   @ApiResponse({ status: 200, description: 'Empresa removida' })
-  async remove(@Param('id', ParseIntPipe) id: string) {
+  async remove(@Param('id') id: string) {
     await this.service.softDelete(id);
     return { message: 'Empresa deletada', statusCode: 200 };
   }
@@ -68,10 +65,7 @@ export class EmpresaController {
   @Post(':id/filiais')
   @ApiOperation({ summary: 'Criar filial para empresa' })
   @ApiResponse({ status: 201, description: 'Filial criada' })
-  async createFilial(
-    @Param('id', ParseIntPipe) id: string,
-    @Body() dto: CreateFilialDto,
-  ) {
+  async createFilial(@Param('id') id: string, @Body() dto: CreateFilialDto) {
     // garante que empresa_id corresponde ao path param
     if (dto.empresa_id !== id) dto.empresa_id = id;
     const data = await this.service.createFilial(dto);
@@ -81,7 +75,7 @@ export class EmpresaController {
   @Get(':id/filiais')
   @ApiOperation({ summary: 'Listar filiais por empresa' })
   @ApiResponse({ status: 200, description: 'Filiais encontradas' })
-  async listFiliais(@Param('id', ParseIntPipe) id: string) {
+  async listFiliais(@Param('id') id: string) {
     const data = await this.service.findFiliaisByEmpresa(id);
     return { message: 'Filiais encontradas', statusCode: 200, data };
   }
