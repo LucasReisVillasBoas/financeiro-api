@@ -1,5 +1,7 @@
 {
-  "namespaces": ["public"],
+  "namespaces": [
+    "public"
+  ],
   "name": "public",
   "tables": [
     {
@@ -230,7 +232,9 @@
       "indexes": [
         {
           "keyName": "empresa_pkey",
-          "columnNames": ["id"],
+          "columnNames": [
+            "id"
+          ],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -379,7 +383,9 @@
       "indexes": [
         {
           "keyName": "endereco_pkey",
-          "columnNames": ["id"],
+          "columnNames": [
+            "id"
+          ],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -617,7 +623,9 @@
       "indexes": [
         {
           "keyName": "filial_pkey",
-          "columnNames": ["id"],
+          "columnNames": [
+            "id"
+          ],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -628,9 +636,13 @@
       "foreignKeys": {
         "filial_empresa_id_foreign": {
           "constraintName": "filial_empresa_id_foreign",
-          "columnNames": ["empresa_id"],
+          "columnNames": [
+            "empresa_id"
+          ],
           "localTableName": "public.filial",
-          "referencedColumnNames": ["id"],
+          "referencedColumnNames": [
+            "id"
+          ],
           "referencedTableName": "public.empresa",
           "updateRule": "cascade"
         }
@@ -704,7 +716,9 @@
       "indexes": [
         {
           "keyName": "perfil_pkey",
-          "columnNames": ["id"],
+          "columnNames": [
+            "id"
+          ],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -753,7 +767,9 @@
       "indexes": [
         {
           "keyName": "tipo_contato_pkey",
-          "columnNames": ["id"],
+          "columnNames": [
+            "id"
+          ],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -859,7 +875,9 @@
       "schema": "public",
       "indexes": [
         {
-          "columnNames": ["entity_type"],
+          "columnNames": [
+            "entity_type"
+          ],
           "composite": false,
           "keyName": "contato_entity_type_index",
           "constraint": false,
@@ -867,7 +885,9 @@
           "unique": false
         },
         {
-          "columnNames": ["entity_id"],
+          "columnNames": [
+            "entity_id"
+          ],
           "composite": false,
           "keyName": "contato_entity_id_index",
           "constraint": false,
@@ -876,7 +896,9 @@
         },
         {
           "keyName": "contato_pkey",
-          "columnNames": ["id"],
+          "columnNames": [
+            "id"
+          ],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -887,9 +909,13 @@
       "foreignKeys": {
         "contato_tipo_contato_id_foreign": {
           "constraintName": "contato_tipo_contato_id_foreign",
-          "columnNames": ["tipo_contato_id"],
+          "columnNames": [
+            "tipo_contato_id"
+          ],
           "localTableName": "public.contato",
-          "referencedColumnNames": ["id"],
+          "referencedColumnNames": [
+            "id"
+          ],
           "referencedTableName": "public.tipo_contato",
           "updateRule": "cascade"
         }
@@ -1013,7 +1039,9 @@
       "schema": "public",
       "indexes": [
         {
-          "columnNames": ["login"],
+          "columnNames": [
+            "login"
+          ],
           "composite": false,
           "keyName": "usuario_login_index",
           "constraint": false,
@@ -1022,7 +1050,9 @@
         },
         {
           "keyName": "usuario_pkey",
-          "columnNames": ["id"],
+          "columnNames": [
+            "id"
+          ],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -1176,7 +1206,9 @@
       "schema": "public",
       "indexes": [
         {
-          "columnNames": ["empresa_id"],
+          "columnNames": [
+            "empresa_id"
+          ],
           "composite": false,
           "keyName": "pessoa_empresa_id_index",
           "constraint": false,
@@ -1184,7 +1216,9 @@
           "unique": false
         },
         {
-          "columnNames": ["endereco_id"],
+          "columnNames": [
+            "endereco_id"
+          ],
           "composite": false,
           "keyName": "pessoa_endereco_id_index",
           "constraint": false,
@@ -1192,7 +1226,9 @@
           "unique": false
         },
         {
-          "columnNames": ["criado_por_id"],
+          "columnNames": [
+            "criado_por_id"
+          ],
           "composite": false,
           "keyName": "pessoa_criado_por_id_index",
           "constraint": false,
@@ -1200,7 +1236,9 @@
           "unique": false
         },
         {
-          "columnNames": ["atualizado_por_id"],
+          "columnNames": [
+            "atualizado_por_id"
+          ],
           "composite": false,
           "keyName": "pessoa_atualizado_por_id_index",
           "constraint": false,
@@ -1209,7 +1247,9 @@
         },
         {
           "keyName": "pessoa_pkey",
-          "columnNames": ["id"],
+          "columnNames": [
+            "id"
+          ],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -1220,34 +1260,50 @@
       "foreignKeys": {
         "pessoa_empresa_id_foreign": {
           "constraintName": "pessoa_empresa_id_foreign",
-          "columnNames": ["empresa_id"],
+          "columnNames": [
+            "empresa_id"
+          ],
           "localTableName": "public.pessoa",
-          "referencedColumnNames": ["id"],
+          "referencedColumnNames": [
+            "id"
+          ],
           "referencedTableName": "public.empresa",
           "updateRule": "cascade"
         },
         "pessoa_endereco_id_foreign": {
           "constraintName": "pessoa_endereco_id_foreign",
-          "columnNames": ["endereco_id"],
+          "columnNames": [
+            "endereco_id"
+          ],
           "localTableName": "public.pessoa",
-          "referencedColumnNames": ["id"],
+          "referencedColumnNames": [
+            "id"
+          ],
           "referencedTableName": "public.endereco",
           "updateRule": "cascade"
         },
         "pessoa_criado_por_id_foreign": {
           "constraintName": "pessoa_criado_por_id_foreign",
-          "columnNames": ["criado_por_id"],
+          "columnNames": [
+            "criado_por_id"
+          ],
           "localTableName": "public.pessoa",
-          "referencedColumnNames": ["id"],
+          "referencedColumnNames": [
+            "id"
+          ],
           "referencedTableName": "public.usuario",
           "deleteRule": "set null",
           "updateRule": "cascade"
         },
         "pessoa_atualizado_por_id_foreign": {
           "constraintName": "pessoa_atualizado_por_id_foreign",
-          "columnNames": ["atualizado_por_id"],
+          "columnNames": [
+            "atualizado_por_id"
+          ],
           "localTableName": "public.pessoa",
-          "referencedColumnNames": ["id"],
+          "referencedColumnNames": [
+            "id"
+          ],
           "referencedTableName": "public.usuario",
           "deleteRule": "set null",
           "updateRule": "cascade"
@@ -1310,7 +1366,9 @@
       "schema": "public",
       "indexes": [
         {
-          "columnNames": ["empresa_id"],
+          "columnNames": [
+            "empresa_id"
+          ],
           "composite": false,
           "keyName": "empresa_usuario_empresa_id_index",
           "constraint": false,
@@ -1318,7 +1376,9 @@
           "unique": false
         },
         {
-          "columnNames": ["usuario_id"],
+          "columnNames": [
+            "usuario_id"
+          ],
           "composite": false,
           "keyName": "empresa_usuario_usuario_id_index",
           "constraint": false,
@@ -1327,7 +1387,9 @@
         },
         {
           "keyName": "empresa_usuario_pkey",
-          "columnNames": ["id"],
+          "columnNames": [
+            "id"
+          ],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -1338,17 +1400,25 @@
       "foreignKeys": {
         "empresa_usuario_empresa_id_foreign": {
           "constraintName": "empresa_usuario_empresa_id_foreign",
-          "columnNames": ["empresa_id"],
+          "columnNames": [
+            "empresa_id"
+          ],
           "localTableName": "public.empresa_usuario",
-          "referencedColumnNames": ["id"],
+          "referencedColumnNames": [
+            "id"
+          ],
           "referencedTableName": "public.empresa",
           "updateRule": "cascade"
         },
         "empresa_usuario_usuario_id_foreign": {
           "constraintName": "empresa_usuario_usuario_id_foreign",
-          "columnNames": ["usuario_id"],
+          "columnNames": [
+            "usuario_id"
+          ],
           "localTableName": "public.empresa_usuario",
-          "referencedColumnNames": ["id"],
+          "referencedColumnNames": [
+            "id"
+          ],
           "referencedTableName": "public.usuario",
           "updateRule": "cascade"
         }
