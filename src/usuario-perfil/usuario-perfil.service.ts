@@ -16,9 +16,15 @@ export class UsuarioPerfilService {
   }
 
   async findByCliente(clienteId: string): Promise<UsuarioPerfil[]> {
+    const usuario = await this.usuarioPerfilRepository.findOne({
+      id: clienteId,
+    });
+    if (!usuario) {
+      throw new NotFoundException('Usuário não encontrado');
+    }
+
     return this.usuarioPerfilRepository.find({
-      usuario: clienteId,
-      ativo: true,
+      usuario,
     });
   }
 

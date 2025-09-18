@@ -1,9 +1,9 @@
 import { Migration } from '@mikro-orm/migrations';
 
-export class Migration20250917233758 extends Migration {
+export class Migration20250918001200 extends Migration {
   override async up(): Promise<void> {
     this.addSql(
-      `create table "usuario_perfil" ("id" uuid not null default gen_random_uuid(), "perfil_id" uuid not null, "usuario_id" uuid not null, "empresa_id" uuid not null, "criado_em" timestamptz not null, "atualizado_em" timestamptz not null, constraint "usuario_perfil_pkey" primary key ("id"));`,
+      `create table "usuario_perfil" ("id" uuid not null default gen_random_uuid(), "perfil_id" uuid not null, "usuario_id" uuid not null, "empresa_id" uuid not null, "ativo" boolean not null, "criado_em" timestamptz not null, "atualizado_em" timestamptz not null, "deletado_em" timestamptz null, constraint "usuario_perfil_pkey" primary key ("id"));`,
     );
     this.addSql(
       `create index "usuario_perfil_perfil_id_index" on "usuario_perfil" ("perfil_id");`,

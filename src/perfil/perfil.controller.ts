@@ -20,8 +20,8 @@ export class PerfilController {
 
   @Post()
   @ApiResponse({ status: 201 })
-  async create(@Body() dto: CreatePerfilDto, @Req() req: any) {
-    const perfil = await this.perfilService.create(dto, req.user);
+  async create(@Body() dto: CreatePerfilDto) {
+    const perfil = await this.perfilService.create(dto);
     return {
       message: 'Perfil criado com sucesso',
       statusCode: 201,

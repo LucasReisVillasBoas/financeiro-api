@@ -43,6 +43,11 @@ export class UsuarioService {
     return !!usuario;
   }
 
+  async findOne(id: string): Promise<Usuario> {
+    const usuario = await this.usuarioRepository.findOne({ id });
+    if (!usuario) throw new NotFoundException('Usuário não encontrado');
+    return usuario;
+  }
   private async hashPassword(password: string): Promise<string> {
     const salt = await bcrypt.genSalt();
     return bcrypt.hash(password, salt);
