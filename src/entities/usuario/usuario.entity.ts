@@ -1,7 +1,15 @@
-import { Entity, PrimaryKey, Property, Index } from '@mikro-orm/core';
+import {
+  Entity,
+  PrimaryKey,
+  Property,
+  Index,
+  OneToMany,
+  Collection,
+} from '@mikro-orm/core';
 import { Expose, Exclude } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 import { UsuarioRepository } from '../../usuario/usuario.repository';
+import { UsuarioEmpresaFilial } from '../usuario-empresa-filial/usuario-empresa-filial.entity';
 
 @Entity({ repository: () => UsuarioRepository })
 export class Usuario {
@@ -47,6 +55,11 @@ export class Usuario {
 
   @Property({ nullable: true })
   deletadoEm?: Date;
+
+  @Expose()
+  @ApiProperty()
+  @OneToMany(() => UsuarioEmpresaFilial, (uef) => uef.usuario)
+  empresasFiliais = new Collection<UsuarioEmpresaFilial>(this);
 
   @Expose()
   @ApiProperty()

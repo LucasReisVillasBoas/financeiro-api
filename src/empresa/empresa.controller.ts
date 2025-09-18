@@ -76,7 +76,7 @@ export class EmpresaController {
   @ApiOperation({ summary: 'Listar filiais por empresa' })
   @ApiResponse({ status: 200, description: 'Filiais encontradas' })
   async listFiliais(@Param('id') id: string) {
-    const data = await this.service.findFiliaisByEmpresa(id);
+    const data = await this.service.findFiliaisBySede(id);
     return { message: 'Filiais encontradas', statusCode: 200, data };
   }
 
