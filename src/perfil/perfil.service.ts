@@ -2,23 +2,76 @@ import {
   Injectable,
   ForbiddenException,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { PerfilRepository } from './perfil.repository';
 import { CreatePerfilDto } from './dto/create-perfil.dto';
 import { UpdatePerfilDto } from './dto/update-perfil.dto';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { Perfil } from '../entities/perfil/perfil.entity';
+import { UsuarioPerfil } from '../entities/usuario-perfil/usuario-perfil.entity';
+import type { UsuarioPerfilRepository } from '../usuario-perfil/usuario-perfil.repository';
+import { Usuario } from '../entities/usuario/usuario.entity';
+import type { UsuarioRepository } from '../usuario/usuario.repository';
+import type { UsuarioEmpresaFilialRepository } from '../usuario/usuario-empresa-filial.repository';
+import { UsuarioEmpresaFilial } from '../entities/usuario-empresa-filial/usuario-empresa-filial.entity';
+import { EmpresaService } from '../empresa/empresa.service';
+import { UsuarioService } from '../usuario/usuario.service';
 
 @Injectable()
 export class PerfilService {
   constructor(
     @InjectRepository(Perfil)
     private readonly perfilRepository: PerfilRepository,
+
+    @InjectRepository(UsuarioPerfil)
+    private readonly usuarioPerfilRepository: UsuarioPerfilRepository,
+
+    @InjectRepository(Usuario)
+    private readonly usuarioService: UsuarioService,
+
+    @InjectRepository(UsuarioEmpresaFilial)
+    private readonly usuarioEmpresaFilialRepository: UsuarioEmpresaFilialRepository,
+
+    private readonly empresaService: EmpresaService,
   ) {}
 
-  async create(dto: CreatePerfilDto, user: any): Promise<Perfil> {
+  async create(dto: CreatePerfilDto): Promise<Perfil> {
+    // achar usuario
+    const usuario = await this.usuarioService.findOne(dto.clienteId);
+    if (!usuario) {
+      throw new NotFoundException('Usuário não encontrado');
+    }
+
+    const empresaList = await this.empresaService.findAllByCliente(
+      dto.clienteId,
+    );
+
+    const empresa = empresaList.at(0);
+
     const perfil = this.perfilRepository.create(dto);
     await this.perfilRepository.flush();
+
+    // Evita duplicidade
+    const jaExiste = await this.usuarioPerfilRepository.findOne({
+      usuario,
+      perfil,
+      empresa,
+    });
+
+    if (jaExiste) {
+      throw new BadRequestException('Associação já existe');
+    }
+
+    const associacao = this.usuarioPerfilRepository.create({
+      usuario,
+      perfil,
+      empresa,
+      ativo: true,
+    });
+
+    await this.usuarioPerfilRepository.persistAndFlush(associacao);
+
     return perfil;
   }
 

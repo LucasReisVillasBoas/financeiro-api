@@ -8,6 +8,7 @@ import { UsuarioEmpresaFilial } from '../entities/usuario-empresa-filial/usuario
 import { Endereco } from '../entities/endereco/endereco.entity';
 import { Pessoa } from '../entities/pessoa/pessoa.entity';
 import { Perfil } from '../entities/perfil/perfil.entity';
+import { UsuarioPerfil } from '../entities/usuario-perfil/usuario-perfil.entity';
 
 export default defineConfig({
   dbName: DATABASE_NAME,
@@ -22,6 +23,7 @@ export default defineConfig({
     Endereco,
     Pessoa,
     Perfil,
+    UsuarioPerfil,
   ],
   migrations: {
     path: 'src/database/migrations',

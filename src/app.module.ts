@@ -8,6 +8,7 @@ import { EmpresaModule } from './empresa/empresa.module';
 import { UsuarioModule } from './usuario/usuario.module';
 import { AuthModule } from './auth/auth.module';
 import { PerfilModule } from './perfil/perfil.module';
+import { UsuarioPerfilModule } from './usuario-perfil/usuario-perfil.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { PerfilModule } from './perfil/perfil.module';
     UsuarioModule,
     PerfilModule,
     AuthModule,
+    UsuarioPerfilModule,
   ],
   controllers: [AppController],
   providers: [AppService],
