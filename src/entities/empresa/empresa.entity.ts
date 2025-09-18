@@ -8,6 +8,14 @@ export class Empresa {
   @PrimaryKey({ type: 'uuid', defaultRaw: 'gen_random_uuid()' })
   id!: string;
 
+  @ManyToOne(() => Empresa, { nullable: true })
+  @ApiProperty({
+    example: 'uuid da sede (ou null se for sede)',
+    description: 'FK -> empresa.id (sede/matriz)',
+    required: false,
+  })
+  sede?: Empresa | null;
+
   @Property()
   @ApiProperty({
     example: 123,
@@ -28,11 +36,9 @@ export class Empresa {
   cnpj_cpf!: string;
 
   @Property({ nullable: true })
-  @ApiProperty({ example: '123456789', required: false })
   inscricao_estadual?: string;
 
   @Property({ nullable: true })
-  @ApiProperty({ example: '987654321', required: false })
   inscricao_municipal?: string;
 
   // Endereço
@@ -77,7 +83,6 @@ export class Empresa {
   data_inclusao: Date = new Date();
 
   @Property({ default: true })
-  @ApiProperty({ example: true })
   ativo: boolean = true;
 
   @Property({ nullable: true })

@@ -1,13 +1,13 @@
 import { Migration } from '@mikro-orm/migrations';
 
-export class Migration20250916000134 extends Migration {
+export class Migration20250918000032 extends Migration {
 
   override async up(): Promise<void> {
-    this.addSql(`create table "empresa" ("id" uuid not null default gen_random_uuid(), "cliente_id" varchar(255) not null, "razao_social" varchar(255) not null, "nome_fantasia" varchar(255) not null, "cnpj_cpf" varchar(255) not null, "inscricao_estadual" varchar(255) null, "inscricao_municipal" varchar(255) null, "cep" varchar(255) null, "logradouro" varchar(255) null, "numero" varchar(255) null, "bairro" varchar(255) null, "complemento" varchar(255) null, "cidade" varchar(255) null, "codigo_ibge" varchar(255) null, "uf" varchar(255) null, "telefone" varchar(255) null, "celular" varchar(255) null, "email" varchar(255) null, "data_abertura" timestamptz null, "data_inclusao" timestamptz not null, "ativo" boolean not null default true, "deletado_em" timestamptz null, constraint "empresa_pkey" primary key ("id"));`);
+    this.addSql(`create table "empresa" ("id" uuid not null default gen_random_uuid(), "sede_id" uuid null, "cliente_id" varchar(255) not null, "razao_social" varchar(255) not null, "nome_fantasia" varchar(255) not null, "cnpj_cpf" varchar(255) not null, "inscricao_estadual" varchar(255) null, "inscricao_municipal" varchar(255) null, "cep" varchar(255) null, "logradouro" varchar(255) null, "numero" varchar(255) null, "bairro" varchar(255) null, "complemento" varchar(255) null, "cidade" varchar(255) null, "codigo_ibge" varchar(255) null, "uf" varchar(255) null, "telefone" varchar(255) null, "celular" varchar(255) null, "email" varchar(255) null, "data_abertura" timestamptz null, "data_inclusao" timestamptz not null, "ativo" boolean not null default true, "deletado_em" timestamptz null, constraint "empresa_pkey" primary key ("id"));`);
 
     this.addSql(`create table "endereco" ("id" uuid not null default gen_random_uuid(), "cep" varchar(8) not null, "logradouro" varchar(60) not null, "numero" varchar(60) not null, "bairro" varchar(60) not null, "complemento" varchar(60) null, "cidade" varchar(60) not null, "codigo_ibge" varchar(7) not null, "uf" varchar(2) not null, "ativo" boolean not null default true, "deletado_em" timestamptz null, "criado_em" timestamptz not null, "atualizado_em" timestamptz not null, constraint "endereco_pkey" primary key ("id"));`);
 
-    this.addSql(`create table "filial" ("id" uuid not null default gen_random_uuid(), "empresa_id" varchar(255) not null, "razao_social" varchar(255) not null, "nome_fantasia" varchar(255) not null, "cnpj_cpf" varchar(255) not null, "inscricao_estadual" varchar(255) null, "inscricao_municipal" varchar(255) null, "cep" varchar(255) null, "logradouro" varchar(255) null, "numero" varchar(255) null, "bairro" varchar(255) null, "complemento" varchar(255) null, "cidade" varchar(255) null, "codigo_ibge" varchar(255) null, "uf" varchar(255) null, "telefone" varchar(255) null, "celular" varchar(255) null, "email" varchar(255) null, "data_abertura" timestamptz null, "data_inclusao" timestamptz not null, "ativo" boolean not null default true, "deletado_em" timestamptz null, constraint "filial_pkey" primary key ("id"));`);
+    this.addSql(`create table "perfil" ("id" uuid not null default gen_random_uuid(), "cliente_id" varchar(255) not null, "nome" varchar(255) not null, "permissoes" jsonb not null, "ativo" boolean not null default true, "deletado_em" timestamptz null, constraint "perfil_pkey" primary key ("id"));`);
 
     this.addSql(`create table "tipo_contato" ("id" uuid not null default gen_random_uuid(), "nome" varchar(50) not null, "corporativo" boolean not null default false, constraint "tipo_contato_pkey" primary key ("id"));`);
 
@@ -24,9 +24,12 @@ export class Migration20250916000134 extends Migration {
     this.addSql(`create index "pessoa_criado_por_id_index" on "pessoa" ("criado_por_id");`);
     this.addSql(`create index "pessoa_atualizado_por_id_index" on "pessoa" ("atualizado_por_id");`);
 
-    this.addSql(`create table "empresa_usuario" ("id" uuid not null default gen_random_uuid(), "empresa_id" uuid not null, "usuario_id" uuid not null, "criado_em" timestamptz not null, "atualizado_em" timestamptz not null, constraint "empresa_usuario_pkey" primary key ("id"));`);
-    this.addSql(`create index "empresa_usuario_empresa_id_index" on "empresa_usuario" ("empresa_id");`);
-    this.addSql(`create index "empresa_usuario_usuario_id_index" on "empresa_usuario" ("usuario_id");`);
+    this.addSql(`create table "usuario_empresa_filial" ("id" uuid not null default gen_random_uuid(), "usuario_id" uuid not null, "empresa_id" uuid null, "filial_id" uuid null, "criado_em" timestamptz not null, "atualizado_em" timestamptz not null, constraint "usuario_empresa_filial_pkey" primary key ("id"));`);
+    this.addSql(`create index "usuario_empresa_filial_usuario_id_index" on "usuario_empresa_filial" ("usuario_id");`);
+    this.addSql(`create index "usuario_empresa_filial_empresa_id_index" on "usuario_empresa_filial" ("empresa_id");`);
+    this.addSql(`create index "usuario_empresa_filial_filial_id_index" on "usuario_empresa_filial" ("filial_id");`);
+
+    this.addSql(`alter table "empresa" add constraint "empresa_sede_id_foreign" foreign key ("sede_id") references "empresa" ("id") on update cascade on delete set null;`);
 
     this.addSql(`alter table "contato" add constraint "contato_tipo_contato_id_foreign" foreign key ("tipo_contato_id") references "tipo_contato" ("id") on update cascade;`);
 
@@ -35,14 +38,19 @@ export class Migration20250916000134 extends Migration {
     this.addSql(`alter table "pessoa" add constraint "pessoa_criado_por_id_foreign" foreign key ("criado_por_id") references "usuario" ("id") on update cascade on delete set null;`);
     this.addSql(`alter table "pessoa" add constraint "pessoa_atualizado_por_id_foreign" foreign key ("atualizado_por_id") references "usuario" ("id") on update cascade on delete set null;`);
 
-    this.addSql(`alter table "empresa_usuario" add constraint "empresa_usuario_empresa_id_foreign" foreign key ("empresa_id") references "empresa" ("id") on update cascade;`);
-    this.addSql(`alter table "empresa_usuario" add constraint "empresa_usuario_usuario_id_foreign" foreign key ("usuario_id") references "usuario" ("id") on update cascade;`);
+    this.addSql(`alter table "usuario_empresa_filial" add constraint "usuario_empresa_filial_usuario_id_foreign" foreign key ("usuario_id") references "usuario" ("id") on update cascade;`);
+    this.addSql(`alter table "usuario_empresa_filial" add constraint "usuario_empresa_filial_empresa_id_foreign" foreign key ("empresa_id") references "empresa" ("id") on update cascade on delete set null;`);
+    this.addSql(`alter table "usuario_empresa_filial" add constraint "usuario_empresa_filial_filial_id_foreign" foreign key ("filial_id") references "empresa" ("id") on update cascade on delete set null;`);
   }
 
   override async down(): Promise<void> {
+    this.addSql(`alter table "empresa" drop constraint "empresa_sede_id_foreign";`);
+
     this.addSql(`alter table "pessoa" drop constraint "pessoa_empresa_id_foreign";`);
 
-    this.addSql(`alter table "empresa_usuario" drop constraint "empresa_usuario_empresa_id_foreign";`);
+    this.addSql(`alter table "usuario_empresa_filial" drop constraint "usuario_empresa_filial_empresa_id_foreign";`);
+
+    this.addSql(`alter table "usuario_empresa_filial" drop constraint "usuario_empresa_filial_filial_id_foreign";`);
 
     this.addSql(`alter table "pessoa" drop constraint "pessoa_endereco_id_foreign";`);
 
@@ -52,13 +60,13 @@ export class Migration20250916000134 extends Migration {
 
     this.addSql(`alter table "pessoa" drop constraint "pessoa_atualizado_por_id_foreign";`);
 
-    this.addSql(`alter table "empresa_usuario" drop constraint "empresa_usuario_usuario_id_foreign";`);
+    this.addSql(`alter table "usuario_empresa_filial" drop constraint "usuario_empresa_filial_usuario_id_foreign";`);
 
     this.addSql(`drop table if exists "empresa" cascade;`);
 
     this.addSql(`drop table if exists "endereco" cascade;`);
 
-    this.addSql(`drop table if exists "filial" cascade;`);
+    this.addSql(`drop table if exists "perfil" cascade;`);
 
     this.addSql(`drop table if exists "tipo_contato" cascade;`);
 
@@ -68,7 +76,7 @@ export class Migration20250916000134 extends Migration {
 
     this.addSql(`drop table if exists "pessoa" cascade;`);
 
-    this.addSql(`drop table if exists "empresa_usuario" cascade;`);
+    this.addSql(`drop table if exists "usuario_empresa_filial" cascade;`);
   }
 
 }

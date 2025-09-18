@@ -4,10 +4,9 @@ import { Usuario } from '../entities/usuario/usuario.entity';
 import { Contato } from '../entities/contato/contato.entity';
 import { TipoContato } from '../entities/contato/tipo-contato.entity';
 import { Empresa } from '../entities/empresa/empresa.entity';
-import { EmpresaUsuario } from '../entities/empresa-usuario/empresa-usuario.entity';
+import { UsuarioEmpresaFilial } from '../entities/usuario-empresa-filial/usuario-empresa-filial.entity';
 import { Endereco } from '../entities/endereco/endereco.entity';
 import { Pessoa } from '../entities/pessoa/pessoa.entity';
-import { Filial } from '../entities/empresa/filial.entity';
 import { Perfil } from '../entities/perfil/perfil.entity';
 import { UsuarioPerfil } from '../entities/usuario-perfil/usuario-perfil.entity';
 
@@ -20,10 +19,9 @@ export default defineConfig({
     Contato,
     TipoContato,
     Empresa,
-    EmpresaUsuario,
+    UsuarioEmpresaFilial,
     Endereco,
     Pessoa,
-    Filial,
     Perfil,
     UsuarioPerfil,
   ],
