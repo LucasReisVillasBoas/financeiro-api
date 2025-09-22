@@ -5,12 +5,15 @@ import { LoginResponseDto } from './dto/login-response.dto';
 import * as bcrypt from 'bcryptjs';
 import { UsuarioService } from '../usuario/usuario.service';
 import { Usuario } from '../entities/usuario/usuario.entity';
+import { EntityManager } from '@mikro-orm/postgresql';
+import { UsuarioEmpresaFilial } from '../entities/usuario-empresa-filial/usuario-empresa-filial.entity';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly usuarioService: UsuarioService,
+    private readonly em: EntityManager,
   ) { }
 
   async login(loginDto: LoginDto): Promise<LoginResponseDto> {
@@ -20,7 +23,26 @@ export class AuthService {
       throw new BadRequestException('error-user-not_found');
     }
 
-    const payload = { username: user.email, sub: user.id };
+    // Buscar empresas do usuário
+    const userEmpresas = await this.em.find(UsuarioEmpresaFilial, {
+      usuario: user.id,
+    }, {
+      populate: ['empresa'],
+    });
+
+    const empresas = userEmpresas.map(ue => ({
+      empresaId: ue.empresa.id,
+      clienteId: ue.empresa.cliente_id,
+      isFilial: ue.filial,
+      sedeId: ue.empresa.sede?.id || null,
+    }));
+
+    const payload = {
+      username: user.email,
+      sub: user.id,
+      empresas,
+    };
+
     const loginResponseDto = new LoginResponseDto();
     loginResponseDto.token = this.jwtService.sign(payload);
 

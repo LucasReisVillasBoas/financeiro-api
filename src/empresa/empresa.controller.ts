@@ -17,10 +17,12 @@ import { UpdateEmpresaDto } from './dto/update-empresa.dto';
 import { CreateFilialDto } from './dto/create-filial.dto';
 import { UpdateFilialDto } from './dto/update-filial.dto';
 import { RolesGuard } from '../auth/roles.guard';
+import { EmpresaGuard } from '../auth/empresa.guard';
+import { CurrentClienteIds } from '../auth/decorators/current-empresa.decorator';
 
 @ApiTags('Empresas')
 @Controller('empresas')
-@UseGuards(RolesGuard)
+@UseGuards(RolesGuard, EmpresaGuard)
 export class EmpresaController {
   constructor(private readonly service: EmpresaService) {}
 
@@ -37,7 +39,15 @@ export class EmpresaController {
   @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
   @ApiOperation({ summary: 'Listar empresas por cliente' })
   @ApiResponse({ status: 200, description: 'Empresas encontradas' })
-  async findByCliente(@Param('clienteId') clienteId: string) {
+  async findByCliente(
+    @Param('clienteId') clienteId: string,
+    @CurrentClienteIds() userClienteIds: string[],
+  ) {
+    // Verifica se o usuário tem acesso ao cliente
+    if (!userClienteIds.includes(clienteId)) {
+      const data = [];
+      return { message: 'Empresas encontradas', statusCode: 200, data };
+    }
     const data = await this.service.findAllByCliente(clienteId);
     return { message: 'Empresas encontradas', statusCode: 200, data };
   }
@@ -47,6 +57,7 @@ export class EmpresaController {
   @ApiOperation({ summary: 'Obter empresa por id' })
   @ApiResponse({ status: 200, description: 'Empresa encontrada' })
   async findOne(@Param('id') id: string) {
+    // O EmpresaGuard já validou o acesso
     const data = await this.service.findOne(id);
     return { message: 'Empresa encontrada', statusCode: 200, data };
   }
@@ -56,6 +67,7 @@ export class EmpresaController {
   @ApiOperation({ summary: 'Atualizar empresa' })
   @ApiResponse({ status: 200, description: 'Empresa atualizada' })
   async update(@Param('id') id: string, @Body() dto: UpdateEmpresaDto) {
+    // O EmpresaGuard já validou o acesso
     const data = await this.service.update(id, dto);
     return { message: 'Empresa atualizada', statusCode: 200, data };
   }
@@ -65,6 +77,7 @@ export class EmpresaController {
   @ApiOperation({ summary: 'Remover (soft) empresa' })
   @ApiResponse({ status: 200, description: 'Empresa removida' })
   async remove(@Param('id') id: string) {
+    // O EmpresaGuard já validou o acesso
     await this.service.softDelete(id);
     return { message: 'Empresa deletada', statusCode: 200 };
   }
