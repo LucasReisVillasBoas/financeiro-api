@@ -7,18 +7,23 @@ import {
   Patch,
   Delete,
   Req,
+  UseGuards,
+  SetMetadata,
 } from '@nestjs/common';
 import { ApiTags, ApiResponse } from '@nestjs/swagger';
 import { PerfilService } from './perfil.service';
 import { CreatePerfilDto } from './dto/create-perfil.dto';
 import { UpdatePerfilDto } from './dto/update-perfil.dto';
+import { RolesGuard } from '../auth/roles.guard';
 
 @ApiTags('Perfis')
 @Controller('perfis')
+@UseGuards(RolesGuard)
 export class PerfilController {
   constructor(private readonly perfilService: PerfilService) {}
 
   @Post()
+  @SetMetadata('roles', ['Administrador'])
   @ApiResponse({ status: 201 })
   async create(@Body() dto: CreatePerfilDto) {
     const perfil = await this.perfilService.create(dto);
@@ -30,6 +35,7 @@ export class PerfilController {
   }
 
   @Get(':clienteId')
+  @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
   @ApiResponse({ status: 200 })
   async findAll(@Param('clienteId') clienteId: string) {
     const perfis = await this.perfilService.findAll(clienteId);
@@ -37,6 +43,7 @@ export class PerfilController {
   }
 
   @Get(':clienteId/:id')
+  @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
   @ApiResponse({ status: 200 })
   async findOne(
     @Param('clienteId') clienteId: string,
@@ -47,6 +54,7 @@ export class PerfilController {
   }
 
   @Patch(':clienteId/:id')
+  @SetMetadata('roles', ['Administrador', 'Editor'])
   @ApiResponse({ status: 200 })
   async update(
     @Param('clienteId') clienteId: string,
@@ -68,6 +76,7 @@ export class PerfilController {
   }
 
   @Delete(':clienteId/:id')
+  @SetMetadata('roles', ['Administrador'])
   @ApiResponse({ status: 200 })
   async remove(
     @Param('clienteId') clienteId: string,

@@ -6,10 +6,13 @@ import {
   Delete,
   Param,
   Body,
+  UseGuards,
+  SetMetadata,
 } from '@nestjs/common';
 import { ApiTags, ApiResponse } from '@nestjs/swagger';
 import { UsuarioPerfilService } from './usuario-perfil.service';
 import type { UpdateUsuarioPerfilDto } from './dto/update-usuario-perfil.dto';
+import { RolesGuard } from '../auth/roles.guard';
 
 @ApiTags('Usuário-Perfil')
 @Controller('usuario-perfil')
@@ -17,6 +20,8 @@ export class UsuarioPerfilController {
   constructor(private readonly usuarioPerfilService: UsuarioPerfilService) {}
 
   @Get()
+  @UseGuards(RolesGuard)
+  @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
   @ApiResponse({ status: 200, description: 'Lista de associações' })
   async findAll() {
     const data = await this.usuarioPerfilService.findAll();
@@ -24,6 +29,7 @@ export class UsuarioPerfilController {
   }
 
   @Get('cliente/:clienteId')
+  @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
   @ApiResponse({ status: 200, description: 'Perfis por cliente' })
   async findByCliente(@Param('clienteId') clienteId: string) {
     const data = await this.usuarioPerfilService.findByCliente(clienteId);
@@ -31,6 +37,7 @@ export class UsuarioPerfilController {
   }
 
   @Put(':id')
+  @SetMetadata('roles', ['Administrador', 'Editor'])
   @ApiResponse({ status: 200, description: 'Associação atualizada' })
   async update(@Param('id') id: string, @Body() dto: UpdateUsuarioPerfilDto) {
     const data = await this.usuarioPerfilService.update(id, dto);
@@ -42,6 +49,7 @@ export class UsuarioPerfilController {
   }
 
   @Delete(':id')
+  @SetMetadata('roles', ['Administrador'])
   @ApiResponse({
     status: 200,
     description: 'Associação removida (soft delete)',
