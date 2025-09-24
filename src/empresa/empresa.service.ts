@@ -79,9 +79,47 @@ export class EmpresaService {
     return this.empresaRepo.find({ cliente_id, ativo: true });
   }
 
+  async findAllByEmpresaIds(empresaIds: string[]): Promise<Empresa[]> {
+    if (!empresaIds.length) return [];
+    return this.empresaRepo.find({
+      id: { $in: empresaIds },
+      ativo: true,
+    });
+  }
+
+  async findAllByClienteAndEmpresaIds(
+    cliente_id: string,
+    empresaIds: string[],
+  ): Promise<Empresa[]> {
+    if (!empresaIds.length) return [];
+    return this.empresaRepo.find({
+      cliente_id,
+      id: { $in: empresaIds },
+      ativo: true,
+    });
+  }
+
   async findOne(id: string): Promise<Empresa> {
     const empresa = await this.empresaRepo.findOne({ id, ativo: true });
     if (!empresa) throw new NotFoundException('Empresa não encontrada.');
+    return empresa;
+  }
+
+  async findOneWithAccess(
+    id: string,
+    userEmpresaIds: string[],
+  ): Promise<Empresa> {
+    const empresa = await this.empresaRepo.findOne({ id, ativo: true });
+    if (!empresa) throw new NotFoundException('Empresa não encontrada.');
+
+    // Verifica se o usuário tem acesso à empresa
+    const hasAccess = userEmpresaIds.includes(id) ||
+      (empresa.sede && userEmpresaIds.includes(empresa.sede.id));
+
+    if (!hasAccess) {
+      throw new NotFoundException('Empresa não encontrada.');
+    }
+
     return empresa;
   }
 

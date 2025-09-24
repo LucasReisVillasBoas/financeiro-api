@@ -5,12 +5,14 @@ import { UsuarioService } from './usuario.service';
 import { UsuarioController } from './usuario.controller';
 import { EmpresaModule } from '../empresa/empresa.module';
 import { UsuarioEmpresaFilial } from '../entities/usuario-empresa-filial/usuario-empresa-filial.entity';
+import { Empresa } from '../entities/empresa/empresa.entity';
+import { UsuarioPerfilModule } from '../usuario-perfil/usuario-perfil.module';
 
 @Global()
 @Module({
   imports: [
-    MikroOrmModule.forFeature([Usuario, UsuarioEmpresaFilial]),
-    EmpresaModule,
+    MikroOrmModule.forFeature([Usuario, UsuarioEmpresaFilial, Empresa]),
+    UsuarioPerfilModule
   ],
   providers: [UsuarioService],
   controllers: [UsuarioController],

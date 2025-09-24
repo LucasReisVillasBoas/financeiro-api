@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -12,10 +13,12 @@ import { Empresa } from '../entities/empresa/empresa.entity';
 import { EmpresaService } from '../empresa/empresa.service';
 import { UsuarioEmpresaFilialRepository } from './usuario-empresa-filial.repository';
 import { AssociarEmpresaFilialRequestDto } from './dto/associar-empresa-filial-request.dto';
+import { InjectRepository } from '@mikro-orm/nestjs';
 
 @Injectable()
 export class UsuarioService {
   constructor(
+    @InjectRepository(Usuario)
     private readonly usuarioRepository: UsuarioRepository,
     private readonly empresaService: EmpresaService,
     private readonly usuarioEmpresaFilialRepository: UsuarioEmpresaFilialRepository,
@@ -32,9 +35,31 @@ export class UsuarioService {
     return usuario;
   }
 
-  async getByEmail(email: string): Promise<Usuario> {
+  async getByEmail(email: string, empresaId?: string): Promise<Usuario> {
     const usuario = await this.usuarioRepository.findOne({ email });
     if (!usuario) throw new NotFoundException('Usuario not found');
+    if (
+      empresaId &&
+      !usuario.empresasFiliais
+        .getItems()
+        .some((uef) => uef.empresa.id === empresaId)
+    ) {
+      throw new NotFoundException('Usuário não encontrado');
+    }
+    return usuario;
+  }
+
+  async getById(id: string, empresaId?: string): Promise<Usuario> {
+    const usuario = await this.usuarioRepository.findOne({ id });
+    if (!usuario) throw new NotFoundException('Usuário não encontrado');
+    // if (
+    //   empresaId &&
+    //   !usuario.empresasFiliais
+    //     .getItems()
+    //     .some((uef) => uef.empresa.id === empresaId)
+    // ) {
+    //   throw new NotFoundException('Usuário não encontrado');
+    // }
     return usuario;
   }
 

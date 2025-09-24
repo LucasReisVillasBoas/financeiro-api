@@ -7,8 +7,12 @@ import { BaseResponse } from '../dto/base-response.dto';
 import { UsuarioEmpresaFilial } from '../entities/usuario-empresa-filial/usuario-empresa-filial.entity';
 import { AssociarEmpresaFilialRequestDto } from './dto/associar-empresa-filial-request.dto';
 
+import { RolesGuard } from 'src/auth/roles.guard';
+import { SetMetadata, UseGuards } from '@nestjs/common';
+
 @Controller('usuario')
 @ApiTags('Usuario')
+@UseGuards(RolesGuard)
 export class UsuarioController {
   constructor(private readonly usuarioService: UsuarioService) {}
 
@@ -18,6 +22,7 @@ export class UsuarioController {
     description: 'Usuário criado',
   })
   @Post('cadastro')
+  @SetMetadata('roles', ['Administrador'])
   async createUsuario(
     @Body() dto: UsuarioCreateRequestDto,
   ): Promise<BaseResponse<Usuario>> {
@@ -31,6 +36,7 @@ export class UsuarioController {
     description: 'Associar usuario a empresa ou filial',
   })
   @Post(':id/empresas')
+  @SetMetadata('roles', ['Administrador'])
   async associarEmpresaOuFilial(
     @Param('id') usuarioId: string,
     @Body() dto: AssociarEmpresaFilialRequestDto,
@@ -49,11 +55,13 @@ export class UsuarioController {
     description: 'Listar usuarios associados a empresa',
   })
   @Get(':id/empresas')
+  @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
   async listarAssociacoes(@Param('id') usuarioId: string) {
     return this.usuarioService.listarAssociacoes(usuarioId);
   }
 
   @Delete(':id/empresas/:assocId')
+  @SetMetadata('roles', ['Administrador'])
   async removerAssociacao(
     @Param('id') usuarioId: string,
     @Param('assocId') assocId: string,
