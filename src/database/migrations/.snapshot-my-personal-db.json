@@ -1,5 +1,7 @@
 {
-  "namespaces": ["public"],
+  "namespaces": [
+    "public"
+  ],
   "name": "public",
   "tables": [
     {
@@ -239,7 +241,9 @@
       "indexes": [
         {
           "keyName": "empresa_pkey",
-          "columnNames": ["id"],
+          "columnNames": [
+            "id"
+          ],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -402,7 +406,9 @@
       "indexes": [
         {
           "keyName": "endereco_pkey",
-          "columnNames": ["id"],
+          "columnNames": [
+            "id"
+          ],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -505,84 +511,6 @@
           "default": "gen_random_uuid()",
           "mappedType": "uuid"
         },
-        "cliente_id": {
-          "name": "cliente_id",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 255,
-          "mappedType": "string"
-        },
-        "nome": {
-          "name": "nome",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 255,
-          "mappedType": "string"
-        },
-        "permissoes": {
-          "name": "permissoes",
-          "type": "jsonb",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "json"
-        },
-        "ativo": {
-          "name": "ativo",
-          "type": "boolean",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "default": "true",
-          "mappedType": "boolean"
-        },
-        "deletado_em": {
-          "name": "deletado_em",
-          "type": "timestamptz",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "length": 6,
-          "mappedType": "datetime"
-        }
-      },
-      "name": "perfil",
-      "schema": "public",
-      "indexes": [
-        {
-          "keyName": "perfil_pkey",
-          "columnNames": ["id"],
-          "composite": false,
-          "constraint": true,
-          "primary": true,
-          "unique": true
-        }
-      ],
-      "checks": [],
-      "foreignKeys": {},
-      "nativeEnums": {}
-    },
-    {
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "default": "gen_random_uuid()",
-          "mappedType": "uuid"
-        },
         "nome": {
           "name": "nome",
           "type": "varchar(50)",
@@ -609,7 +537,9 @@
       "indexes": [
         {
           "keyName": "tipo_contato_pkey",
-          "columnNames": ["id"],
+          "columnNames": [
+            "id"
+          ],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -715,7 +645,9 @@
       "schema": "public",
       "indexes": [
         {
-          "columnNames": ["entity_type"],
+          "columnNames": [
+            "entity_type"
+          ],
           "composite": false,
           "keyName": "contato_entity_type_index",
           "constraint": false,
@@ -723,7 +655,9 @@
           "unique": false
         },
         {
-          "columnNames": ["entity_id"],
+          "columnNames": [
+            "entity_id"
+          ],
           "composite": false,
           "keyName": "contato_entity_id_index",
           "constraint": false,
@@ -732,7 +666,9 @@
         },
         {
           "keyName": "contato_pkey",
-          "columnNames": ["id"],
+          "columnNames": [
+            "id"
+          ],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -743,9 +679,13 @@
       "foreignKeys": {
         "contato_tipo_contato_id_foreign": {
           "constraintName": "contato_tipo_contato_id_foreign",
-          "columnNames": ["tipo_contato_id"],
+          "columnNames": [
+            "tipo_contato_id"
+          ],
           "localTableName": "public.contato",
-          "referencedColumnNames": ["id"],
+          "referencedColumnNames": [
+            "id"
+          ],
           "referencedTableName": "public.tipo_contato",
           "updateRule": "cascade"
         }
@@ -869,7 +809,9 @@
       "schema": "public",
       "indexes": [
         {
-          "columnNames": ["login"],
+          "columnNames": [
+            "login"
+          ],
           "composite": false,
           "keyName": "usuario_login_index",
           "constraint": false,
@@ -878,7 +820,9 @@
         },
         {
           "keyName": "usuario_pkey",
-          "columnNames": ["id"],
+          "columnNames": [
+            "id"
+          ],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -1032,7 +976,9 @@
       "schema": "public",
       "indexes": [
         {
-          "columnNames": ["empresa_id"],
+          "columnNames": [
+            "empresa_id"
+          ],
           "composite": false,
           "keyName": "pessoa_empresa_id_index",
           "constraint": false,
@@ -1040,7 +986,9 @@
           "unique": false
         },
         {
-          "columnNames": ["endereco_id"],
+          "columnNames": [
+            "endereco_id"
+          ],
           "composite": false,
           "keyName": "pessoa_endereco_id_index",
           "constraint": false,
@@ -1048,7 +996,9 @@
           "unique": false
         },
         {
-          "columnNames": ["criado_por_id"],
+          "columnNames": [
+            "criado_por_id"
+          ],
           "composite": false,
           "keyName": "pessoa_criado_por_id_index",
           "constraint": false,
@@ -1056,7 +1006,9 @@
           "unique": false
         },
         {
-          "columnNames": ["atualizado_por_id"],
+          "columnNames": [
+            "atualizado_por_id"
+          ],
           "composite": false,
           "keyName": "pessoa_atualizado_por_id_index",
           "constraint": false,
@@ -1065,7 +1017,9 @@
         },
         {
           "keyName": "pessoa_pkey",
-          "columnNames": ["id"],
+          "columnNames": [
+            "id"
+          ],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -1076,34 +1030,50 @@
       "foreignKeys": {
         "pessoa_empresa_id_foreign": {
           "constraintName": "pessoa_empresa_id_foreign",
-          "columnNames": ["empresa_id"],
+          "columnNames": [
+            "empresa_id"
+          ],
           "localTableName": "public.pessoa",
-          "referencedColumnNames": ["id"],
+          "referencedColumnNames": [
+            "id"
+          ],
           "referencedTableName": "public.empresa",
           "updateRule": "cascade"
         },
         "pessoa_endereco_id_foreign": {
           "constraintName": "pessoa_endereco_id_foreign",
-          "columnNames": ["endereco_id"],
+          "columnNames": [
+            "endereco_id"
+          ],
           "localTableName": "public.pessoa",
-          "referencedColumnNames": ["id"],
+          "referencedColumnNames": [
+            "id"
+          ],
           "referencedTableName": "public.endereco",
           "updateRule": "cascade"
         },
         "pessoa_criado_por_id_foreign": {
           "constraintName": "pessoa_criado_por_id_foreign",
-          "columnNames": ["criado_por_id"],
+          "columnNames": [
+            "criado_por_id"
+          ],
           "localTableName": "public.pessoa",
-          "referencedColumnNames": ["id"],
+          "referencedColumnNames": [
+            "id"
+          ],
           "referencedTableName": "public.usuario",
           "deleteRule": "set null",
           "updateRule": "cascade"
         },
         "pessoa_atualizado_por_id_foreign": {
           "constraintName": "pessoa_atualizado_por_id_foreign",
-          "columnNames": ["atualizado_por_id"],
+          "columnNames": [
+            "atualizado_por_id"
+          ],
           "localTableName": "public.pessoa",
-          "referencedColumnNames": ["id"],
+          "referencedColumnNames": [
+            "id"
+          ],
           "referencedTableName": "public.usuario",
           "deleteRule": "set null",
           "updateRule": "cascade"
@@ -1291,6 +1261,26 @@
           "autoincrement": false,
           "primary": false,
           "nullable": true,
+          "length": 6,
+          "mappedType": "datetime"
+        },
+        "criado_em": {
+          "name": "criado_em",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "mappedType": "datetime"
+        },
+        "atualizado_em": {
+          "name": "atualizado_em",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
           "length": 6,
           "mappedType": "datetime"
         }
