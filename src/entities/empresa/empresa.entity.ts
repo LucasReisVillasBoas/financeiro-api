@@ -1,6 +1,7 @@
-import { Entity, PrimaryKey, Property, ManyToOne } from '@mikro-orm/core';
+import { Entity, PrimaryKey, Property, ManyToOne, OneToMany, Collection } from '@mikro-orm/core';
 import { ApiProperty } from '@nestjs/swagger';
 import { EmpresaRepository } from '../../empresa/empresa.repository';
+import { Cidade } from '../cidade/cidade.entity';
 
 @Entity({ repository: () => EmpresaRepository })
 export class Empresa {
@@ -87,4 +88,7 @@ export class Empresa {
 
   @Property({ nullable: true })
   deletadoEm?: Date | null;
+
+  @OneToMany(() => Cidade, cidade => cidade.filial)
+  cidades = new Collection<Cidade>(this);
 }
