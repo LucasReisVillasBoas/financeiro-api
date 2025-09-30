@@ -548,27 +548,8 @@
           "default": "gen_random_uuid()",
           "mappedType": "uuid"
         },
-        "entity_type": {
-          "name": "entity_type",
-          "type": "varchar(50)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 50,
-          "mappedType": "string"
-        },
-        "entity_id": {
-          "name": "entity_id",
-          "type": "int",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "integer"
-        },
-        "tipo_contato_id": {
-          "name": "tipo_contato_id",
+        "cliente_id": {
+          "name": "cliente_id",
           "type": "uuid",
           "unsigned": false,
           "autoincrement": false,
@@ -576,8 +557,17 @@
           "nullable": false,
           "mappedType": "uuid"
         },
-        "descricao": {
-          "name": "descricao",
+        "filial_id": {
+          "name": "filial_id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "uuid"
+        },
+        "nome": {
+          "name": "nome",
           "type": "varchar(100)",
           "unsigned": false,
           "autoincrement": false,
@@ -586,15 +576,45 @@
           "length": 100,
           "mappedType": "string"
         },
-        "ativo": {
-          "name": "ativo",
-          "type": "boolean",
+        "funcao": {
+          "name": "funcao",
+          "type": "varchar(100)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "default": "true",
-          "mappedType": "boolean"
+          "length": 100,
+          "mappedType": "string"
+        },
+        "telefone": {
+          "name": "telefone",
+          "type": "varchar(15)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 15,
+          "mappedType": "string"
+        },
+        "celular": {
+          "name": "celular",
+          "type": "varchar(15)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 15,
+          "mappedType": "string"
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(100)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 100,
+          "mappedType": "string"
         },
         "deletado_em": {
           "name": "deletado_em",

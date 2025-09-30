@@ -22,12 +22,10 @@ import { CurrentClienteIds } from '../auth/decorators/current-empresa.decorator'
 
 @ApiTags('Empresas')
 @Controller('empresas')
-@UseGuards(RolesGuard, EmpresaGuard)
 export class EmpresaController {
   constructor(private readonly service: EmpresaService) {}
 
   @Post()
-  @SetMetadata('roles', ['Administrador'])
   @ApiOperation({ summary: 'Criar empresa' })
   @ApiResponse({ status: 201, description: 'Empresa criada' })
   async create(@Body() dto: CreateEmpresaDto) {
@@ -36,6 +34,7 @@ export class EmpresaController {
   }
 
   @Get('cliente/:clienteId')
+  @UseGuards(RolesGuard, EmpresaGuard)
   @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
   @ApiOperation({ summary: 'Listar empresas por cliente' })
   @ApiResponse({ status: 200, description: 'Empresas encontradas' })
@@ -53,6 +52,7 @@ export class EmpresaController {
   }
 
   @Get(':id')
+  @UseGuards(RolesGuard, EmpresaGuard)
   @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
   @ApiOperation({ summary: 'Obter empresa por id' })
   @ApiResponse({ status: 200, description: 'Empresa encontrada' })
@@ -63,6 +63,7 @@ export class EmpresaController {
   }
 
   @Put(':id')
+  @UseGuards(RolesGuard)
   @SetMetadata('roles', ['Administrador', 'Editor'])
   @ApiOperation({ summary: 'Atualizar empresa' })
   @ApiResponse({ status: 200, description: 'Empresa atualizada' })
@@ -73,6 +74,7 @@ export class EmpresaController {
   }
 
   @Delete(':id')
+  @UseGuards(RolesGuard, EmpresaGuard)
   @SetMetadata('roles', ['Administrador'])
   @ApiOperation({ summary: 'Remover (soft) empresa' })
   @ApiResponse({ status: 200, description: 'Empresa removida' })
@@ -96,6 +98,7 @@ export class EmpresaController {
   }
 
   @Get(':id/filiais')
+  @UseGuards(RolesGuard, EmpresaGuard)
   @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
   @ApiOperation({ summary: 'Listar filiais por empresa' })
   @ApiResponse({ status: 200, description: 'Filiais encontradas' })
@@ -105,6 +108,7 @@ export class EmpresaController {
   }
 
   @Put('filiais/:filialId')
+  @UseGuards(RolesGuard, EmpresaGuard)
   @SetMetadata('roles', ['Administrador', 'Editor'])
   @ApiOperation({ summary: 'Atualizar filial' })
   @ApiResponse({ status: 200, description: 'Filial atualizada' })
@@ -117,6 +121,7 @@ export class EmpresaController {
   }
 
   @Delete('filiais/:filialId')
+  @UseGuards(RolesGuard, EmpresaGuard)
   @SetMetadata('roles', ['Administrador'])
   @ApiOperation({ summary: 'Remover (soft) filial' })
   @ApiResponse({ status: 200, description: 'Filial removida' })

@@ -14,7 +14,6 @@ export class EmpresaGuard implements CanActivate {
       throw new ForbiddenException('Usuário não autenticado');
     }
 
-    // Buscar as empresas/filiais do usuário
     const usuarioEmpresas = await this.em.find(UsuarioEmpresaFilial, {
       usuario: user.id,
     }, {
@@ -25,7 +24,6 @@ export class EmpresaGuard implements CanActivate {
       throw new ForbiddenException('Usuário não possui acesso a nenhuma empresa');
     }
 
-    // Adicionar as empresas do usuário ao request para uso posterior
     request.userEmpresas = usuarioEmpresas.map(ue => ({
       empresaId: ue.empresa.id,
       clienteId: ue.empresa.cliente_id,
@@ -33,7 +31,6 @@ export class EmpresaGuard implements CanActivate {
       sedeId: ue.empresa.sede?.id || null,
     }));
 
-    // Verificar se há parâmetros de empresa na requisição
     const empresaIdParam = request.params.empresaId || request.params.id;
     const empresaIdBody = request.body?.empresa_id;
     const clienteIdBody = request.body?.cliente_id;
@@ -42,7 +39,7 @@ export class EmpresaGuard implements CanActivate {
 
     if (empresaIdToCheck) {
       const hasAccess = request.userEmpresas.some(
-        emp => emp.empresaId === empresaIdToCheck || emp.sedeId === empresaIdToCheck
+        emp => emp.empresaId === empresaIdToCheck || emp.sedeId === empresaIdToCheck || emp.filialId === empresaIdToCheck
       );
 
       if (!hasAccess) {

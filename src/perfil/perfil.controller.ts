@@ -23,7 +23,6 @@ export class PerfilController {
   constructor(private readonly perfilService: PerfilService) {}
 
   @Post()
-  @SetMetadata('roles', ['Administrador'])
   @ApiResponse({ status: 201 })
   async create(@Body() dto: CreatePerfilDto) {
     const perfil = await this.perfilService.create(dto);
