@@ -4,12 +4,17 @@ import {
   Property,
   Index,
   OneToMany,
+  ManyToOne,
+  ManyToMany,
   Collection,
 } from '@mikro-orm/core';
 import { Expose, Exclude } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 import { UsuarioRepository } from '../../usuario/usuario.repository';
 import { UsuarioEmpresaFilial } from '../usuario-empresa-filial/usuario-empresa-filial.entity';
+import { Cidade } from '../cidade/cidade.entity';
+import { Contato } from '../contato/contato.entity';
+import { UsuarioContato } from '../usuario-contato/usuario-contato.entity';
 
 @Entity({ repository: () => UsuarioRepository })
 export class Usuario {
@@ -60,6 +65,17 @@ export class Usuario {
   @ApiProperty()
   @OneToMany(() => UsuarioEmpresaFilial, (uef) => uef.usuario)
   empresasFiliais = new Collection<UsuarioEmpresaFilial>(this);
+
+  @Expose()
+  @ApiProperty({ nullable: true })
+  @ManyToOne(() => Cidade, { nullable: true })
+  @Index()
+  cidade?: Cidade;
+
+  @Expose()
+  @ApiProperty()
+  @OneToMany(() => UsuarioContato, (uc) => uc.usuario)
+  usuarioContatos = new Collection<UsuarioContato>(this);
 
   @Expose()
   @ApiProperty()

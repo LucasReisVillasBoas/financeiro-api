@@ -1,6 +1,7 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Patch } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UsuarioCreateRequestDto } from './dto/usuario-create-request.dto';
+import { UsuarioUpdateRequestDto } from './dto/usuario-update-request.dto';
 import { Usuario } from '../entities/usuario/usuario.entity';
 import { UsuarioService } from './usuario.service';
 import { BaseResponse } from '../dto/base-response.dto';
@@ -9,6 +10,7 @@ import { AssociarEmpresaFilialRequestDto } from './dto/associar-empresa-filial-r
 
 import { RolesGuard } from 'src/auth/roles.guard';
 import { SetMetadata, UseGuards } from '@nestjs/common';
+import { CurrentCliente } from '../auth/decorators/current-cliente.decorator';
 
 @Controller('usuario')
 @ApiTags('Usuario')
@@ -30,6 +32,22 @@ export class UsuarioController {
 
   @ApiResponse({
     status: 200,
+    type: Usuario,
+    description: 'Usuário atualizado',
+  })
+  @Patch(':id')
+  @UseGuards(RolesGuard)
+  @SetMetadata('roles', ['Administrador'])
+  async updateUsuario(
+    @Param('id') id: string,
+    @Body() dto: UsuarioUpdateRequestDto,
+  ): Promise<BaseResponse<Usuario>> {
+    const usuario = await this.usuarioService.update(id, dto);
+    return { message: 'Usuário atualizado', statusCode: 200, data: usuario };
+  }
+
+  @ApiResponse({
+    status: 200,
     type: BaseResponse<UsuarioEmpresaFilial>,
     description: 'Associar usuario a empresa ou filial',
   })
@@ -39,8 +57,9 @@ export class UsuarioController {
   async associarEmpresaOuFilial(
     @Param('id') usuarioId: string,
     @Body() dto: AssociarEmpresaFilialRequestDto,
+    @CurrentCliente() cliente: string,
   ): Promise<BaseResponse<Promise<UsuarioEmpresaFilial>>> {
-    const result = this.usuarioService.associarEmpresaOuFilial(usuarioId, dto);
+    const result = this.usuarioService.associarEmpresaOuFilial(usuarioId, dto, cliente);
     return new BaseResponse<Promise<UsuarioEmpresaFilial>>(
       'Associação feita com sucesso!',
       200,

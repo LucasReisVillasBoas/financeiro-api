@@ -1,4 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsArray } from 'class-validator';
+import { Cidade } from '../../entities/cidade/cidade.entity';
+import { Contato } from '../../entities/contato/contato.entity';
 
 export class UsuarioCreateRequestDto {
   @ApiProperty({ example: 'email@email.com' })
@@ -21,4 +24,11 @@ export class UsuarioCreateRequestDto {
 
   @ApiProperty({ example: '123' })
   ativo: boolean;
+
+  @ApiProperty({ example: '', required: false })
+  cidade?: Cidade;
+
+  @ApiProperty({ example: [], required: false, type: [String] })
+  @IsArray()
+  contatos?: Contato[];
 }
