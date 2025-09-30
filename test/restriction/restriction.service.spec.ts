@@ -28,9 +28,13 @@ describe('RestrictionService', () => {
     }).compile();
 
     service = module.get<RestrictionService>(RestrictionService);
-    restrictionRepository = module.get<RestrictionRepository>(RestrictionRepository);
+    restrictionRepository = module.get<RestrictionRepository>(
+      RestrictionRepository,
+    );
 
-    jest.spyOn(RestrictionUtil, 'generateRestrictionCode').mockReturnValue('REST-001');
+    jest
+      .spyOn(RestrictionUtil, 'generateRestrictionCode')
+      .mockReturnValue('REST-001');
   });
 
   it('should be defined', () => {
@@ -64,10 +68,12 @@ describe('RestrictionService', () => {
         registerDto.code,
         [],
       );
-      expect(restrictionRepository.create).toHaveBeenCalledWith(expect.objectContaining({
-        code: 'REST-001',
-        description: 'Lactose intolerance',
-      }));
+      expect(restrictionRepository.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          code: 'REST-001',
+          description: 'Lactose intolerance',
+        }),
+      );
       expect(restrictionRepository.flush).toHaveBeenCalled();
     });
   });
@@ -75,7 +81,9 @@ describe('RestrictionService', () => {
   describe('getAll', () => {
     it('should return an array of restrictions', async () => {
       const restrictions = [new Restriction(), new Restriction()];
-      jest.spyOn(restrictionRepository, 'findAll').mockResolvedValue(restrictions);
+      jest
+        .spyOn(restrictionRepository, 'findAll')
+        .mockResolvedValue(restrictions);
       expect(await service.getAll()).toEqual(restrictions);
     });
   });
@@ -83,7 +91,9 @@ describe('RestrictionService', () => {
   describe('getById', () => {
     it('should return a restriction by id', async () => {
       const restriction = new Restriction();
-      jest.spyOn(restrictionRepository, 'findOne').mockResolvedValue(restriction);
+      jest
+        .spyOn(restrictionRepository, 'findOne')
+        .mockResolvedValue(restriction);
       expect(await service.getById('someId')).toEqual(restriction);
     });
   });

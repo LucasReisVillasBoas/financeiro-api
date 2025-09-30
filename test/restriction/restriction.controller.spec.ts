@@ -93,7 +93,9 @@ describe('RestrictionController', () => {
       const updatedRestriction = new Restriction();
       updatedRestriction.id = 'someId';
       updatedRestriction.description = 'Updated Gluten intolerance';
-      const updateData: Partial<Restriction> = { description: 'Updated Gluten intolerance' };
+      const updateData: Partial<Restriction> = {
+        description: 'Updated Gluten intolerance',
+      };
 
       jest.spyOn(service, 'update').mockResolvedValue(updatedRestriction);
 

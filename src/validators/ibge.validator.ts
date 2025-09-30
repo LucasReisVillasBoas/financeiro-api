@@ -1,14 +1,13 @@
 import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
-  ValidationArguments,
   ValidationOptions,
   registerDecorator,
 } from 'class-validator';
 
 @ValidatorConstraint({ name: 'isValidIBGE', async: false })
 export class IsValidIBGEConstraint implements ValidatorConstraintInterface {
-  validate(codigoIbge: string, args: ValidationArguments) {
+  validate(codigoIbge: string) {
     if (!codigoIbge || typeof codigoIbge !== 'string') {
       return false;
     }
@@ -39,13 +38,13 @@ export class IsValidIBGEConstraint implements ValidatorConstraintInterface {
     return digitoVerificador === digitoCalculado;
   }
 
-  defaultMessage(args: ValidationArguments) {
+  defaultMessage() {
     return 'Código IBGE inválido. O código deve ter 7 dígitos numéricos com dígito verificador válido';
   }
 }
 
 export function IsValidIBGE(validationOptions?: ValidationOptions) {
-  return function (object: Object, propertyName: string) {
+  return function (object: object, propertyName: string) {
     registerDecorator({
       target: object.constructor,
       propertyName: propertyName,

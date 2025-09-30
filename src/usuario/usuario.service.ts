@@ -205,7 +205,7 @@ export class UsuarioService {
     return usuario;
   }
 
-  async getById(id: string, empresaId?: string): Promise<Usuario> {
+  async getById(id: string): Promise<Usuario> {
     const usuario = await this.usuarioRepository.findOne({ id });
     if (!usuario) throw new NotFoundException('Usuário não encontrado');
     return usuario;

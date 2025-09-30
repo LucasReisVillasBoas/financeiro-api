@@ -1,7 +1,6 @@
 import { Entity, PrimaryKey, Property, ManyToOne } from '@mikro-orm/core';
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { TipoContato } from './tipo-contato.entity';
 import { ContatoRepository } from '../../contato/contato.repository';
 import { IsOptional, IsString } from 'class-validator';
 import { Usuario } from '../usuario/usuario.entity';
