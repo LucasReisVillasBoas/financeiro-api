@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -18,7 +17,7 @@ import { UsuarioContato } from '../entities/usuario-contato/usuario-contato.enti
 import { CidadeService } from '../cidade/cidade.service';
 import { UsuarioContatoRepository } from './usuario-contato.repository';
 import { ContatoService } from '../contato/contato.service';
-import type { Contato } from '../entities/contato/contato.entity';
+import { Contato } from '../entities/contato/contato.entity';
 
 @Injectable()
 export class UsuarioService {
@@ -227,9 +226,6 @@ export class UsuarioService {
     return bcrypt.hash(password, salt);
   }
 
-  /**
-   * Associa usuário a uma empresa ou filial (ambas são Empresa)
-   */
   async associarEmpresaOuFilial(
     usuarioId: string,
     dto: AssociarEmpresaFilialRequestDto,
@@ -265,18 +261,25 @@ export class UsuarioService {
       filial: isFilial,
     });
 
-    await this.cidadeService.update(cidade.id, usuario.id, { filialId: empresa.id }, admin);
-    await this.contatoService.update(contato.id, usuario.id, {
-      filialId: empresa.id,
-    }, admin);
+    await this.cidadeService.update(
+      cidade.id,
+      usuario.id,
+      { filialId: empresa.id },
+      admin,
+    );
+    await this.contatoService.update(
+      contato.id,
+      usuario.id,
+      {
+        filialId: empresa.id,
+      },
+      admin,
+    );
 
     await this.usuarioEmpresaFilialRepository.persistAndFlush(associacao);
     return associacao;
   }
 
-  /**
-   * Lista todas as empresas/filiais vinculadas ao usuário
-   */
   async listarAssociacoes(usuarioId: string): Promise<UsuarioEmpresaFilial[]> {
     const usuario = await this.usuarioRepository.findOne({ id: usuarioId });
     if (!usuario) throw new NotFoundException('Usuário não encontrado');
@@ -287,9 +290,6 @@ export class UsuarioService {
     );
   }
 
-  /**
-   * Remove vínculo do usuário com empresa/filial
-   */
   async removerAssociacao(usuarioId: string, assocId: string): Promise<void> {
     const usuario = await this.usuarioRepository.findOne({ id: usuarioId });
     if (!usuario) throw new NotFoundException('Usuário não encontrado');

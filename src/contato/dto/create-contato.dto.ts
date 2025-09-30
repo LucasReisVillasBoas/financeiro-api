@@ -1,11 +1,4 @@
-import {
-  IsString,
-  IsOptional,
-  IsUUID,
-  Length,
-  Matches,
-  IsIn,
-} from 'class-validator';
+import { IsString, IsOptional, IsUUID } from 'class-validator';
 
 export class CreateContatoDto {
   @IsOptional()

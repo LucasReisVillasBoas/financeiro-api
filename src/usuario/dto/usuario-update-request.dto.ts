@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsUUID, IsArray, IsString, IsBoolean } from 'class-validator';
+import {
+  IsOptional,
+  IsUUID,
+  IsArray,
+  IsString,
+  IsBoolean,
+} from 'class-validator';
 
 export class UsuarioUpdateRequestDto {
   @ApiProperty({ example: 'email@email.com', required: false })
@@ -42,7 +48,11 @@ export class UsuarioUpdateRequestDto {
   @IsUUID()
   cidadeId?: string;
 
-  @ApiProperty({ example: ['uuid-contato-1', 'uuid-contato-2'], required: false, type: [String] })
+  @ApiProperty({
+    example: ['uuid-contato-1', 'uuid-contato-2'],
+    required: false,
+    type: [String],
+  })
   @IsOptional()
   @IsArray()
   @IsUUID('4', { each: true })

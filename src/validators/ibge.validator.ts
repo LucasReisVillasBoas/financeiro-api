@@ -34,7 +34,7 @@ export class IsValidIBGEConstraint implements ValidatorConstraintInterface {
       soma += resultado;
     }
 
-    const digitoCalculado = ((Math.ceil(soma / 10) * 10) - soma) % 10;
+    const digitoCalculado = (Math.ceil(soma / 10) * 10 - soma) % 10;
 
     return digitoVerificador === digitoCalculado;
   }
@@ -60,7 +60,7 @@ export function IsValidIBGE(validationOptions?: ValidationOptions) {
 // Fonte: IBGE - Instituto Brasileiro de Geografia e Estatística
 export const CODIGOS_IBGE_VALIDOS: Record<string, string[]> = {
   // São Paulo - Principais cidades
-  'SP': [
+  SP: [
     '3550308', // São Paulo
     '3509502', // Campinas
     '3518800', // Guarulhos
@@ -73,7 +73,7 @@ export const CODIGOS_IBGE_VALIDOS: Record<string, string[]> = {
     '3549805', // São José do Rio Preto
   ],
   // Rio de Janeiro - Principais cidades
-  'RJ': [
+  RJ: [
     '3304557', // Rio de Janeiro
     '3301702', // Duque de Caxias
     '3304904', // São Gonçalo
@@ -86,7 +86,7 @@ export const CODIGOS_IBGE_VALIDOS: Record<string, string[]> = {
     '3305109', // Volta Redonda
   ],
   // Minas Gerais - Principais cidades
-  'MG': [
+  MG: [
     '3106200', // Belo Horizonte
     '3170206', // Uberlândia
     '3118601', // Contagem

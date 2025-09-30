@@ -112,8 +112,8 @@ export class EmpresaService {
     const empresa = await this.empresaRepo.findOne({ id, ativo: true });
     if (!empresa) throw new NotFoundException('Empresa não encontrada.');
 
-    // Verifica se o usuário tem acesso à empresa
-    const hasAccess = userEmpresaIds.includes(id) ||
+    const hasAccess =
+      userEmpresaIds.includes(id) ||
       (empresa.sede && userEmpresaIds.includes(empresa.sede.id));
 
     if (!hasAccess) {

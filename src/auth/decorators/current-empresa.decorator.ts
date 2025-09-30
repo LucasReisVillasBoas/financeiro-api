@@ -18,7 +18,7 @@ export const CurrentEmpresaIds = createParamDecorator(
   (data: unknown, ctx: ExecutionContext): string[] => {
     const request = ctx.switchToHttp().getRequest();
     const userEmpresas: UserEmpresa[] = request.userEmpresas || [];
-    return userEmpresas.map(emp => emp.empresaId);
+    return userEmpresas.map((emp) => emp.empresaId);
   },
 );
 
@@ -26,6 +26,6 @@ export const CurrentClienteIds = createParamDecorator(
   (data: unknown, ctx: ExecutionContext): string[] => {
     const request = ctx.switchToHttp().getRequest();
     const userEmpresas: UserEmpresa[] = request.userEmpresas || [];
-    return [...new Set(userEmpresas.map(emp => emp.clienteId))];
+    return [...new Set(userEmpresas.map((emp) => emp.clienteId))];
   },
 );

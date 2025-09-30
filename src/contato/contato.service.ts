@@ -155,7 +155,7 @@ export class ContatoService {
     id: string,
     clienteId: string,
     updateContatoDto: UpdateContatoDto,
-    admin?: string
+    admin?: string,
   ): Promise<Contato> {
     const contato = await this.findOne(id, clienteId);
     const { clienteId: newClienteId, ...contatoData } = updateContatoDto;

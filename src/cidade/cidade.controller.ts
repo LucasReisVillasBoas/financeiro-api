@@ -24,7 +24,10 @@ export class CidadeController {
 
   @Post()
   @SetMetadata('roles', ['Administrador', 'Editor'])
-  async create(@Body() createCidadeDto: CreateCidadeDto, @CurrentCliente() clienteId: string) {
+  async create(
+    @Body() createCidadeDto: CreateCidadeDto,
+    @CurrentCliente() clienteId: string,
+  ) {
     const data = await this.cidadeService.create({
       ...createCidadeDto,
       clienteId: clienteId,
@@ -42,14 +45,23 @@ export class CidadeController {
   @Get('uf/:uf')
   @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
   async findByUf(@Param('uf') uf: string, @CurrentCliente() clienteId: string) {
-    const cidades = await this.cidadeService.findByUf(uf.toUpperCase(), clienteId);
+    const cidades = await this.cidadeService.findByUf(
+      uf.toUpperCase(),
+      clienteId,
+    );
     return { message: 'Cidades encontradas', statusCode: 200, data: cidades };
   }
 
   @Get('ibge/:codigoIbge')
   @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
-  async findByCodigoIbge(@Param('codigoIbge') codigoIbge: string, @CurrentCliente() clienteId: string) {
-    const cidade = await this.cidadeService.findByCodigoIbge(codigoIbge, clienteId);
+  async findByCodigoIbge(
+    @Param('codigoIbge') codigoIbge: string,
+    @CurrentCliente() clienteId: string,
+  ) {
+    const cidade = await this.cidadeService.findByCodigoIbge(
+      codigoIbge,
+      clienteId,
+    );
     return { message: 'Cidade encontrada', statusCode: 200, data: cidade };
   }
 
@@ -67,7 +79,11 @@ export class CidadeController {
     @Body() updateCidadeDto: UpdateCidadeDto,
     @CurrentCliente() clienteId: string,
   ) {
-    const cidade = await this.cidadeService.update(id, clienteId, updateCidadeDto);
+    const cidade = await this.cidadeService.update(
+      id,
+      clienteId,
+      updateCidadeDto,
+    );
     return { message: 'Cidade atualizada', statusCode: 200, data: cidade };
   }
 

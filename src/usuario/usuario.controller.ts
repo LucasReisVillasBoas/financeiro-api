@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Patch } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Patch,
+} from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UsuarioCreateRequestDto } from './dto/usuario-create-request.dto';
 import { UsuarioUpdateRequestDto } from './dto/usuario-update-request.dto';
@@ -59,7 +67,11 @@ export class UsuarioController {
     @Body() dto: AssociarEmpresaFilialRequestDto,
     @CurrentCliente() cliente: string,
   ): Promise<BaseResponse<Promise<UsuarioEmpresaFilial>>> {
-    const result = this.usuarioService.associarEmpresaOuFilial(usuarioId, dto, cliente);
+    const result = this.usuarioService.associarEmpresaOuFilial(
+      usuarioId,
+      dto,
+      cliente,
+    );
     return new BaseResponse<Promise<UsuarioEmpresaFilial>>(
       'Associação feita com sucesso!',
       200,

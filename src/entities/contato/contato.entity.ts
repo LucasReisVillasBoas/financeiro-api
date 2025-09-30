@@ -1,10 +1,4 @@
-import {
-  Entity,
-  PrimaryKey,
-  Property,
-  Index,
-  ManyToOne,
-} from '@mikro-orm/core';
+import { Entity, PrimaryKey, Property, ManyToOne } from '@mikro-orm/core';
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 import { TipoContato } from './tipo-contato.entity';

@@ -5,7 +5,10 @@ import { UsuarioPerfilService } from '../usuario-perfil/usuario-perfil.service';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-  constructor(private reflector: Reflector, private usuarioPerfilService: UsuarioPerfilService) {}
+  constructor(
+    private reflector: Reflector,
+    private usuarioPerfilService: UsuarioPerfilService,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const roles = this.reflector.get<string[]>('roles', context.getHandler());
@@ -21,15 +24,16 @@ export class RolesGuard implements CanActivate {
   }
 
   async matchRoles(roles: string[], userId: string): Promise<boolean> {
-    const userRoles = await this.getUserRoles(userId); // Assuming you have a method to get user roles
+    const userRoles = await this.getUserRoles(userId);
     return roles.some((role) => userRoles.includes(role));
   }
 
   async getUserRoles(userId: string): Promise<string[]> {
     try {
       const userRoles = await this.usuarioPerfilService.findByCliente(userId);
-      // Assuming the user object has a roles property that is an array of role names
-      return userRoles.map(usuarioPerfil => usuarioPerfil.perfil?.nome).filter(Boolean);
+      return userRoles
+        .map((usuarioPerfil) => usuarioPerfil.perfil?.nome)
+        .filter(Boolean);
     } catch (error) {
       console.error('Error fetching user roles:', error);
       return [];
