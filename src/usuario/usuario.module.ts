@@ -7,14 +7,19 @@ import { EmpresaModule } from '../empresa/empresa.module';
 import { UsuarioEmpresaFilial } from '../entities/usuario-empresa-filial/usuario-empresa-filial.entity';
 import { Empresa } from '../entities/empresa/empresa.entity';
 import { UsuarioPerfilModule } from '../usuario-perfil/usuario-perfil.module';
+import { Cidade } from '../entities/cidade/cidade.entity';
+import { Contato } from '../entities/contato/contato.entity';
+import { UsuarioContato } from '../entities/usuario-contato/usuario-contato.entity';
+import { CidadeService } from '../cidade/cidade.service';
+import { ContatoService } from '../contato/contato.service';
 
 @Global()
 @Module({
   imports: [
-    MikroOrmModule.forFeature([Usuario, UsuarioEmpresaFilial, Empresa]),
+    MikroOrmModule.forFeature([Usuario, UsuarioEmpresaFilial, Empresa, Cidade, Contato, UsuarioContato]),
     UsuarioPerfilModule
   ],
-  providers: [UsuarioService],
+  providers: [UsuarioService, CidadeService, ContatoService],
   controllers: [UsuarioController],
   exports: [UsuarioService],
 })

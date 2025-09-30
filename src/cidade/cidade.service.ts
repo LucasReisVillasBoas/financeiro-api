@@ -107,6 +107,7 @@ export class CidadeService {
     id: string,
     clienteId: string,
     updateCidadeDto: UpdateCidadeDto,
+    admin?: string,
   ): Promise<Cidade> {
     const cidade = await this.findOne(id, clienteId);
     const {
@@ -127,7 +128,7 @@ export class CidadeService {
       } else {
         const filial = await this.empresaRepository.findOne({
           id: filialId,
-          cliente_id: clienteId,
+          cliente_id: admin ?? clienteId,
         });
         if (!filial) {
           throw new NotFoundException(
@@ -175,6 +176,18 @@ export class CidadeService {
 
     return this.cidadeRepository.findOne(
       { codigoIbge, cliente: cliente },
+      { populate: ['filial'] },
+    );
+  }
+
+  async findByCliente(clienteId: string): Promise<Cidade | null> {
+    const cliente = await this.usuarioRepository.findOne({ id: clienteId });
+    if (!cliente) {
+      throw new NotFoundException(`Cliente com ID ${clienteId} não encontrado`);
+    }
+
+    return this.cidadeRepository.findOne(
+      { cliente: cliente },
       { populate: ['filial'] },
     );
   }

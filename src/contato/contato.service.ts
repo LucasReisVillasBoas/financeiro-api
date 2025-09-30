@@ -94,22 +94,91 @@ export class ContatoService {
     return contato;
   }
 
+  async findByCelular(celular: string, clienteId: string): Promise<Contato> {
+    const cliente = await this.usuarioRepository.findOne({ id: clienteId });
+    if (!cliente) {
+      throw new NotFoundException(`Cliente com ID ${clienteId} não encontrado`);
+    }
+
+    const contato = await this.contatoRepository.findOne({
+      celular: celular,
+      cliente: cliente,
+    });
+
+    if (!contato) {
+      throw new NotFoundException(
+        `Contato com celular ${celular} não encontrado`,
+      );
+    }
+
+    return contato;
+  }
+
+  async findByCliente(clienteId: string): Promise<Contato> {
+    const cliente = await this.usuarioRepository.findOne({ id: clienteId });
+    if (!cliente) {
+      throw new NotFoundException(`Cliente com ID ${clienteId} não encontrado`);
+    }
+
+    const contato = await this.contatoRepository.findOne({
+      cliente: cliente,
+    });
+
+    if (!contato) {
+      throw new NotFoundException(
+        `Contato com cliente ${clienteId} não encontrado`,
+      );
+    }
+
+    return contato;
+  }
+
+  async exists(celular: string, clienteId: string): Promise<boolean> {
+    const cliente = await this.usuarioRepository.findOne({ id: clienteId });
+    if (!cliente) {
+      throw new NotFoundException(`Cliente com ID ${clienteId} não encontrado`);
+    }
+
+    const contato = await this.contatoRepository.findOne({
+      celular: celular,
+      cliente: cliente,
+    });
+
+    if (!contato) {
+      return false;
+    }
+
+    return true;
+  }
+
   async update(
     id: string,
     clienteId: string,
     updateContatoDto: UpdateContatoDto,
+    admin?: string
   ): Promise<Contato> {
     const contato = await this.findOne(id, clienteId);
     const { clienteId: newClienteId, ...contatoData } = updateContatoDto;
 
-    if (contatoData.filialId) {
-      throw new BadRequestException(
-        `Não é permitido alterar a filial do contato`,
-      );
+    if (contatoData.filialId !== undefined) {
+      if (contatoData.filialId === null) {
+        contato.filial = undefined;
+      } else {
+        const filial = await this.empresaRepository.findOne({
+          id: contatoData.filialId,
+          cliente_id: admin ?? clienteId,
+        });
+        if (!filial) {
+          throw new NotFoundException(
+            `Filial com ID ${contatoData.filialId} não encontrada para o cliente ${clienteId}`,
+          );
+        }
+        contato.filial = filial;
+      }
     }
 
     Object.assign(contato, contatoData);
-    await this.contatoRepository.flush();
+    await this.contatoRepository.persistAndFlush(contato);
 
     return contato;
   }

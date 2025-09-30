@@ -7,19 +7,28 @@ import {
 import { Usuario } from '../entities/usuario/usuario.entity';
 import { UsuarioRepository } from './usuario.repository';
 import { UsuarioCreateRequestDto } from './dto/usuario-create-request.dto';
+import { UsuarioUpdateRequestDto } from './dto/usuario-update-request.dto';
 import * as bcrypt from 'bcryptjs';
 import { UsuarioEmpresaFilial } from '../entities/usuario-empresa-filial/usuario-empresa-filial.entity';
-import { Empresa } from '../entities/empresa/empresa.entity';
 import { EmpresaService } from '../empresa/empresa.service';
 import { UsuarioEmpresaFilialRepository } from './usuario-empresa-filial.repository';
 import { AssociarEmpresaFilialRequestDto } from './dto/associar-empresa-filial-request.dto';
 import { InjectRepository } from '@mikro-orm/nestjs';
+import { UsuarioContato } from '../entities/usuario-contato/usuario-contato.entity';
+import { CidadeService } from '../cidade/cidade.service';
+import { UsuarioContatoRepository } from './usuario-contato.repository';
+import { ContatoService } from '../contato/contato.service';
+import type { Contato } from '../entities/contato/contato.entity';
 
 @Injectable()
 export class UsuarioService {
   constructor(
     @InjectRepository(Usuario)
     private readonly usuarioRepository: UsuarioRepository,
+    private readonly cidadeService: CidadeService,
+    private readonly contatoService: ContatoService,
+    @InjectRepository(UsuarioContato)
+    private readonly usuarioContatoRepository: UsuarioContatoRepository,
     private readonly empresaService: EmpresaService,
     private readonly usuarioEmpresaFilialRepository: UsuarioEmpresaFilialRepository,
   ) {}
@@ -29,10 +38,158 @@ export class UsuarioService {
       throw new BadRequestException('Email já existe');
     }
 
-    const usuario = this.usuarioRepository.create(dto);
+    const usuario = this.usuarioRepository.create({
+      nome: dto.nome,
+      cargo: dto.cargo,
+      login: dto.login,
+      senha: dto.senha,
+      telefone: dto.telefone,
+      email: dto.email,
+      ativo: dto.ativo,
+    });
     usuario.senha = await this.hashPassword(dto.senha);
+    const usuarioNovo = await this.usuarioRepository.findOne({
+      email: dto.email,
+    });
+
+    if (dto.cidade) {
+      const cidade = await this.cidadeService.findByCodigoIbge(
+        dto.cidade.codigoIbge,
+        usuarioNovo.id,
+      );
+      if (!cidade) {
+        const novaCidade = await this.cidadeService.create({
+          clienteId: usuarioNovo.id,
+          nome: dto.cidade.nome,
+          uf: dto.cidade.uf,
+          codigoBacen: dto.cidade.codigoBacen,
+          codigoIbge: dto.cidade.codigoIbge,
+        });
+        usuario.cidade = novaCidade;
+      } else {
+        usuario.cidade = cidade;
+      }
+    }
+
     await this.usuarioRepository.persistAndFlush(usuario);
+
+    if (dto.contatos && dto.contatos.length > 0) {
+      await this.associarContatos(usuario.id, dto.contatos);
+    }
+
     return usuario;
+  }
+
+  async update(id: string, dto: UsuarioUpdateRequestDto): Promise<Usuario> {
+    const usuario = await this.usuarioRepository.findOne({ id });
+    if (!usuario) {
+      throw new NotFoundException('Usuário não encontrado');
+    }
+
+    const { cidadeId, contatoIds, senha, ...dadosBasicos } = dto;
+    Object.assign(usuario, dadosBasicos);
+
+    if (senha) {
+      usuario.senha = await this.hashPassword(senha);
+    }
+
+    if (cidadeId !== undefined) {
+      if (cidadeId === null) {
+        usuario.cidade = undefined;
+      } else {
+        const cidade = await this.cidadeService.findOne(cidadeId, usuario.id);
+        if (!cidade) {
+          throw new NotFoundException(
+            `Cidade com ID ${cidadeId} não encontrada`,
+          );
+        }
+        usuario.cidade = cidade;
+      }
+    }
+
+    await this.usuarioRepository.flush();
+
+    if (contatoIds !== undefined) {
+      await this.atualizarContatos(usuario.id, contatoIds);
+    }
+
+    return usuario;
+  }
+
+  private async associarContatos(
+    usuarioId: string,
+    contatos: Contato[],
+  ): Promise<void> {
+    const usuario = await this.usuarioRepository.findOne({ id: usuarioId });
+    if (!usuario) {
+      throw new NotFoundException('Usuário não encontrado');
+    }
+
+    for (const contato of contatos) {
+      const existe = await this.contatoService.exists(
+        contato.celular,
+        usuario.id,
+      );
+      if (!existe) {
+        const novoContato = await this.contatoService.create({
+          clienteId: usuario.id,
+          nome: contato.nome,
+          funcao: contato.funcao,
+          telefone: contato.telefone,
+          celular: contato.celular,
+          email: contato.email,
+        });
+        contato.id = novoContato.id;
+      }
+
+      const jaAssociado = await this.usuarioContatoRepository.findOne({
+        usuario: usuario,
+        contato: contato,
+      });
+
+      if (!jaAssociado) {
+        const usuarioContato = this.usuarioContatoRepository.create({
+          usuario: usuario,
+          contato: contato,
+        });
+        usuario.usuarioContatos.add(usuarioContato);
+        await this.usuarioRepository.persistAndFlush(usuario);
+        await this.usuarioContatoRepository.persistAndFlush(usuarioContato);
+      }
+    }
+  }
+
+  private async atualizarContatos(
+    usuarioId: string,
+    contatoIds: string[],
+  ): Promise<void> {
+    const usuario = await this.usuarioRepository.findOne({ id: usuarioId });
+    if (!usuario) {
+      throw new NotFoundException('Usuário não encontrado');
+    }
+
+    const associacoesAntigas = await this.usuarioContatoRepository.find({
+      usuario: usuario,
+    });
+
+    for (const associacao of associacoesAntigas) {
+      this.usuarioContatoRepository.remove(associacao);
+    }
+
+    for (const contatoId of contatoIds) {
+      const contato = await this.contatoService.findOne(contatoId, usuario.id);
+      if (!contato) {
+        throw new NotFoundException(
+          `Contato com ID ${contatoId} não encontrado`,
+        );
+      }
+
+      const usuarioContato = this.usuarioContatoRepository.create({
+        usuario: usuario,
+        contato: contato,
+      });
+      await this.usuarioContatoRepository.persistAndFlush(usuarioContato);
+    }
   }
 
   async getByEmail(email: string, empresaId?: string): Promise<Usuario> {
@@ -52,14 +209,6 @@ export class UsuarioService {
   async getById(id: string, empresaId?: string): Promise<Usuario> {
     const usuario = await this.usuarioRepository.findOne({ id });
     if (!usuario) throw new NotFoundException('Usuário não encontrado');
-    // if (
-    //   empresaId &&
-    //   !usuario.empresasFiliais
-    //     .getItems()
-    //     .some((uef) => uef.empresa.id === empresaId)
-    // ) {
-    //   throw new NotFoundException('Usuário não encontrado');
-    // }
     return usuario;
   }
 
@@ -84,6 +233,7 @@ export class UsuarioService {
   async associarEmpresaOuFilial(
     usuarioId: string,
     dto: AssociarEmpresaFilialRequestDto,
+    admin: string,
   ): Promise<UsuarioEmpresaFilial> {
     const usuario = await this.usuarioRepository.findOne({ id: usuarioId });
     if (!usuario) throw new NotFoundException('Usuário não encontrado');
@@ -91,9 +241,14 @@ export class UsuarioService {
     const empresa = await this.empresaService.findOne(dto.empresaId);
     if (!empresa) throw new NotFoundException('Empresa não encontrada');
 
+    const cidade = await this.cidadeService.findByCliente(usuario.id);
+    if (!cidade) throw new NotFoundException('Cidade não encontrada');
+
+    const contato = await this.contatoService.findByCliente(usuario.id);
+    if (!contato) throw new NotFoundException('Contato não encontrado');
+
     const isFilial = !!empresa.sede;
 
-    // Evita duplicidade
     const jaExiste = await this.usuarioEmpresaFilialRepository.findOne({
       usuario,
       empresa,
@@ -109,6 +264,11 @@ export class UsuarioService {
       empresa,
       filial: isFilial,
     });
+
+    await this.cidadeService.update(cidade.id, usuario.id, { filialId: empresa.id }, admin);
+    await this.contatoService.update(contato.id, usuario.id, {
+      filialId: empresa.id,
+    }, admin);
 
     await this.usuarioEmpresaFilialRepository.persistAndFlush(associacao);
     return associacao;
