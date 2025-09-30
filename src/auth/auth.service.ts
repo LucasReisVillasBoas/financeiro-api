@@ -14,7 +14,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly usuarioService: UsuarioService,
     private readonly em: EntityManager,
-  ) { }
+  ) {}
 
   async login(loginDto: LoginDto): Promise<LoginResponseDto> {
     const user: Usuario = await this.validateLogin(loginDto);
@@ -24,13 +24,17 @@ export class AuthService {
     }
 
     // Buscar empresas do usuário
-    const userEmpresas = await this.em.find(UsuarioEmpresaFilial, {
-      usuario: user.id,
-    }, {
-      populate: ['empresa'],
-    });
+    const userEmpresas = await this.em.find(
+      UsuarioEmpresaFilial,
+      {
+        usuario: user.id,
+      },
+      {
+        populate: ['empresa'],
+      },
+    );
 
-    const empresas = userEmpresas.map(ue => ({
+    const empresas = userEmpresas.map((ue) => ({
       empresaId: ue.empresa.id,
       clienteId: ue.empresa.cliente_id,
       isFilial: ue.filial,

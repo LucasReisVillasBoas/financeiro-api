@@ -16,6 +16,7 @@ import { UsuarioPerfilModule } from './usuario-perfil/usuario-perfil.module';
 import { AuthMiddleware } from './middlewares/auth.middleware';
 import { JwtModule } from '@nestjs/jwt';
 import { CidadeModule } from './cidade/cidade.module';
+import { ContatoModule } from './contato/contato.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { CidadeModule } from './cidade/cidade.module';
     PerfilModule,
     AuthModule,
     CidadeModule,
+    ContatoModule,
     UsuarioPerfilModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET || 'your-secret-key',
@@ -38,7 +40,10 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(AuthMiddleware)
-      .exclude({ path: 'auth/login', method: RequestMethod.ALL })
+      .exclude(
+        { path: 'auth/login', method: RequestMethod.ALL },
+        { path: 'usuario/cadastro', method: RequestMethod.POST }
+      )
       .forRoutes('*');
   }
 }

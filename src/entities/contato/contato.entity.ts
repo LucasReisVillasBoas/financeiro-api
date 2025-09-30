@@ -8,8 +8,12 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 import { TipoContato } from './tipo-contato.entity';
+import { ContatoRepository } from '../../contato/contato.repository';
+import { IsOptional, IsString } from 'class-validator';
+import { Usuario } from '../usuario/usuario.entity';
+import { Empresa } from '../empresa/empresa.entity';
 
-@Entity()
+@Entity({ repository: () => ContatoRepository })
 export class Contato {
   @Expose()
   @ApiProperty()
@@ -17,31 +21,38 @@ export class Contato {
   id!: string;
 
   @Expose()
-  @ApiProperty()
-  @Property({ length: 50 })
-  @Index()
-  entityType!: string; // ex: 'empresa' ou 'pessoa'
-
-  @Expose()
-  @ApiProperty()
-  @Index()
+  @IsString()
   @Property()
-  entityId!: number;
+  nome!: string;
 
   @Expose()
-  @ApiProperty()
-  @ManyToOne(() => TipoContato)
-  tipoContato!: TipoContato;
+  @ManyToOne(() => Usuario, { nullable: true })
+  cliente?: Usuario;
 
   @Expose()
-  @ApiProperty()
-  @Property({ length: 100 })
-  descricao!: string;
+  @IsOptional()
+  @ManyToOne(() => Empresa, { nullable: true })
+  filial?: Empresa;
 
   @Expose()
-  @ApiProperty({ default: true })
-  @Property({ default: true })
-  ativo: boolean = true;
+  @IsString()
+  @Property()
+  funcao!: string;
+
+  @Expose()
+  @IsString()
+  @Property()
+  telefone!: string;
+
+  @Expose()
+  @IsString()
+  @Property()
+  celular!: string;
+
+  @Expose()
+  @IsString()
+  @Property()
+  email!: string;
 
   @Property({ nullable: true })
   deletadoEm?: Date;

@@ -36,7 +36,6 @@ export class PerfilService {
   ) {}
 
   async create(dto: CreatePerfilDto): Promise<Perfil> {
-    // achar usuario
     const usuario = await this.usuarioService.findOne(dto.clienteId);
     if (!usuario) {
       throw new NotFoundException('Usuário não encontrado');

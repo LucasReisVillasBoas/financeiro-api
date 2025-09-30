@@ -12,7 +12,6 @@ import { SetMetadata, UseGuards } from '@nestjs/common';
 
 @Controller('usuario')
 @ApiTags('Usuario')
-@UseGuards(RolesGuard)
 export class UsuarioController {
   constructor(private readonly usuarioService: UsuarioService) {}
 
@@ -22,7 +21,6 @@ export class UsuarioController {
     description: 'Usuário criado',
   })
   @Post('cadastro')
-  @SetMetadata('roles', ['Administrador'])
   async createUsuario(
     @Body() dto: UsuarioCreateRequestDto,
   ): Promise<BaseResponse<Usuario>> {
@@ -36,6 +34,7 @@ export class UsuarioController {
     description: 'Associar usuario a empresa ou filial',
   })
   @Post(':id/empresas')
+  @UseGuards(RolesGuard)
   @SetMetadata('roles', ['Administrador'])
   async associarEmpresaOuFilial(
     @Param('id') usuarioId: string,
@@ -55,12 +54,14 @@ export class UsuarioController {
     description: 'Listar usuarios associados a empresa',
   })
   @Get(':id/empresas')
+  @UseGuards(RolesGuard)
   @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
   async listarAssociacoes(@Param('id') usuarioId: string) {
     return this.usuarioService.listarAssociacoes(usuarioId);
   }
 
   @Delete(':id/empresas/:assocId')
+  @UseGuards(RolesGuard)
   @SetMetadata('roles', ['Administrador'])
   async removerAssociacao(
     @Param('id') usuarioId: string,
