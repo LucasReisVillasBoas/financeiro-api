@@ -16,6 +16,10 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { EmpresaGuard } from '../auth/empresa.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { CurrentCliente } from '../auth/decorators/current-cliente.decorator';
+import {
+  sanitizeCidadeResponse,
+  sanitizeCidadesResponse,
+} from '../utils/cidade.util';
 
 @Controller('cidades')
 @UseGuards(JwtAuthGuard, EmpresaGuard, RolesGuard)
@@ -32,14 +36,22 @@ export class CidadeController {
       ...createCidadeDto,
       clienteId: clienteId,
     });
-    return { message: 'Cidade criada', statusCode: 201, data };
+    return {
+      message: 'Cidade criada',
+      statusCode: 201,
+      data: sanitizeCidadeResponse(data),
+    };
   }
 
   @Get()
   @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
   async findAll(@CurrentCliente() clienteId: string) {
     const cidades = await this.cidadeService.findAll(clienteId);
-    return { message: 'Cidades encontradas', statusCode: 200, data: cidades };
+    return {
+      message: 'Cidades encontradas',
+      statusCode: 200,
+      data: sanitizeCidadesResponse(cidades),
+    };
   }
 
   @Get('uf/:uf')
@@ -49,7 +61,11 @@ export class CidadeController {
       uf.toUpperCase(),
       clienteId,
     );
-    return { message: 'Cidades encontradas', statusCode: 200, data: cidades };
+    return {
+      message: 'Cidades encontradas',
+      statusCode: 200,
+      data: sanitizeCidadesResponse(cidades),
+    };
   }
 
   @Get('ibge/:codigoIbge')
@@ -62,14 +78,22 @@ export class CidadeController {
       codigoIbge,
       clienteId,
     );
-    return { message: 'Cidade encontrada', statusCode: 200, data: cidade };
+    return {
+      message: 'Cidade encontrada',
+      statusCode: 200,
+      data: sanitizeCidadeResponse(cidade),
+    };
   }
 
   @Get(':id')
   @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
   async findOne(@Param('id') id: string, @CurrentCliente() clienteId: string) {
     const cidade = await this.cidadeService.findOne(id, clienteId);
-    return { message: 'Cidade encontrada', statusCode: 200, data: cidade };
+    return {
+      message: 'Cidade encontrada',
+      statusCode: 200,
+      data: sanitizeCidadeResponse(cidade),
+    };
   }
 
   @Patch(':id')
@@ -84,7 +108,11 @@ export class CidadeController {
       clienteId,
       updateCidadeDto,
     );
-    return { message: 'Cidade atualizada', statusCode: 200, data: cidade };
+    return {
+      message: 'Cidade atualizada',
+      statusCode: 200,
+      data: sanitizeCidadeResponse(cidade),
+    };
   }
 
   @Delete(':id')

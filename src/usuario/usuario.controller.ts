@@ -19,6 +19,10 @@ import { AssociarEmpresaFilialRequestDto } from './dto/associar-empresa-filial-r
 import { RolesGuard } from 'src/auth/roles.guard';
 import { SetMetadata, UseGuards } from '@nestjs/common';
 import { CurrentCliente } from '../auth/decorators/current-cliente.decorator';
+import {
+  sanitizeUserResponse,
+  sanitizeUsersResponse,
+} from '../utils/user.util';
 
 @Controller('usuario')
 @ApiTags('Usuario')
@@ -35,7 +39,30 @@ export class UsuarioController {
     @Body() dto: UsuarioCreateRequestDto,
   ): Promise<BaseResponse<Usuario>> {
     const usuario = await this.usuarioService.create(dto);
-    return { message: 'Usuário criado', statusCode: 201, data: usuario };
+    return {
+      message: 'Usuário criado',
+      statusCode: 201,
+      data: sanitizeUserResponse(usuario),
+    };
+  }
+
+  @ApiResponse({
+    status: 200,
+    type: Usuario,
+    description: 'Usuário',
+  })
+  @Get()
+  @UseGuards(RolesGuard)
+  @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
+  async getById(
+    @CurrentCliente() cliente: string,
+  ): Promise<BaseResponse<Usuario>> {
+    const usuario = await this.usuarioService.findOne(cliente);
+    return {
+      message: 'Usuário encontrado com sucesso',
+      statusCode: 200,
+      data: sanitizeUserResponse(usuario),
+    };
   }
 
   @ApiResponse({
@@ -51,7 +78,11 @@ export class UsuarioController {
     @Body() dto: UsuarioUpdateRequestDto,
   ): Promise<BaseResponse<Usuario>> {
     const usuario = await this.usuarioService.update(id, dto);
-    return { message: 'Usuário atualizado', statusCode: 200, data: usuario };
+    return {
+      message: 'Usuário atualizado',
+      statusCode: 200,
+      data: sanitizeUserResponse(usuario),
+    };
   }
 
   @ApiResponse({
@@ -66,13 +97,13 @@ export class UsuarioController {
     @Param('id') usuarioId: string,
     @Body() dto: AssociarEmpresaFilialRequestDto,
     @CurrentCliente() cliente: string,
-  ): Promise<BaseResponse<Promise<UsuarioEmpresaFilial>>> {
-    const result = this.usuarioService.associarEmpresaOuFilial(
+  ): Promise<BaseResponse<UsuarioEmpresaFilial>> {
+    const result = await this.usuarioService.associarEmpresaOuFilial(
       usuarioId,
       dto,
       cliente,
     );
-    return new BaseResponse<Promise<UsuarioEmpresaFilial>>(
+    return new BaseResponse<UsuarioEmpresaFilial>(
       'Associação feita com sucesso!',
       200,
       result,
@@ -87,8 +118,15 @@ export class UsuarioController {
   @Get(':id/empresas')
   @UseGuards(RolesGuard)
   @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
-  async listarAssociacoes(@Param('id') usuarioId: string) {
-    return this.usuarioService.listarAssociacoes(usuarioId);
+  async listarAssociacoes(
+    @Param('id') usuarioId: string,
+  ): Promise<BaseResponse<UsuarioEmpresaFilial[]>> {
+    const result = await this.usuarioService.listarAssociacoes(usuarioId);
+    return new BaseResponse<UsuarioEmpresaFilial[]>(
+      'Associações listadas com sucesso!',
+      200,
+      result,
+    );
   }
 
   @Delete(':id/empresas/:assocId')
@@ -97,7 +135,8 @@ export class UsuarioController {
   async removerAssociacao(
     @Param('id') usuarioId: string,
     @Param('assocId') assocId: string,
-  ) {
-    return this.usuarioService.removerAssociacao(usuarioId, assocId);
+  ): Promise<BaseResponse<void>> {
+    await this.usuarioService.removerAssociacao(usuarioId, assocId);
+    return new BaseResponse<void>('Associação removida com sucesso!', 200);
   }
 }

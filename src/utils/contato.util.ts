@@ -1,4 +1,4 @@
-import type { Usuario } from '../entities/usuario/usuario.entity';
+import type { Contato } from "../entities/contato/contato.entity";
 
 function maskEmail(email?: string): string | undefined {
   if (!email) return email;
@@ -23,27 +23,23 @@ function maskPhone(phone?: string): string | undefined {
   return `${maskedPart}${lastFour}`;
 }
 
-export function sanitizeUserResponse(user: Usuario): any {
-  if (!user) return user;
+export function sanitizeContatoResponse(contato: Contato): any {
+  if (!contato) return contato;
 
-  const { login, senha, email, telefone, empresasFiliais, cidade, usuarioContatos, ...rest } = user;
+  const { cliente, filial, email, telefone, celular, ...rest } = contato;
 
   return {
     ...rest,
+    clienteId: cliente?.id,
+    filialId: filial?.id,
     email: maskEmail(email),
     telefone: maskPhone(telefone),
-    empresasFiliais: empresasFiliais.isInitialized()
-      ? empresasFiliais.getItems().map((ef) => ({ id: ef.id }))
-      : [],
-    cidade: cidade?.id,
-    usuarioContatos: usuarioContatos.isInitialized()
-      ? usuarioContatos.getItems().map((uc) => ({ id: uc.contato.id }))
-      : [],
+    celular: maskPhone(celular),
   };
 }
 
-export function sanitizeUsersResponse(users: Usuario[]): any[] {
-  if (!Array.isArray(users)) return users;
+export function sanitizeContatosResponse(contatos: Contato[]): any[] {
+  if (!Array.isArray(contatos)) return contatos;
 
-  return users.map(sanitizeUserResponse);
+  return contatos.map(sanitizeContatoResponse);
 }

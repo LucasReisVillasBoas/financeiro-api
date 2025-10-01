@@ -19,6 +19,7 @@ import { UpdateFilialDto } from './dto/update-filial.dto';
 import { RolesGuard } from '../auth/roles.guard';
 import { EmpresaGuard } from '../auth/empresa.guard';
 import { CurrentClienteIds } from '../auth/decorators/current-empresa.decorator';
+import { sanitizeEmpresaResponse, sanitizeEmpresasResponse } from '../utils/empresa.util';
 
 @ApiTags('Empresas')
 @Controller('empresas')
@@ -42,13 +43,12 @@ export class EmpresaController {
     @Param('clienteId') clienteId: string,
     @CurrentClienteIds() userClienteIds: string[],
   ) {
-    // Verifica se o usuário tem acesso ao cliente
     if (!userClienteIds.includes(clienteId)) {
       const data = [];
       return { message: 'Empresas encontradas', statusCode: 200, data };
     }
     const data = await this.service.findAllByCliente(clienteId);
-    return { message: 'Empresas encontradas', statusCode: 200, data };
+    return { message: 'Empresas encontradas', statusCode: 200, data: sanitizeEmpresasResponse(data) };
   }
 
   @Get(':id')
@@ -57,9 +57,8 @@ export class EmpresaController {
   @ApiOperation({ summary: 'Obter empresa por id' })
   @ApiResponse({ status: 200, description: 'Empresa encontrada' })
   async findOne(@Param('id') id: string) {
-    // O EmpresaGuard já validou o acesso
     const data = await this.service.findOne(id);
-    return { message: 'Empresa encontrada', statusCode: 200, data };
+    return { message: 'Empresa encontrada', statusCode: 200, data: sanitizeEmpresaResponse(data) };
   }
 
   @Put(':id')
@@ -68,9 +67,8 @@ export class EmpresaController {
   @ApiOperation({ summary: 'Atualizar empresa' })
   @ApiResponse({ status: 200, description: 'Empresa atualizada' })
   async update(@Param('id') id: string, @Body() dto: UpdateEmpresaDto) {
-    // O EmpresaGuard já validou o acesso
     const data = await this.service.update(id, dto);
-    return { message: 'Empresa atualizada', statusCode: 200, data };
+    return { message: 'Empresa atualizada', statusCode: 200, data: sanitizeEmpresaResponse(data) };
   }
 
   @Delete(':id')
@@ -79,22 +77,18 @@ export class EmpresaController {
   @ApiOperation({ summary: 'Remover (soft) empresa' })
   @ApiResponse({ status: 200, description: 'Empresa removida' })
   async remove(@Param('id') id: string) {
-    // O EmpresaGuard já validou o acesso
     await this.service.softDelete(id);
     return { message: 'Empresa deletada', statusCode: 200 };
   }
-
-  /* Filiais */
 
   @Post(':id/filiais')
   @SetMetadata('roles', ['Administrador'])
   @ApiOperation({ summary: 'Criar filial para empresa' })
   @ApiResponse({ status: 201, description: 'Filial criada' })
   async createFilial(@Param('id') id: string, @Body() dto: CreateFilialDto) {
-    // garante que empresa_id corresponde ao path param
     if (dto.empresa_id !== id) dto.empresa_id = id;
     const data = await this.service.createFilial(dto);
-    return { message: 'Filial criada', statusCode: 201, data };
+    return { message: 'Filial criada', statusCode: 201, data: sanitizeEmpresaResponse(data) };
   }
 
   @Get(':id/filiais')
@@ -104,7 +98,7 @@ export class EmpresaController {
   @ApiResponse({ status: 200, description: 'Filiais encontradas' })
   async listFiliais(@Param('id') id: string) {
     const data = await this.service.findFiliaisBySede(id);
-    return { message: 'Filiais encontradas', statusCode: 200, data };
+    return { message: 'Filiais encontradas', statusCode: 200, data: sanitizeEmpresasResponse(data) };
   }
 
   @Put('filiais/:filialId')
@@ -117,7 +111,7 @@ export class EmpresaController {
     @Body() dto: UpdateFilialDto,
   ) {
     const data = await this.service.updateFilial(filialId, dto);
-    return { message: 'Filial atualizada', statusCode: 200, data };
+    return { message: 'Filial atualizada', statusCode: 200, data: sanitizeEmpresaResponse(data) };
   }
 
   @Delete('filiais/:filialId')
