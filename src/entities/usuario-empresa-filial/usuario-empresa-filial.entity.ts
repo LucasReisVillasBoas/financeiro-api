@@ -1,4 +1,10 @@
-import { Entity, PrimaryKey, ManyToOne, Property, Index } from '@mikro-orm/core';
+import {
+  Entity,
+  PrimaryKey,
+  ManyToOne,
+  Property,
+  Index,
+} from '@mikro-orm/core';
 import { Empresa } from '../empresa/empresa.entity';
 import { Usuario } from '../usuario/usuario.entity';
 import { ApiProperty } from '@nestjs/swagger';

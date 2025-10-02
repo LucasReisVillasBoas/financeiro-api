@@ -65,10 +65,14 @@ describe('TrainingService', () => {
 
     service = module.get<TrainingService>(TrainingService);
     trainingRepository = module.get<TrainingRepository>(TrainingRepository);
-    trainingTypeRepository = module.get<TrainingTypeRepository>(TrainingTypeRepository);
+    trainingTypeRepository = module.get<TrainingTypeRepository>(
+      TrainingTypeRepository,
+    );
     userService = module.get<UserService>(UserService);
     goalsService = module.get<GoalsService>(GoalsService);
-    trainingExerciseService = module.get<TrainingExerciseService>(TrainingExerciseService);
+    trainingExerciseService = module.get<TrainingExerciseService>(
+      TrainingExerciseService,
+    );
   });
 
   it('should be defined', () => {
@@ -98,7 +102,9 @@ describe('TrainingService', () => {
 
       jest.spyOn(userService, 'getById').mockResolvedValue(user);
       jest.spyOn(goalsService, 'getById').mockResolvedValue(goals);
-      jest.spyOn(trainingTypeRepository, 'findOne').mockResolvedValue(trainingType);
+      jest
+        .spyOn(trainingTypeRepository, 'findOne')
+        .mockResolvedValue(trainingType);
       jest.spyOn(trainingRepository, 'create').mockImplementation((data) => {
         const training = new Training();
         Object.assign(training, data);
@@ -117,13 +123,17 @@ describe('TrainingService', () => {
       expect(result.user).toEqual(user);
       expect(userService.getById).toHaveBeenCalledWith('userId1');
       expect(goalsService.getById).toHaveBeenCalledWith('goalId1');
-      expect(trainingTypeRepository.findOne).toHaveBeenCalledWith({ code: 'STRENGTH' });
-      expect(trainingRepository.create).toHaveBeenCalledWith(expect.objectContaining({
-        active: true,
-        trainingType,
-        goals,
-        user,
-      }));
+      expect(trainingTypeRepository.findOne).toHaveBeenCalledWith({
+        code: 'STRENGTH',
+      });
+      expect(trainingRepository.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          active: true,
+          trainingType,
+          goals,
+          user,
+        }),
+      );
       expect(trainingRepository.flush).toHaveBeenCalled();
       expect(trainingExerciseService.create).not.toHaveBeenCalled();
     });
@@ -131,8 +141,8 @@ describe('TrainingService', () => {
     it('should register a new training successfully with exercises', async () => {
       const exercise1 = new TrainingExercise();
       exercise1.sets = 3;
-      exercise1.reps = "10";
-      exercise1.rest_time = "60";
+      exercise1.reps = '10';
+      exercise1.rest_time = '60';
       exercise1.exercise = { code: 'EX001' } as any;
 
       registerDto.trainingExerciseList = [exercise1];
@@ -140,13 +150,15 @@ describe('TrainingService', () => {
       const result = await service.register(registerDto);
 
       expect(result).toBeInstanceOf(Training);
-      expect(trainingExerciseService.create).toHaveBeenCalledWith(expect.objectContaining({
-        sets: exercise1.sets,
-        reps: exercise1.reps,
-        restTime: exercise1.rest_time,
-        trainingId: result.id,
-        exerciseCode: exercise1.exercise.code,
-      }));
+      expect(trainingExerciseService.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          sets: exercise1.sets,
+          reps: exercise1.reps,
+          restTime: exercise1.rest_time,
+          trainingId: result.id,
+          exerciseCode: exercise1.exercise.code,
+        }),
+      );
       expect(trainingRepository.flush).toHaveBeenCalled();
     });
 
@@ -175,7 +187,9 @@ describe('TrainingService', () => {
   describe('getAllByType', () => {
     it('should return an array of training types', async () => {
       const trainingTypes = [new TrainingType(), new TrainingType()];
-      jest.spyOn(trainingTypeRepository, 'find').mockResolvedValue(trainingTypes);
+      jest
+        .spyOn(trainingTypeRepository, 'find')
+        .mockResolvedValue(trainingTypes);
       expect(await service.getAllByType('typeId')).toEqual(trainingTypes);
     });
   });
@@ -225,21 +239,25 @@ describe('TrainingService', () => {
     it('should update training with new exercises', async () => {
       const exercise1 = new TrainingExercise();
       exercise1.sets = 3;
-      exercise1.reps = "10";
-      exercise1.rest_time = "60";
+      exercise1.reps = '10';
+      exercise1.rest_time = '60';
       exercise1.exercise = { code: 'EX001' } as any;
 
-      const updateData: Partial<Training> = { trainingExerciseList: [exercise1] };
+      const updateData: Partial<Training> = {
+        trainingExerciseList: [exercise1],
+      };
 
       const result = await service.update('someId', updateData);
 
-      expect(trainingExerciseService.create).toHaveBeenCalledWith(expect.objectContaining({
-        sets: exercise1.sets,
-        reps: exercise1.reps,
-        restTime: exercise1.rest_time,
-        trainingId: training.id,
-        exerciseCode: exercise1.exercise.code,
-      }));
+      expect(trainingExerciseService.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          sets: exercise1.sets,
+          reps: exercise1.reps,
+          restTime: exercise1.rest_time,
+          trainingId: training.id,
+          exerciseCode: exercise1.exercise.code,
+        }),
+      );
       expect(result).toEqual(training);
       expect(trainingRepository.flush).not.toHaveBeenCalled();
     });

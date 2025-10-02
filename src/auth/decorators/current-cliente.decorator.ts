@@ -4,7 +4,6 @@ export interface User {
   id: string;
 }
 
-
 export const CurrentCliente = createParamDecorator(
   (data: unknown, ctx: ExecutionContext): string => {
     const request = ctx.switchToHttp().getRequest();

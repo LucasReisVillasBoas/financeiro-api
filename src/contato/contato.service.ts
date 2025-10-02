@@ -155,29 +155,28 @@ export class ContatoService {
     id: string,
     clienteId: string,
     updateContatoDto: UpdateContatoDto,
-    admin?: string
+    admin?: string,
   ): Promise<Contato> {
     const contato = await this.findOne(id, clienteId);
-    const { clienteId: newClienteId, ...contatoData } = updateContatoDto;
 
-    if (contatoData.filialId !== undefined) {
-      if (contatoData.filialId === null) {
+    if (updateContatoDto.filialId !== undefined) {
+      if (updateContatoDto.filialId === null) {
         contato.filial = undefined;
       } else {
         const filial = await this.empresaRepository.findOne({
-          id: contatoData.filialId,
+          id: updateContatoDto.filialId,
           cliente_id: admin ?? clienteId,
         });
         if (!filial) {
           throw new NotFoundException(
-            `Filial com ID ${contatoData.filialId} não encontrada para o cliente ${clienteId}`,
+            `Filial com ID ${updateContatoDto.filialId} não encontrada para o cliente ${clienteId}`,
           );
         }
         contato.filial = filial;
       }
     }
 
-    Object.assign(contato, contatoData);
+    Object.assign(contato, updateContatoDto);
     await this.contatoRepository.persistAndFlush(contato);
 
     return contato;

@@ -63,7 +63,9 @@ describe('ExerciseService', () => {
       muscleGroup.code = 'CHEST';
       muscleGroup.description = 'Chest Muscles';
 
-      jest.spyOn(muscleGroupService, 'getByCode').mockResolvedValue(muscleGroup);
+      jest
+        .spyOn(muscleGroupService, 'getByCode')
+        .mockResolvedValue(muscleGroup);
       jest.spyOn(exerciseRepository, 'findAll').mockResolvedValue([]);
       jest.spyOn(exerciseRepository, 'create').mockImplementation((data) => {
         const exercise = new Exercise();
@@ -86,11 +88,13 @@ describe('ExerciseService', () => {
         registerDto.type,
         [],
       );
-      expect(exerciseRepository.create).toHaveBeenCalledWith(expect.objectContaining({
-        code: 'MG-B-001',
-        description: 'Push-up',
-        muscleGroup: muscleGroup,
-      }));
+      expect(exerciseRepository.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          code: 'MG-B-001',
+          description: 'Push-up',
+          muscleGroup: muscleGroup,
+        }),
+      );
       expect(exerciseRepository.flush).toHaveBeenCalled();
     });
 

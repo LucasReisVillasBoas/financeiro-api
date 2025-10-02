@@ -46,7 +46,9 @@ describe('TrainingExerciseService', () => {
     }).compile();
 
     service = module.get<TrainingExerciseService>(TrainingExerciseService);
-    trainingExerciseRepository = module.get<TrainingExerciseRepository>(getRepositoryToken(TrainingExercise));
+    trainingExerciseRepository = module.get<TrainingExerciseRepository>(
+      getRepositoryToken(TrainingExercise),
+    );
     trainingService = module.get<TrainingService>(TrainingService);
     exerciseService = module.get<ExerciseService>(ExerciseService);
   });
@@ -57,8 +59,13 @@ describe('TrainingExerciseService', () => {
 
   describe('findAll', () => {
     it('should return an array of training exercises', async () => {
-      const trainingExercises = [new TrainingExercise(), new TrainingExercise()];
-      jest.spyOn(trainingExerciseRepository, 'findAll').mockResolvedValue(trainingExercises);
+      const trainingExercises = [
+        new TrainingExercise(),
+        new TrainingExercise(),
+      ];
+      jest
+        .spyOn(trainingExerciseRepository, 'findAll')
+        .mockResolvedValue(trainingExercises);
       expect(await service.findAll()).toEqual(trainingExercises);
     });
   });
@@ -66,7 +73,9 @@ describe('TrainingExerciseService', () => {
   describe('findById', () => {
     it('should return a training exercise by id', async () => {
       const trainingExercise = new TrainingExercise();
-      jest.spyOn(trainingExerciseRepository, 'findOne').mockResolvedValue(trainingExercise);
+      jest
+        .spyOn(trainingExerciseRepository, 'findOne')
+        .mockResolvedValue(trainingExercise);
       expect(await service.findById('someId')).toEqual(trainingExercise);
     });
 
@@ -86,8 +95,8 @@ describe('TrainingExerciseService', () => {
     beforeEach(() => {
       registerDto = {
         sets: 3,
-        reps: "10",
-        restTime: "60",
+        reps: '10',
+        restTime: '60',
         trainingId: 'trainingId1',
         exerciseCode: 'EX001',
       };
@@ -98,12 +107,16 @@ describe('TrainingExerciseService', () => {
 
       jest.spyOn(trainingService, 'getById').mockResolvedValue(training);
       jest.spyOn(exerciseService, 'getByCode').mockResolvedValue(exercise);
-      jest.spyOn(trainingExerciseRepository, 'create').mockImplementation((data) => {
-        const trainingExercise = new TrainingExercise();
-        Object.assign(trainingExercise, data);
-        return trainingExercise;
-      });
-      jest.spyOn(trainingExerciseRepository, 'flush').mockResolvedValue(undefined);
+      jest
+        .spyOn(trainingExerciseRepository, 'create')
+        .mockImplementation((data) => {
+          const trainingExercise = new TrainingExercise();
+          Object.assign(trainingExercise, data);
+          return trainingExercise;
+        });
+      jest
+        .spyOn(trainingExerciseRepository, 'flush')
+        .mockResolvedValue(undefined);
     });
 
     it('should create a new training exercise successfully', async () => {
@@ -111,19 +124,21 @@ describe('TrainingExerciseService', () => {
 
       expect(result).toBeInstanceOf(TrainingExercise);
       expect(result.sets).toEqual(3);
-      expect(result.reps).toEqual("10");
-      expect(result.rest_time).toEqual("60");
+      expect(result.reps).toEqual('10');
+      expect(result.rest_time).toEqual('60');
       expect(result.training).toEqual(training);
       expect(result.exercise).toEqual(exercise);
       expect(trainingService.getById).toHaveBeenCalledWith('trainingId1');
       expect(exerciseService.getByCode).toHaveBeenCalledWith('EX001');
-      expect(trainingExerciseRepository.create).toHaveBeenCalledWith(expect.objectContaining({
-        sets: 3,
-        reps: "10",
-        rest_time: "60",
-        training,
-        exercise,
-      }));
+      expect(trainingExerciseRepository.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          sets: 3,
+          reps: '10',
+          rest_time: '60',
+          training,
+          exercise,
+        }),
+      );
       expect(trainingExerciseRepository.flush).toHaveBeenCalled();
     });
 
@@ -150,7 +165,9 @@ describe('TrainingExerciseService', () => {
       trainingExercise.id = 'someId';
       trainingExercise.sets = 3;
       jest.spyOn(service, 'findById').mockResolvedValue(trainingExercise);
-      jest.spyOn(trainingExerciseRepository, 'flush').mockResolvedValue(undefined);
+      jest
+        .spyOn(trainingExerciseRepository, 'flush')
+        .mockResolvedValue(undefined);
     });
 
     it('should update a training exercise successfully', async () => {
@@ -174,12 +191,18 @@ describe('TrainingExerciseService', () => {
       trainingExercise.id = 'someId';
 
       jest.spyOn(service, 'findById').mockResolvedValue(trainingExercise);
-      jest.spyOn(trainingExerciseRepository, 'remove').mockReturnValue(undefined);
-      jest.spyOn(trainingExerciseRepository, 'flush').mockResolvedValue(undefined);
+      jest
+        .spyOn(trainingExerciseRepository, 'remove')
+        .mockReturnValue(undefined);
+      jest
+        .spyOn(trainingExerciseRepository, 'flush')
+        .mockResolvedValue(undefined);
 
       const result = await service.delete('someId');
       expect(!result).toBe(true);
-      expect(trainingExerciseRepository.remove).toHaveBeenCalledWith(trainingExercise);
+      expect(trainingExerciseRepository.remove).toHaveBeenCalledWith(
+        trainingExercise,
+      );
       expect(trainingExerciseRepository.flush).toHaveBeenCalled();
     });
 

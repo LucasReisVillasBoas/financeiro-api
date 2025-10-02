@@ -1,4 +1,9 @@
-import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+} from '@nestjs/common';
 import { EntityManager } from '@mikro-orm/postgresql';
 import { UsuarioEmpresaFilial } from '../entities/usuario-empresa-filial/usuario-empresa-filial.entity';
 
@@ -14,24 +19,33 @@ export class EmpresaGuard implements CanActivate {
       throw new ForbiddenException('Usuário não autenticado');
     }
 
-    const usuarioEmpresas = await this.em.find(UsuarioEmpresaFilial, {
-      usuario: user.id,
-    }, {
-      populate: ['empresa'],
-    });
+    const usuarioEmpresas = await this.em.find(
+      UsuarioEmpresaFilial,
+      {
+        usuario: user.id,
+      },
+      {
+        populate: ['empresa'],
+      },
+    );
 
     if (!usuarioEmpresas.length) {
-      throw new ForbiddenException('Usuário não possui acesso a nenhuma empresa');
+      throw new ForbiddenException(
+        'Usuário não possui acesso a nenhuma empresa',
+      );
     }
 
-    request.userEmpresas = usuarioEmpresas.map(ue => ({
+    request.userEmpresas = usuarioEmpresas.map((ue) => ({
       empresaId: ue.empresa.id,
       clienteId: ue.empresa.cliente_id,
       isFilial: ue.filial,
       sedeId: ue.empresa.sede?.id || null,
     }));
 
-    const empresaIdParam = request.params.empresaId || request.params.id;
+    const empresaIdParam =
+      request.params.empresaId ||
+      request.userEmpresas[0]?.empresaId ||
+      request.params.id;
     const empresaIdBody = request.body?.empresa_id;
     const clienteIdBody = request.body?.cliente_id;
 
@@ -39,7 +53,10 @@ export class EmpresaGuard implements CanActivate {
 
     if (empresaIdToCheck) {
       const hasAccess = request.userEmpresas.some(
-        emp => emp.empresaId === empresaIdToCheck || emp.sedeId === empresaIdToCheck || emp.filialId === empresaIdToCheck
+        (emp) =>
+          emp.empresaId === empresaIdToCheck ||
+          emp.sedeId === empresaIdToCheck ||
+          emp.filialId === empresaIdToCheck,
       );
 
       if (!hasAccess) {
@@ -49,7 +66,7 @@ export class EmpresaGuard implements CanActivate {
 
     if (clienteIdBody) {
       const hasClientAccess = request.userEmpresas.some(
-        emp => emp.clienteId === clienteIdBody
+        (emp) => emp.clienteId === clienteIdBody,
       );
 
       if (!hasClientAccess) {

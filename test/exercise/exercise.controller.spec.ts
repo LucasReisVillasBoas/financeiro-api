@@ -83,7 +83,9 @@ describe('ExerciseController', () => {
       const result = await controller.details('someId');
 
       expect(result).toBeInstanceOf(ExerciseDefaultResponseDto);
-      expect(result.message).toEqual('Exercise details retrieved successfully by id');
+      expect(result.message).toEqual(
+        'Exercise details retrieved successfully by id',
+      );
       expect(result.statusCode).toEqual(200);
       expect(result.data['exercise']).toEqual(exercise);
       expect(service.getById).toHaveBeenCalledWith('someId');
@@ -99,7 +101,9 @@ describe('ExerciseController', () => {
       const result = await controller.detailsByCode('PU001');
 
       expect(result).toBeInstanceOf(ExerciseDefaultResponseDto);
-      expect(result.message).toEqual('Exercise details retrieved successfully by code');
+      expect(result.message).toEqual(
+        'Exercise details retrieved successfully by code',
+      );
       expect(result.statusCode).toEqual(200);
       expect(result.data['exercise']).toEqual(exercise);
       expect(service.getByCode).toHaveBeenCalledWith('PU001');

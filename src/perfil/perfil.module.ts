@@ -19,21 +19,21 @@ import { EmpresaService } from '../empresa/empresa.service';
       UsuarioPerfil,
       Usuario,
       UsuarioEmpresaFilial,
-      Empresa
+      Empresa,
     ]),
   ],
   providers: [
     PerfilService,
     UsuarioPerfilRepository,
     UsuarioEmpresaFilialRepository,
-    EmpresaService
+    EmpresaService,
   ],
   controllers: [PerfilController],
   exports: [
     PerfilService,
     UsuarioPerfilRepository,
     UsuarioEmpresaFilialRepository,
-    EmpresaService
+    EmpresaService,
   ],
 })
 export class PerfilModule {}

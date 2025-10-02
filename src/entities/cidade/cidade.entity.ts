@@ -3,7 +3,6 @@ import {
   PrimaryKey,
   Property,
   ManyToOne,
-  Unique,
   Index,
 } from '@mikro-orm/core';
 import { Empresa } from '../empresa/empresa.entity';

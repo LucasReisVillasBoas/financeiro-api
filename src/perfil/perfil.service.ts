@@ -9,11 +9,8 @@ import { UpdatePerfilDto } from './dto/update-perfil.dto';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { Perfil } from '../entities/perfil/perfil.entity';
 import { UsuarioPerfil } from '../entities/usuario-perfil/usuario-perfil.entity';
-import type { UsuarioPerfilRepository } from '../usuario-perfil/usuario-perfil.repository';
+import { UsuarioPerfilRepository } from '../usuario-perfil/usuario-perfil.repository';
 import { Usuario } from '../entities/usuario/usuario.entity';
-import type { UsuarioRepository } from '../usuario/usuario.repository';
-import type { UsuarioEmpresaFilialRepository } from '../usuario/usuario-empresa-filial.repository';
-import { UsuarioEmpresaFilial } from '../entities/usuario-empresa-filial/usuario-empresa-filial.entity';
 import { EmpresaService } from '../empresa/empresa.service';
 import { UsuarioService } from '../usuario/usuario.service';
 
@@ -28,10 +25,6 @@ export class PerfilService {
 
     @InjectRepository(Usuario)
     private readonly usuarioService: UsuarioService,
-
-    @InjectRepository(UsuarioEmpresaFilial)
-    private readonly usuarioEmpresaFilialRepository: UsuarioEmpresaFilialRepository,
-
     private readonly empresaService: EmpresaService,
   ) {}
 
@@ -50,7 +43,6 @@ export class PerfilService {
     const perfil = this.perfilRepository.create(dto);
     await this.perfilRepository.flush();
 
-    // Evita duplicidade
     const jaExiste = await this.usuarioPerfilRepository.findOne({
       usuario,
       perfil,
@@ -100,7 +92,6 @@ export class PerfilService {
   }
 
   async softDelete(id: string, clienteId: string): Promise<void> {
-    // TODO: Adicionar validação de admin
     const filial = await this.findOne(id, clienteId);
     filial.ativo = false;
     filial.deletadoEm = new Date();

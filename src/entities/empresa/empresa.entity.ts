@@ -1,4 +1,11 @@
-import { Entity, PrimaryKey, Property, ManyToOne, OneToMany, Collection } from '@mikro-orm/core';
+import {
+  Entity,
+  PrimaryKey,
+  Property,
+  ManyToOne,
+  OneToMany,
+  Collection,
+} from '@mikro-orm/core';
 import { ApiProperty } from '@nestjs/swagger';
 import { EmpresaRepository } from '../../empresa/empresa.repository';
 import { Cidade } from '../cidade/cidade.entity';
@@ -42,7 +49,6 @@ export class Empresa {
   @Property({ nullable: true })
   inscricao_municipal?: string;
 
-  // Endereço
   @Property({ nullable: true })
   cep?: string;
 
@@ -67,7 +73,6 @@ export class Empresa {
   @Property({ nullable: true })
   uf?: string;
 
-  // Contatos
   @Property({ nullable: true })
   telefone?: string;
 
@@ -89,6 +94,6 @@ export class Empresa {
   @Property({ nullable: true })
   deletadoEm?: Date | null;
 
-  @OneToMany(() => Cidade, cidade => cidade.filial)
+  @OneToMany(() => Cidade, (cidade) => cidade.filial)
   cidades = new Collection<Cidade>(this);
 }

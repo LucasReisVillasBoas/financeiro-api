@@ -27,7 +27,9 @@ describe('TrainingExerciseController', () => {
       ],
     }).compile();
 
-    controller = module.get<TrainingExerciseController>(TrainingExerciseController);
+    controller = module.get<TrainingExerciseController>(
+      TrainingExerciseController,
+    );
     service = module.get<TrainingExerciseService>(TrainingExerciseService);
   });
 
@@ -39,8 +41,8 @@ describe('TrainingExerciseController', () => {
     it('should register a training exercise and return a success response', async () => {
       const registerDto: TrainingExerciseRegisterRequestDto = {
         sets: 3,
-        reps: "10",
-        restTime: "60",
+        reps: '10',
+        restTime: '60',
         trainingId: 'trainingId1',
         exerciseCode: 'EX001',
       };
@@ -62,7 +64,10 @@ describe('TrainingExerciseController', () => {
 
   describe('getAll', () => {
     it('should return a list of training exercises', async () => {
-      const trainingExercises = [new TrainingExercise(), new TrainingExercise()];
+      const trainingExercises = [
+        new TrainingExercise(),
+        new TrainingExercise(),
+      ];
       jest.spyOn(service, 'findAll').mockResolvedValue(trainingExercises);
 
       const result = await controller.getAll();

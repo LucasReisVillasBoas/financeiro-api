@@ -25,7 +25,9 @@ describe('MuscleGroupService', () => {
     }).compile();
 
     service = module.get<MuscleGroupService>(MuscleGroupService);
-    muscleGroupRepository = module.get<MuscleGroupRepository>(MuscleGroupRepository);
+    muscleGroupRepository = module.get<MuscleGroupRepository>(
+      MuscleGroupRepository,
+    );
   });
 
   it('should be defined', () => {
@@ -35,7 +37,9 @@ describe('MuscleGroupService', () => {
   describe('getAll', () => {
     it('should return an array of muscle groups', async () => {
       const muscleGroups = [new MuscleGroup(), new MuscleGroup()];
-      jest.spyOn(muscleGroupRepository, 'findAll').mockResolvedValue(muscleGroups);
+      jest
+        .spyOn(muscleGroupRepository, 'findAll')
+        .mockResolvedValue(muscleGroups);
       expect(await service.getAll()).toEqual(muscleGroups);
     });
   });
@@ -43,7 +47,9 @@ describe('MuscleGroupService', () => {
   describe('getById', () => {
     it('should return a muscle group by id', async () => {
       const muscleGroup = new MuscleGroup();
-      jest.spyOn(muscleGroupRepository, 'findOne').mockResolvedValue(muscleGroup);
+      jest
+        .spyOn(muscleGroupRepository, 'findOne')
+        .mockResolvedValue(muscleGroup);
       expect(await service.getById('someId')).toEqual(muscleGroup);
     });
   });
@@ -51,7 +57,9 @@ describe('MuscleGroupService', () => {
   describe('getByCode', () => {
     it('should return a muscle group by code', async () => {
       const muscleGroup = new MuscleGroup();
-      jest.spyOn(muscleGroupRepository, 'findOne').mockResolvedValue(muscleGroup);
+      jest
+        .spyOn(muscleGroupRepository, 'findOne')
+        .mockResolvedValue(muscleGroup);
       expect(await service.getByCode('CHEST')).toEqual(muscleGroup);
     });
   });
@@ -63,7 +71,9 @@ describe('MuscleGroupService', () => {
       muscleGroup.description = 'Old Description';
       const updatedData = { description: 'New Description' };
 
-      jest.spyOn(muscleGroupRepository, 'findOne').mockResolvedValue(muscleGroup);
+      jest
+        .spyOn(muscleGroupRepository, 'findOne')
+        .mockResolvedValue(muscleGroup);
       jest.spyOn(muscleGroupRepository, 'flush').mockResolvedValue(undefined);
 
       const result = await service.update('someId', updatedData);
@@ -84,7 +94,9 @@ describe('MuscleGroupService', () => {
       const muscleGroup = new MuscleGroup();
       muscleGroup.id = 'someId';
 
-      jest.spyOn(muscleGroupRepository, 'findOne').mockResolvedValue(muscleGroup);
+      jest
+        .spyOn(muscleGroupRepository, 'findOne')
+        .mockResolvedValue(muscleGroup);
       jest.spyOn(muscleGroupRepository, 'remove').mockReturnValue(undefined);
       jest.spyOn(muscleGroupRepository, 'flush').mockResolvedValue(undefined);
 

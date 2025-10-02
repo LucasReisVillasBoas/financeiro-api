@@ -16,6 +16,10 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { EmpresaGuard } from '../auth/empresa.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { CurrentCliente } from '../auth/decorators/current-cliente.decorator';
+import {
+  sanitizeCidadeResponse,
+  sanitizeCidadesResponse,
+} from '../utils/cidade.util';
 
 @Controller('cidades')
 @UseGuards(JwtAuthGuard, EmpresaGuard, RolesGuard)
@@ -24,40 +28,72 @@ export class CidadeController {
 
   @Post()
   @SetMetadata('roles', ['Administrador', 'Editor'])
-  async create(@Body() createCidadeDto: CreateCidadeDto, @CurrentCliente() clienteId: string) {
+  async create(
+    @Body() createCidadeDto: CreateCidadeDto,
+    @CurrentCliente() clienteId: string,
+  ) {
     const data = await this.cidadeService.create({
       ...createCidadeDto,
       clienteId: clienteId,
     });
-    return { message: 'Cidade criada', statusCode: 201, data };
+    return {
+      message: 'Cidade criada',
+      statusCode: 201,
+      data: sanitizeCidadeResponse(data),
+    };
   }
 
   @Get()
   @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
   async findAll(@CurrentCliente() clienteId: string) {
     const cidades = await this.cidadeService.findAll(clienteId);
-    return { message: 'Cidades encontradas', statusCode: 200, data: cidades };
+    return {
+      message: 'Cidades encontradas',
+      statusCode: 200,
+      data: sanitizeCidadesResponse(cidades),
+    };
   }
 
   @Get('uf/:uf')
   @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
   async findByUf(@Param('uf') uf: string, @CurrentCliente() clienteId: string) {
-    const cidades = await this.cidadeService.findByUf(uf.toUpperCase(), clienteId);
-    return { message: 'Cidades encontradas', statusCode: 200, data: cidades };
+    const cidades = await this.cidadeService.findByUf(
+      uf.toUpperCase(),
+      clienteId,
+    );
+    return {
+      message: 'Cidades encontradas',
+      statusCode: 200,
+      data: sanitizeCidadesResponse(cidades),
+    };
   }
 
   @Get('ibge/:codigoIbge')
   @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
-  async findByCodigoIbge(@Param('codigoIbge') codigoIbge: string, @CurrentCliente() clienteId: string) {
-    const cidade = await this.cidadeService.findByCodigoIbge(codigoIbge, clienteId);
-    return { message: 'Cidade encontrada', statusCode: 200, data: cidade };
+  async findByCodigoIbge(
+    @Param('codigoIbge') codigoIbge: string,
+    @CurrentCliente() clienteId: string,
+  ) {
+    const cidade = await this.cidadeService.findByCodigoIbge(
+      codigoIbge,
+      clienteId,
+    );
+    return {
+      message: 'Cidade encontrada',
+      statusCode: 200,
+      data: sanitizeCidadeResponse(cidade),
+    };
   }
 
   @Get(':id')
   @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
   async findOne(@Param('id') id: string, @CurrentCliente() clienteId: string) {
     const cidade = await this.cidadeService.findOne(id, clienteId);
-    return { message: 'Cidade encontrada', statusCode: 200, data: cidade };
+    return {
+      message: 'Cidade encontrada',
+      statusCode: 200,
+      data: sanitizeCidadeResponse(cidade),
+    };
   }
 
   @Patch(':id')
@@ -67,8 +103,16 @@ export class CidadeController {
     @Body() updateCidadeDto: UpdateCidadeDto,
     @CurrentCliente() clienteId: string,
   ) {
-    const cidade = await this.cidadeService.update(id, clienteId, updateCidadeDto);
-    return { message: 'Cidade atualizada', statusCode: 200, data: cidade };
+    const cidade = await this.cidadeService.update(
+      id,
+      clienteId,
+      updateCidadeDto,
+    );
+    return {
+      message: 'Cidade atualizada',
+      statusCode: 200,
+      data: sanitizeCidadeResponse(cidade),
+    };
   }
 
   @Delete(':id')

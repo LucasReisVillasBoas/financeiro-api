@@ -1,13 +1,4 @@
-import type { Empresa } from '../entities/empresa/empresa.entity';
-
-export const normalizeCnpjCpf = (value: string) => {
-  return value ? value.replace(/\D/g, '') : '';
-};
-
-export const isValidCnpjCpf = (value: string): boolean => {
-  const normalized = normalizeCnpjCpf(value);
-  return normalized.length === 11 || normalized.length === 14;
-};
+import type { Contato } from '../entities/contato/contato.entity';
 
 function maskEmail(email?: string): string | undefined {
   if (!email) return email;
@@ -32,21 +23,23 @@ function maskPhone(phone?: string): string | undefined {
   return `${maskedPart}${lastFour}`;
 }
 
-export function sanitizeEmpresaResponse(empresa: Empresa): any {
-  if (!empresa) return empresa;
+export function sanitizeContatoResponse(contato: Contato): any {
+  if (!contato) return contato;
 
-  const { email, telefone, celular, ...rest } = empresa;
+  const { cliente, filial, email, telefone, celular, ...rest } = contato;
 
   return {
     ...rest,
+    clienteId: cliente?.id,
+    filialId: filial?.id,
     email: maskEmail(email),
     telefone: maskPhone(telefone),
     celular: maskPhone(celular),
   };
 }
 
-export function sanitizeEmpresasResponse(empresas: Empresa[]): any[] {
-  if (!Array.isArray(empresas)) return empresas;
+export function sanitizeContatosResponse(contatos: Contato[]): any[] {
+  if (!Array.isArray(contatos)) return contatos;
 
-  return empresas.map(sanitizeEmpresaResponse);
+  return contatos.map(sanitizeContatoResponse);
 }

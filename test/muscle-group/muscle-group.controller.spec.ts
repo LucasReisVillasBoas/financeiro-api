@@ -41,7 +41,9 @@ describe('MuscleGroupController', () => {
       const result = await controller.list();
 
       expect(result).toBeInstanceOf(MuscleGroupDefaultResponseDto);
-      expect(result.message).toEqual('Muscle Group list retrieved successfully');
+      expect(result.message).toEqual(
+        'Muscle Group list retrieved successfully',
+      );
       expect(result.statusCode).toEqual(200);
       expect(result.data['muscleGroups']).toEqual(muscleGroups);
       expect(service.getAll).toHaveBeenCalled();
@@ -57,7 +59,9 @@ describe('MuscleGroupController', () => {
       const result = await controller.getById('someId');
 
       expect(result).toBeInstanceOf(MuscleGroupDefaultResponseDto);
-      expect(result.message).toEqual('Muscle Group details retrieved successfully');
+      expect(result.message).toEqual(
+        'Muscle Group details retrieved successfully',
+      );
       expect(result.statusCode).toEqual(200);
       expect(result.data['muscleGroup']).toEqual(muscleGroup);
       expect(service.getById).toHaveBeenCalledWith('someId');
@@ -73,7 +77,9 @@ describe('MuscleGroupController', () => {
       const result = await controller.getByCode('CHEST');
 
       expect(result).toBeInstanceOf(MuscleGroupDefaultResponseDto);
-      expect(result.message).toEqual('Muscle Group details retrieved successfully');
+      expect(result.message).toEqual(
+        'Muscle Group details retrieved successfully',
+      );
       expect(result.statusCode).toEqual(200);
       expect(result.data['muscleGroup']).toEqual(muscleGroup);
       expect(service.getByCode).toHaveBeenCalledWith('CHEST');

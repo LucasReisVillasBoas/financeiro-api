@@ -33,13 +33,17 @@ export class AuthMiddleware implements NestMiddleware {
           return res.status(401).json({ message: 'Unauthorized' });
         }
 
-        const userEmpresas = await this.em.find(UsuarioEmpresaFilial, {
-          usuario: user.id,
-        }, {
-          populate: ['empresa', 'empresa.sede'],
-        });
+        const userEmpresas = await this.em.find(
+          UsuarioEmpresaFilial,
+          {
+            usuario: user.id,
+          },
+          {
+            populate: ['empresa', 'empresa.sede'],
+          },
+        );
 
-        req['userEmpresas'] = userEmpresas.map(ue => ({
+        req['userEmpresas'] = userEmpresas.map((ue) => ({
           empresaId: ue.empresa.id,
           clienteId: ue.empresa.cliente_id,
           isFilial: ue.filial,

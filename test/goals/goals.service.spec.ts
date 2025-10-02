@@ -83,20 +83,22 @@ describe('GoalsService', () => {
         registerDto.code,
         [],
       );
-      expect(goalsRepository.create).toHaveBeenCalledWith(expect.objectContaining({
-        code: 'GOAL-001',
-        description: 'Lose weight',
-        active: true,
-        user: user,
-      }));
+      expect(goalsRepository.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          code: 'GOAL-001',
+          description: 'Lose weight',
+          active: true,
+          user: user,
+        }),
+      );
       expect(goalsRepository.flush).toHaveBeenCalled();
     });
 
     it('should throw BadRequestException if user not found', async () => {
       jest.spyOn(userService, 'getById').mockResolvedValue(null);
-      await expect(service.register(registerDto, 'nonExistentUserId')).rejects.toThrow(
-        new BadRequestException('error-user-not_found'),
-      );
+      await expect(
+        service.register(registerDto, 'nonExistentUserId'),
+      ).rejects.toThrow(new BadRequestException('error-user-not_found'));
     });
   });
 

@@ -3,9 +3,7 @@ import { Migration } from '@mikro-orm/migrations';
 export class Migration20250930000001_AddCidadeAndContatosToUsuario extends Migration {
   override async up(): Promise<void> {
     // Adicionar campo cidade_id na tabela usuario
-    this.addSql(
-      'alter table "usuario" add column "cidade_id" uuid null;',
-    );
+    this.addSql('alter table "usuario" add column "cidade_id" uuid null;');
 
     // Criar índice para cidade_id
     this.addSql(

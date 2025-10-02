@@ -23,7 +23,6 @@ export class AuthService {
       throw new BadRequestException('error-user-not_found');
     }
 
-    // Buscar empresas do usuário
     const userEmpresas = await this.em.find(
       UsuarioEmpresaFilial,
       {
@@ -53,9 +52,6 @@ export class AuthService {
     return loginResponseDto;
   }
 
-  /*
-   * PRIVATE FUNCTIONS
-   */
   async validateLogin(loginDto: LoginDto): Promise<Usuario> {
     const { email, password } = loginDto;
 

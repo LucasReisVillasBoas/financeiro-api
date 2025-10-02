@@ -77,11 +77,7 @@ export class PerfilController {
   @Delete(':clienteId/:id')
   @SetMetadata('roles', ['Administrador'])
   @ApiResponse({ status: 200 })
-  async remove(
-    @Param('clienteId') clienteId: string,
-    @Param('id') id: string,
-    @Req() req: any,
-  ) {
+  async remove(@Param('clienteId') clienteId: string, @Param('id') id: string) {
     await this.perfilService.softDelete(id, clienteId);
     return { message: 'Perfil excluído com sucesso', statusCode: 200 };
   }
