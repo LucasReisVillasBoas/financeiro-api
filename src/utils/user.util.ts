@@ -26,7 +26,18 @@ function maskPhone(phone?: string): string | undefined {
 export function sanitizeUserResponse(user: Usuario): any {
   if (!user) return user;
 
-  const { login, senha, email, telefone, empresasFiliais, cidade, usuarioContatos, ...rest } = user;
+  const {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    login,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    senha,
+    email,
+    telefone,
+    empresasFiliais,
+    cidade,
+    usuarioContatos,
+    ...rest
+  } = user;
 
   return {
     ...rest,

@@ -1,4 +1,4 @@
-import type { Contato } from "../entities/contato/contato.entity";
+import type { Contato } from '../entities/contato/contato.entity';
 
 function maskEmail(email?: string): string | undefined {
   if (!email) return email;

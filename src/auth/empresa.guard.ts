@@ -42,7 +42,10 @@ export class EmpresaGuard implements CanActivate {
       sedeId: ue.empresa.sede?.id || null,
     }));
 
-    const empresaIdParam = request.params.empresaId || request.userEmpresas[0]?.empresaId || request.params.id;
+    const empresaIdParam =
+      request.params.empresaId ||
+      request.userEmpresas[0]?.empresaId ||
+      request.params.id;
     const empresaIdBody = request.body?.empresa_id;
     const clienteIdBody = request.body?.cliente_id;
 

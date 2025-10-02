@@ -16,7 +16,10 @@ import { CurrentCliente } from '../auth/decorators/current-cliente.decorator';
 import { UpdateContatoDto } from './dto/update-contato.dto';
 import { ContatoService } from './contato.service';
 import { CreateContatoDto } from './dto/create-contato.dto';
-import { sanitizeContatoResponse, sanitizeContatosResponse } from '../utils/contato.util';
+import {
+  sanitizeContatoResponse,
+  sanitizeContatosResponse,
+} from '../utils/contato.util';
 
 @Controller('contatos')
 @UseGuards(JwtAuthGuard, EmpresaGuard, RolesGuard)
@@ -33,24 +36,33 @@ export class ContatoController {
       ...createContatoDto,
       clienteId: clienteId,
     });
-    return { message: 'Contato criado', statusCode: 201, data: sanitizeContatoResponse(data) };
+    return {
+      message: 'Contato criado',
+      statusCode: 201,
+      data: sanitizeContatoResponse(data),
+    };
   }
 
   @Get()
   @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
   async findAll(@CurrentCliente() clienteId: string) {
     const contatos = await this.contatoService.findAll(clienteId);
-    return { message: 'Contatos encontrados', statusCode: 200, data: sanitizeContatosResponse(contatos) };
+    return {
+      message: 'Contatos encontrados',
+      statusCode: 200,
+      data: sanitizeContatosResponse(contatos),
+    };
   }
 
   @Get(':id')
   @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
-  async findOne(
-    @Param('id') id: string,
-    @CurrentCliente() clienteId: string,
-  ) {
+  async findOne(@Param('id') id: string, @CurrentCliente() clienteId: string) {
     const contato = await this.contatoService.findOne(id, clienteId);
-    return { message: 'Contato encontrado', statusCode: 200, data: sanitizeContatoResponse(contato) };
+    return {
+      message: 'Contato encontrado',
+      statusCode: 200,
+      data: sanitizeContatoResponse(contato),
+    };
   }
 
   @Patch(':id')
@@ -65,15 +77,16 @@ export class ContatoController {
       clienteId,
       updateContatoDto,
     );
-    return { message: 'Contato atualizado', statusCode: 200, data: sanitizeContatoResponse(contato) };
+    return {
+      message: 'Contato atualizado',
+      statusCode: 200,
+      data: sanitizeContatoResponse(contato),
+    };
   }
 
   @Delete(':id')
   @SetMetadata('roles', ['Administrador', 'Editor'])
-  async remove(
-    @Param('id') id: string,
-    @CurrentCliente() clienteId: string,
-  ) {
+  async remove(@Param('id') id: string, @CurrentCliente() clienteId: string) {
     await this.contatoService.remove(id, clienteId);
     return { message: 'Contato removido', statusCode: 200 };
   }

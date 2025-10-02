@@ -1,4 +1,4 @@
-import type { Cidade } from "../entities/cidade/cidade.entity";
+import type { Cidade } from '../entities/cidade/cidade.entity';
 
 export function sanitizeCidadeResponse(cidade: Cidade): any {
   if (!cidade) return cidade;

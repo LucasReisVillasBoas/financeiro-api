@@ -19,10 +19,7 @@ import { AssociarEmpresaFilialRequestDto } from './dto/associar-empresa-filial-r
 import { RolesGuard } from 'src/auth/roles.guard';
 import { SetMetadata, UseGuards } from '@nestjs/common';
 import { CurrentCliente } from '../auth/decorators/current-cliente.decorator';
-import {
-  sanitizeUserResponse,
-  sanitizeUsersResponse,
-} from '../utils/user.util';
+import { sanitizeUserResponse } from '../utils/user.util';
 
 @Controller('usuario')
 @ApiTags('Usuario')
