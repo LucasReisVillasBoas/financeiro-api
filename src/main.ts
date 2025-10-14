@@ -7,10 +7,15 @@ import { PORT_NUMBER } from './settings';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.enableCors({
+    origin: 'http://localhost:3001',
+    credentials: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: 'Content-Type, Authorization',
+  });
+
   const config = new DocumentBuilder()
     .setTitle('API de Exemplo')
-    .setDescription('Descrição da API de Exemplo')
-    .setVersion('1.0')
     .addBearerAuth(
       {
         type: 'http',

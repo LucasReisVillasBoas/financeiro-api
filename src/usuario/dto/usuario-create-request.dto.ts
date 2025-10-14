@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray } from 'class-validator';
+import { IsArray, IsOptional } from 'class-validator';
 import { Cidade } from '../../entities/cidade/cidade.entity';
 import { Contato } from '../../entities/contato/contato.entity';
 
@@ -28,6 +28,7 @@ export class UsuarioCreateRequestDto {
   @ApiProperty({ example: '', required: false })
   cidade?: Cidade;
 
+  @IsOptional()
   @ApiProperty({ example: [], required: false, type: [String] })
   @IsArray()
   contatos?: Contato[];
