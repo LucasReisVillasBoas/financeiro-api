@@ -221,6 +221,15 @@ export class UsuarioService {
     if (!usuario) throw new NotFoundException('Usuário não encontrado');
     return usuario;
   }
+
+  async findAll(empresaId: string): Promise<Usuario[]> {
+    const empresa = await this.empresaService.findOne(empresaId);
+    if (!empresa) throw new NotFoundException('Empresa não encontrada');
+
+    const associacao = await this.usuarioEmpresaFilialRepository.find({ empresa: empresaId });
+    const usuarios = await Promise.all(associacao.map(async (assoc) => await this.getById(assoc.usuario.id)));
+    return usuarios;
+  }
   private async hashPassword(password: string): Promise<string> {
     const salt = await bcrypt.genSalt();
     return bcrypt.hash(password, salt);

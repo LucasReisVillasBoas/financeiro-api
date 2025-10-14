@@ -19,7 +19,12 @@ import { AssociarEmpresaFilialRequestDto } from './dto/associar-empresa-filial-r
 import { RolesGuard } from 'src/auth/roles.guard';
 import { SetMetadata, UseGuards } from '@nestjs/common';
 import { CurrentCliente } from '../auth/decorators/current-cliente.decorator';
-import { sanitizeUserResponse } from '../utils/user.util';
+import {
+  sanitizeUserResponse,
+  sanitizeUsersResponse,
+} from '../utils/user.util';
+import { EmpresaGuard } from '../auth/empresa.guard';
+import { CurrentEmpresaIds } from '../auth/decorators/current-empresa.decorator';
 
 @Controller('usuario')
 @ApiTags('Usuario')
@@ -59,6 +64,25 @@ export class UsuarioController {
       message: 'Usuário encontrado com sucesso',
       statusCode: 200,
       data: sanitizeUserResponse(usuario),
+    };
+  }
+
+  @ApiResponse({
+    status: 200,
+    type: Usuario,
+    description: 'Usuários',
+  })
+  @Get('all')
+  @UseGuards(RolesGuard, EmpresaGuard)
+  @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
+  async getAll(
+    @CurrentEmpresaIds() empresaIds: string[],
+  ): Promise<BaseResponse<Usuario[]>> {
+    const usuarios = await this.usuarioService.findAll(empresaIds[0]);
+    return {
+      message: 'Usuários encontrado com sucesso',
+      statusCode: 200,
+      data: sanitizeUsersResponse(usuarios),
     };
   }
 
