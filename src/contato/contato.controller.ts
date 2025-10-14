@@ -22,7 +22,7 @@ import {
 } from '../utils/contato.util';
 
 @Controller('contatos')
-@UseGuards(JwtAuthGuard, EmpresaGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class ContatoController {
   constructor(private readonly contatoService: ContatoService) {}
 
@@ -44,6 +44,7 @@ export class ContatoController {
   }
 
   @Get()
+  @UseGuards(EmpresaGuard)
   @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
   async findAll(@CurrentCliente() clienteId: string) {
     const contatos = await this.contatoService.findAll(clienteId);
@@ -55,6 +56,7 @@ export class ContatoController {
   }
 
   @Get(':id')
+  @UseGuards(EmpresaGuard)
   @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
   async findOne(@Param('id') id: string, @CurrentCliente() clienteId: string) {
     const contato = await this.contatoService.findOne(id, clienteId);
@@ -66,6 +68,7 @@ export class ContatoController {
   }
 
   @Patch(':id')
+  @UseGuards(EmpresaGuard)
   @SetMetadata('roles', ['Administrador', 'Editor'])
   async update(
     @Param('id') id: string,
@@ -85,6 +88,7 @@ export class ContatoController {
   }
 
   @Delete(':id')
+  @UseGuards(EmpresaGuard)
   @SetMetadata('roles', ['Administrador', 'Editor'])
   async remove(@Param('id') id: string, @CurrentCliente() clienteId: string) {
     await this.contatoService.remove(id, clienteId);

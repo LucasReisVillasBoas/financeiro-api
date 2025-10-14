@@ -22,7 +22,7 @@ import {
 } from '../utils/cidade.util';
 
 @Controller('cidades')
-@UseGuards(JwtAuthGuard, EmpresaGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class CidadeController {
   constructor(private readonly cidadeService: CidadeService) {}
 
@@ -44,6 +44,7 @@ export class CidadeController {
   }
 
   @Get()
+  @UseGuards(EmpresaGuard)
   @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
   async findAll(@CurrentCliente() clienteId: string) {
     const cidades = await this.cidadeService.findAll(clienteId);
@@ -55,6 +56,7 @@ export class CidadeController {
   }
 
   @Get('uf/:uf')
+  @UseGuards(EmpresaGuard)
   @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
   async findByUf(@Param('uf') uf: string, @CurrentCliente() clienteId: string) {
     const cidades = await this.cidadeService.findByUf(
@@ -69,6 +71,7 @@ export class CidadeController {
   }
 
   @Get('ibge/:codigoIbge')
+  @UseGuards(EmpresaGuard)
   @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
   async findByCodigoIbge(
     @Param('codigoIbge') codigoIbge: string,
@@ -86,6 +89,7 @@ export class CidadeController {
   }
 
   @Get(':id')
+  @UseGuards(EmpresaGuard)
   @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
   async findOne(@Param('id') id: string, @CurrentCliente() clienteId: string) {
     const cidade = await this.cidadeService.findOne(id, clienteId);
@@ -97,6 +101,7 @@ export class CidadeController {
   }
 
   @Patch(':id')
+  @UseGuards(EmpresaGuard)
   @SetMetadata('roles', ['Administrador', 'Editor'])
   async update(
     @Param('id') id: string,
@@ -116,6 +121,7 @@ export class CidadeController {
   }
 
   @Delete(':id')
+  @UseGuards(EmpresaGuard)
   @SetMetadata('roles', ['Administrador', 'Editor'])
   async remove(@Param('id') id: string, @CurrentCliente() clienteId: string) {
     await this.cidadeService.remove(id, clienteId);
