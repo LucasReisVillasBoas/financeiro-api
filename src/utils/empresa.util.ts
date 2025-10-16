@@ -35,10 +35,11 @@ function maskPhone(phone?: string): string | undefined {
 export function sanitizeEmpresaResponse(empresa: Empresa): any {
   if (!empresa) return empresa;
 
-  const { email, telefone, celular, ...rest } = empresa;
+  const { email, telefone, celular, sede, ...rest } = empresa;
 
   return {
     ...rest,
+    sede: sede ? sede.id : null,
     email: maskEmail(email),
     telefone: maskPhone(telefone),
     celular: maskPhone(celular),
