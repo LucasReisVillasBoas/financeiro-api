@@ -41,13 +41,15 @@ export class ContatoService {
     }
 
     const contatoExistente = await this.contatoRepository.findOne({
-      funcao: contatoData.funcao,
-      cliente,
+      $or: [
+        { celular: contatoData.celular, cliente },
+        { telefone: contatoData.telefone, cliente },
+      ],
     });
 
     if (contatoExistente) {
       throw new BadRequestException(
-        `Já existe um contato com celular ${contatoData.celular} para este cliente`,
+        `Já existe um contato com este celular ou telefone para este cliente`,
       );
     }
 
