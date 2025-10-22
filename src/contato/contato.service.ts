@@ -96,6 +96,31 @@ export class ContatoService {
     return contato;
   }
 
+  async findOneByTelefone(
+    telefone: string,
+    clienteId: string,
+  ): Promise<Contato> {
+    const cliente = await this.usuarioRepository.findOne({ id: clienteId });
+    if (!cliente) {
+      throw new NotFoundException(`Cliente com ID ${clienteId} não encontrado`);
+    }
+
+    const contato = await this.contatoRepository.findOne({
+      $or: [
+        { celular: telefone, cliente },
+        { telefone: telefone, cliente },
+      ],
+    });
+
+    if (!contato) {
+      throw new NotFoundException(
+        `Contato com telefone ${telefone} não encontrado`,
+      );
+    }
+
+    return contato;
+  }
+
   async findByCelular(celular: string, clienteId: string): Promise<Contato> {
     const cliente = await this.usuarioRepository.findOne({ id: clienteId });
     if (!cliente) {

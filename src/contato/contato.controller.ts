@@ -67,6 +67,24 @@ export class ContatoController {
     };
   }
 
+  @Get('/telefone/:telefone')
+  @UseGuards(EmpresaGuard)
+  @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
+  async findOneByTelefone(
+    @Param('telefone') telefone: string,
+    @CurrentCliente() clienteId: string,
+  ) {
+    const contato = await this.contatoService.findOneByTelefone(
+      telefone,
+      clienteId,
+    );
+    return {
+      message: 'Contato encontrado',
+      statusCode: 200,
+      data: sanitizeContatoResponse(contato),
+    };
+  }
+
   @Patch(':id')
   @UseGuards(EmpresaGuard)
   @SetMetadata('roles', ['Administrador', 'Editor'])
