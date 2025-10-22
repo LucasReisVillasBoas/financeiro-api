@@ -116,9 +116,9 @@ export class CidadeService {
       ...cidadeData
     } = updateCidadeDto;
 
-    if (cidadeData.codigoIbge || cidadeData.codigoBacen || newClienteId) {
+    if (newClienteId) {
       throw new BadRequestException(
-        `Não é permitido alterar o código IBGE, código BACEN ou o cliente da cidade`,
+        `Não é permitido alterar o cliente da cidade`,
       );
     }
 

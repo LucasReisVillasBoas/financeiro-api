@@ -6,7 +6,6 @@ import {
   Param,
   Put,
   Delete,
-  ParseIntPipe,
   UseGuards,
   SetMetadata,
 } from '@nestjs/common';
@@ -68,7 +67,7 @@ export class EmpresaController {
     return {
       message: 'Empresa encontrada',
       statusCode: 200,
-      data: sanitizeEmpresaResponse(data),
+      data: data,
     };
   }
 
@@ -130,7 +129,7 @@ export class EmpresaController {
   @ApiOperation({ summary: 'Atualizar filial' })
   @ApiResponse({ status: 200, description: 'Filial atualizada' })
   async updateFilial(
-    @Param('filialId', ParseIntPipe) filialId: string,
+    @Param('filialId') filialId: string,
     @Body() dto: UpdateFilialDto,
   ) {
     const data = await this.service.updateFilial(filialId, dto);
@@ -146,7 +145,7 @@ export class EmpresaController {
   @SetMetadata('roles', ['Administrador'])
   @ApiOperation({ summary: 'Remover (soft) filial' })
   @ApiResponse({ status: 200, description: 'Filial removida' })
-  async removeFilial(@Param('filialId', ParseIntPipe) filialId: string) {
+  async removeFilial(@Param('filialId') filialId: string) {
     await this.service.softDeleteFilial(filialId);
     return { message: 'Filial deletada', statusCode: 200 };
   }
