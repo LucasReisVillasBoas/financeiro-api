@@ -39,7 +39,7 @@ export class EmpresaController {
   @Get('cliente/:clienteId')
   @UseGuards(RolesGuard, EmpresaGuard)
   @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
-  @ApiOperation({ summary: 'Listar empresas por cliente'})
+  @ApiOperation({ summary: 'Listar empresas por cliente' })
   @ApiResponse({ status: 200, description: 'Empresas encontradas' })
   async findByCliente(
     @Param('clienteId') clienteId: string,
@@ -51,7 +51,7 @@ export class EmpresaController {
       return {
         message: 'Empresas encontradas',
         statusCode: 200,
-        data: sanitizeEmpresasResponse(empresasAssociadas)
+        data: sanitizeEmpresasResponse(empresasAssociadas),
       };
     }
 
@@ -70,6 +70,20 @@ export class EmpresaController {
   @ApiResponse({ status: 200, description: 'Empresa encontrada' })
   async findOne(@Param('id') id: string) {
     const data = await this.service.findOne(id);
+    return {
+      message: 'Empresa encontrada',
+      statusCode: 200,
+      data: data,
+    };
+  }
+
+  @Get('/document/:cnpj')
+  @UseGuards(RolesGuard, EmpresaGuard)
+  @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
+  @ApiOperation({ summary: 'Obter empresa por cnpj' })
+  @ApiResponse({ status: 200, description: 'Empresa encontrada' })
+  async findByDocument(@Param('cnpj') cnpj: string) {
+    const data = await this.service.findByDocument(cnpj);
     return {
       message: 'Empresa encontrada',
       statusCode: 200,
