@@ -131,6 +131,15 @@ export class EmpresaService {
     return empresa;
   }
 
+  async findByDocument(cnpj: string): Promise<Empresa> {
+    const empresa = await this.empresaRepo.findOne({
+      cnpj_cpf: cnpj,
+      ativo: true,
+    });
+    if (!empresa) throw new NotFoundException('Empresa não encontrada.');
+    return empresa;
+  }
+
   async findOneWithAccess(
     id: string,
     userEmpresaIds: string[],
