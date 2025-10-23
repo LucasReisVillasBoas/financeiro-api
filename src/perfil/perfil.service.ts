@@ -12,6 +12,7 @@ import { UsuarioPerfil } from '../entities/usuario-perfil/usuario-perfil.entity'
 import { UsuarioPerfilRepository } from '../usuario-perfil/usuario-perfil.repository';
 import { Usuario } from '../entities/usuario/usuario.entity';
 import { UsuarioService } from '../usuario/usuario.service';
+import { EmpresaService } from '../empresa/empresa.service';
 
 @Injectable()
 export class PerfilService {
@@ -24,6 +25,8 @@ export class PerfilService {
 
     @InjectRepository(Usuario)
     private readonly usuarioService: UsuarioService,
+
+    private readonly empresaService: EmpresaService,
   ) {}
 
   async create(dto: CreatePerfilDto): Promise<Perfil> {
@@ -32,26 +35,19 @@ export class PerfilService {
       throw new NotFoundException('Usuário não encontrado');
     }
 
-    // Criar o perfil
     const perfil = this.perfilRepository.create(dto);
     await this.perfilRepository.flush();
 
-    // Buscar associações de empresas do usuário através de UsuarioEmpresaFilial
-    const associacoesUsuario = await usuario.empresasFiliais.loadItems();
+    const empresaList = await this.empresaService.findAllByCliente(
+      dto.clienteId,
+    );
 
-    if (associacoesUsuario.length === 0) {
-      throw new BadRequestException(
-        'Usuário deve estar associado a pelo menos uma empresa antes de criar perfil',
-      );
-    }
-
-    // Criar UsuarioPerfil para a primeira empresa associada
-    const primeiraEmpresa = associacoesUsuario[0].empresa;
+    const empresa = empresaList.at(0);
 
     const jaExiste = await this.usuarioPerfilRepository.findOne({
       usuario,
       perfil,
-      empresa: primeiraEmpresa,
+      empresa,
     });
 
     if (jaExiste) {
@@ -61,7 +57,7 @@ export class PerfilService {
     const associacao = this.usuarioPerfilRepository.create({
       usuario,
       perfil,
-      empresa: primeiraEmpresa,
+      empresa,
       ativo: true,
     });
 

@@ -262,7 +262,15 @@ export class UsuarioService {
     });
     if (!usuario) throw new NotFoundException('Usuário não encontrado');
 
-    const empresa = await this.empresaService.findOne(dto.empresaId);
+    // Determinar qual ID usar (empresaId ou filialId)
+    const empresaOuFilialId = dto.empresaId || dto.filialId;
+    if (!empresaOuFilialId) {
+      throw new BadRequestException(
+        'É necessário fornecer empresaId ou filialId',
+      );
+    }
+
+    const empresa = await this.empresaService.findOne(empresaOuFilialId);
     if (!empresa) throw new NotFoundException('Empresa não encontrada');
 
     let cidade = await this.cidadeService.findByCliente(usuario.id);

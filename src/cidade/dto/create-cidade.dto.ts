@@ -52,10 +52,10 @@ export class CreateCidadeDto {
   nome!: string;
 
   @IsString()
-  @Length(7, 7)
+  @Length(1, 6)
   @IsValidIBGE({
     message:
-      'Código IBGE inválido. Deve ter 7 dígitos numéricos com dígito verificador válido',
+      'Código IBGE inválido. Deve ter 6 dígitos numéricos com dígito verificador válido',
   })
   codigoIbge!: string;
 
