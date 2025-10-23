@@ -6,7 +6,6 @@ import {
   Param,
   Patch,
   Delete,
-  Req,
   UseGuards,
   SetMetadata,
 } from '@nestjs/common';
@@ -59,12 +58,10 @@ export class PerfilController {
     @Param('clienteId') clienteId: string,
     @Param('id') id: string,
     @Body() dto: UpdatePerfilDto,
-    @Req() req: any,
   ) {
     const perfil = await this.perfilService.update(
       id,
       dto,
-      req.user,
       clienteId,
     );
     return {

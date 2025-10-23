@@ -11,7 +11,6 @@ import { Perfil } from '../entities/perfil/perfil.entity';
 import { UsuarioPerfil } from '../entities/usuario-perfil/usuario-perfil.entity';
 import { UsuarioPerfilRepository } from '../usuario-perfil/usuario-perfil.repository';
 import { Usuario } from '../entities/usuario/usuario.entity';
-import { EmpresaService } from '../empresa/empresa.service';
 import { UsuarioService } from '../usuario/usuario.service';
 
 @Injectable()
@@ -25,7 +24,6 @@ export class PerfilService {
 
     @InjectRepository(Usuario)
     private readonly usuarioService: UsuarioService,
-    private readonly empresaService: EmpresaService,
   ) {}
 
   async create(dto: CreatePerfilDto): Promise<Perfil> {
@@ -34,19 +32,26 @@ export class PerfilService {
       throw new NotFoundException('Usuário não encontrado');
     }
 
-    const empresaList = await this.empresaService.findAllByCliente(
-      dto.clienteId,
-    );
-
-    const empresa = empresaList.at(0);
-
+    // Criar o perfil
     const perfil = this.perfilRepository.create(dto);
     await this.perfilRepository.flush();
+
+    // Buscar associações de empresas do usuário através de UsuarioEmpresaFilial
+    const associacoesUsuario = await usuario.empresasFiliais.loadItems();
+
+    if (associacoesUsuario.length === 0) {
+      throw new BadRequestException(
+        'Usuário deve estar associado a pelo menos uma empresa antes de criar perfil',
+      );
+    }
+
+    // Criar UsuarioPerfil para a primeira empresa associada
+    const primeiraEmpresa = associacoesUsuario[0].empresa;
 
     const jaExiste = await this.usuarioPerfilRepository.findOne({
       usuario,
       perfil,
-      empresa,
+      empresa: primeiraEmpresa,
     });
 
     if (jaExiste) {
@@ -56,7 +61,7 @@ export class PerfilService {
     const associacao = this.usuarioPerfilRepository.create({
       usuario,
       perfil,
-      empresa,
+      empresa: primeiraEmpresa,
       ativo: true,
     });
 
@@ -82,7 +87,6 @@ export class PerfilService {
   async update(
     id: string,
     dto: UpdatePerfilDto,
-    user: any,
     clienteId: string,
   ): Promise<Perfil> {
     const perfil = await this.findOne(id, clienteId);

@@ -3,6 +3,7 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
+import { InjectRepository } from '@mikro-orm/nestjs';
 import { EmpresaRepository } from './empresa.repository';
 import { CreateEmpresaDto } from './dto/create-empresa.dto';
 import { UpdateEmpresaDto } from './dto/update-empresa.dto';
@@ -10,10 +11,16 @@ import { Empresa } from '../entities/empresa/empresa.entity';
 import { isValidCnpjCpf, normalizeCnpjCpf } from '../utils/empresa.util';
 import { CreateFilialDto } from './dto/create-filial.dto';
 import { UpdateFilialDto } from './dto/update-filial.dto';
+import { UsuarioEmpresaFilial } from '../entities/usuario-empresa-filial/usuario-empresa-filial.entity';
+import { UsuarioEmpresaFilialRepository } from '../usuario/usuario-empresa-filial.repository';
 
 @Injectable()
 export class EmpresaService {
-  constructor(private readonly empresaRepo: EmpresaRepository) {}
+  constructor(
+    private readonly empresaRepo: EmpresaRepository,
+    @InjectRepository(UsuarioEmpresaFilial)
+    private readonly usuarioEmpresaFilialRepository: UsuarioEmpresaFilialRepository,
+  ) {}
 
   async create(dto: CreateEmpresaDto): Promise<Empresa> {
     if (!isValidCnpjCpf(dto.cnpj_cpf)) {
@@ -77,6 +84,25 @@ export class EmpresaService {
 
   async findAllByCliente(cliente_id: string): Promise<Empresa[]> {
     return this.empresaRepo.find({ cliente_id, ativo: true });
+  }
+
+  async findByUsuarioId(usuarioId: string): Promise<Empresa[]> {
+    const associacoes = await this.usuarioEmpresaFilialRepository.find(
+      { usuario: { id: usuarioId } },
+      { populate: ['empresa'] },
+    );
+
+    if (!associacoes.length) {
+      return [];
+    }
+
+    const empresaIds = associacoes.map((assoc: any) => assoc.empresa);
+    const empresas = await this.empresaRepo.find({
+      id: { $in: empresaIds },
+      ativo: true,
+    });
+
+    return empresas;
   }
 
   async findAllByEmpresaIds(empresaIds: string[]): Promise<Empresa[]> {

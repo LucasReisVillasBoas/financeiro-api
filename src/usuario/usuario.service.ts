@@ -192,7 +192,10 @@ export class UsuarioService {
   }
 
   async getByEmail(email: string, empresaId?: string): Promise<Usuario> {
-    const usuario = await this.usuarioRepository.findOne({ email });
+    const usuario = await this.usuarioRepository.findOne({
+      email,
+      ativo: true,
+    });
     if (!usuario) throw new NotFoundException('Usuario not found');
     if (
       empresaId &&
@@ -206,18 +209,21 @@ export class UsuarioService {
   }
 
   async getById(id: string): Promise<Usuario> {
-    const usuario = await this.usuarioRepository.findOne({ id });
+    const usuario = await this.usuarioRepository.findOne({ id, ativo: true });
     if (!usuario) throw new NotFoundException('Usuário não encontrado');
     return usuario;
   }
 
   async exists(email: string): Promise<boolean> {
-    const usuario = await this.usuarioRepository.findOne({ email });
+    const usuario = await this.usuarioRepository.findOne({
+      email,
+      ativo: true,
+    });
     return !!usuario;
   }
 
   async findOne(id: string): Promise<Usuario> {
-    const usuario = await this.usuarioRepository.findOne({ id });
+    const usuario = await this.usuarioRepository.findOne({ id, ativo: true });
     if (!usuario) throw new NotFoundException('Usuário não encontrado');
     return usuario;
   }
@@ -226,8 +232,18 @@ export class UsuarioService {
     const empresa = await this.empresaService.findOne(empresaId);
     if (!empresa) throw new NotFoundException('Empresa não encontrada');
 
-    const associacao = await this.usuarioEmpresaFilialRepository.find({ empresa: empresaId });
-    const usuarios = await Promise.all(associacao.map(async (assoc) => await this.getById(assoc.usuario.id)));
+    const associacao = await this.usuarioEmpresaFilialRepository.find(
+      { empresa: { id: empresaId } },
+      { populate: ['usuario'] },
+    );
+
+    const usuarios: Usuario[] = [];
+    for (const assoc of associacao) {
+      try {
+        const usuario = await this.getById(assoc.usuario.id);
+        usuarios.push(usuario);
+      } catch (error) {}
+    }
     return usuarios;
   }
   private async hashPassword(password: string): Promise<string> {
@@ -240,20 +256,27 @@ export class UsuarioService {
     dto: AssociarEmpresaFilialRequestDto,
     admin: string,
   ): Promise<UsuarioEmpresaFilial> {
-    const usuario = await this.usuarioRepository.findOne({ id: usuarioId });
+    const usuario = await this.usuarioRepository.findOne({
+      id: usuarioId,
+      ativo: true,
+    });
     if (!usuario) throw new NotFoundException('Usuário não encontrado');
 
     const empresa = await this.empresaService.findOne(dto.empresaId);
     if (!empresa) throw new NotFoundException('Empresa não encontrada');
 
-    const cidade = await this.cidadeService.findByCliente(usuario.id);
-    if (!cidade) throw new NotFoundException('Cidade não encontrada');
+    let cidade = await this.cidadeService.findByCliente(usuario.id);
+    if (!cidade) {
+      cidade = await this.cidadeService.findByCliente(admin);
+      if (!cidade) {
+        throw new NotFoundException('Cidade não encontrada para associação');
+      }
+    }
 
     const contato = await this.contatoService.findByCliente(usuario.id);
     if (!contato) throw new NotFoundException('Contato não encontrado');
 
     const isFilial = !!empresa.sede;
-
     const jaExiste = await this.usuarioEmpresaFilialRepository.findOne({
       usuario,
       empresa,
@@ -290,17 +313,25 @@ export class UsuarioService {
   }
 
   async listarAssociacoes(usuarioId: string): Promise<UsuarioEmpresaFilial[]> {
-    const usuario = await this.usuarioRepository.findOne({ id: usuarioId });
+    const usuario = await this.usuarioRepository.findOne({
+      id: usuarioId,
+      ativo: true,
+    });
     if (!usuario) throw new NotFoundException('Usuário não encontrado');
 
-    return this.usuarioEmpresaFilialRepository.find(
+    const associacoes = await this.usuarioEmpresaFilialRepository.find(
       { usuario },
       { populate: ['empresa', 'filial'] },
     );
+
+    return associacoes;
   }
 
   async removerAssociacao(usuarioId: string, assocId: string): Promise<void> {
-    const usuario = await this.usuarioRepository.findOne({ id: usuarioId });
+    const usuario = await this.usuarioRepository.findOne({
+      id: usuarioId,
+      ativo: true,
+    });
     if (!usuario) throw new NotFoundException('Usuário não encontrado');
 
     const associacao = await this.usuarioEmpresaFilialRepository.findOne({

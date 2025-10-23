@@ -89,6 +89,23 @@ export class UsuarioController {
   @ApiResponse({
     status: 200,
     type: Usuario,
+    description: 'Usuário por ID',
+  })
+  @Get('id/:id')
+  @UseGuards(RolesGuard)
+  @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
+  async getOne(@Param('id') id: string): Promise<BaseResponse<Usuario>> {
+    const usuario = await this.usuarioService.findOne(id);
+    return {
+      message: 'Usuário encontrado com sucesso',
+      statusCode: 200,
+      data: usuario,
+    };
+  }
+
+  @ApiResponse({
+    status: 200,
+    type: Usuario,
     description: 'Usuário atualizado',
   })
   @Patch(':id')

@@ -20,7 +20,7 @@ export class AuthService {
     const user: Usuario = await this.validateLogin(loginDto);
 
     if (!user) {
-      throw new BadRequestException('error-user-not_found');
+      throw new BadRequestException('Usuário ou senha inválido');
     }
 
     const userEmpresas = await this.em.find(

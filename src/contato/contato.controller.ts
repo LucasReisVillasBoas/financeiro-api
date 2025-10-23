@@ -63,7 +63,7 @@ export class ContatoController {
     return {
       message: 'Contato encontrado',
       statusCode: 200,
-      data: sanitizeContatoResponse(contato),
+      data: contato,
     };
   }
 
