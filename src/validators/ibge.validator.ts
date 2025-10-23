@@ -12,20 +12,21 @@ export class IsValidIBGEConstraint implements ValidatorConstraintInterface {
       return false;
     }
 
-    // Verifica se tem exatamente 7 dígitos
-    if (!/^[0-9]{7}$/.test(codigoIbge)) {
+    // Verifica se tem 6 ou 7 dígitos
+    if (!/^[0-9]{6,7}$/.test(codigoIbge)) {
       return false;
     }
 
     // Validação do dígito verificador do código IBGE
-    const codigo = codigoIbge.substring(0, 6);
-    const digitoVerificador = parseInt(codigoIbge.substring(6, 7));
+    const tamanho = codigoIbge.length;
+    const codigo = codigoIbge.substring(0, tamanho - 1);
+    const digitoVerificador = parseInt(codigoIbge.substring(tamanho - 1));
 
     // Calcula o dígito verificador
     let soma = 0;
-    const pesos = [1, 2, 1, 2, 1, 2];
+    const pesos = tamanho === 6 ? [1, 2, 1, 2, 1] : [1, 2, 1, 2, 1, 2];
 
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < codigo.length; i++) {
       let resultado = parseInt(codigo[i]) * pesos[i];
       if (resultado > 9) {
         resultado = Math.floor(resultado / 10) + (resultado % 10);
@@ -39,7 +40,7 @@ export class IsValidIBGEConstraint implements ValidatorConstraintInterface {
   }
 
   defaultMessage() {
-    return 'Código IBGE inválido. O código deve ter 7 dígitos numéricos com dígito verificador válido';
+    return 'Código IBGE inválido. O código deve ter 6 ou 7 dígitos numéricos com dígito verificador válido';
   }
 }
 

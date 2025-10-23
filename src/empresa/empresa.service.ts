@@ -83,7 +83,8 @@ export class EmpresaService {
   }
 
   async findAllByCliente(cliente_id: string): Promise<Empresa[]> {
-    return this.empresaRepo.find({ cliente_id, ativo: true });
+    const empresa = await this.empresaRepo.find({ cliente_id, ativo: true });
+    return empresa
   }
 
   async findByUsuarioId(usuarioId: string): Promise<Empresa[]> {
@@ -191,6 +192,19 @@ export class EmpresaService {
 
   async softDelete(id: string): Promise<void> {
     const empresa = await this.findOne(id);
+
+    // Se for uma sede, buscar e excluir todas as filiais
+    const filiais = await this.empresaRepo.find({ sede: id, ativo: true });
+
+    if (filiais.length > 0) {
+      const deletadoEm = new Date();
+      for (const filial of filiais) {
+        filial.ativo = false;
+        filial.deletadoEm = deletadoEm;
+      }
+    }
+
+    // Excluir a empresa (sede ou filial)
     empresa.ativo = false;
     empresa.deletadoEm = new Date();
     await this.empresaRepo.flush();
