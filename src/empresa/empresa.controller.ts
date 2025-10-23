@@ -39,16 +39,22 @@ export class EmpresaController {
   @Get('cliente/:clienteId')
   @UseGuards(RolesGuard, EmpresaGuard)
   @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
-  @ApiOperation({ summary: 'Listar empresas por cliente' })
+  @ApiOperation({ summary: 'Listar empresas por cliente'})
   @ApiResponse({ status: 200, description: 'Empresas encontradas' })
   async findByCliente(
     @Param('clienteId') clienteId: string,
     @CurrentClienteIds() userClienteIds: string[],
   ) {
     if (!userClienteIds.includes(clienteId)) {
-      const data = [];
-      return { message: 'Empresas encontradas', statusCode: 200, data };
+      const empresasAssociadas = await this.service.findByUsuarioId(clienteId);
+
+      return {
+        message: 'Empresas encontradas',
+        statusCode: 200,
+        data: sanitizeEmpresasResponse(empresasAssociadas)
+      };
     }
+
     const data = await this.service.findAllByCliente(clienteId);
     return {
       message: 'Empresas encontradas',
