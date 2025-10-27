@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   SetMetadata,
+  HttpStatus,
 } from '@nestjs/common';
 import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 import { EmpresaService } from './empresa.service';
@@ -30,17 +31,17 @@ export class EmpresaController {
 
   @Post()
   @ApiOperation({ summary: 'Criar empresa' })
-  @ApiResponse({ status: 201, description: 'Empresa criada' })
+  @ApiResponse({ status: HttpStatus.CREATED, description: 'Empresa criada' })
   async create(@Body() dto: CreateEmpresaDto) {
     const data = await this.service.create(dto);
-    return { message: 'Empresa criada', statusCode: 201, data };
+    return { message: 'Empresa criada', statusCode: HttpStatus.CREATED, data };
   }
 
   @Get('cliente/:clienteId')
   @UseGuards(RolesGuard, EmpresaGuard)
   @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
   @ApiOperation({ summary: 'Listar empresas por cliente' })
-  @ApiResponse({ status: 200, description: 'Empresas encontradas' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Empresas encontradas' })
   async findByCliente(
     @Param('clienteId') clienteId: string,
     @CurrentClienteIds() userClienteIds: string[],
@@ -50,7 +51,7 @@ export class EmpresaController {
 
       return {
         message: 'Empresas encontradas',
-        statusCode: 200,
+        statusCode: HttpStatus.OK,
         data: sanitizeEmpresasResponse(empresasAssociadas),
       };
     }
@@ -58,7 +59,7 @@ export class EmpresaController {
     const data = await this.service.findAllByCliente(clienteId);
     return {
       message: 'Empresas encontradas',
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data: sanitizeEmpresasResponse(data),
     };
   }
@@ -67,12 +68,12 @@ export class EmpresaController {
   @UseGuards(RolesGuard, EmpresaGuard)
   @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
   @ApiOperation({ summary: 'Obter empresa por id' })
-  @ApiResponse({ status: 200, description: 'Empresa encontrada' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Empresa encontrada' })
   async findOne(@Param('id') id: string) {
     const data = await this.service.findOne(id);
     return {
       message: 'Empresa encontrada',
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data: data,
     };
   }
@@ -81,12 +82,12 @@ export class EmpresaController {
   @UseGuards(RolesGuard, EmpresaGuard)
   @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
   @ApiOperation({ summary: 'Obter empresa por cnpj' })
-  @ApiResponse({ status: 200, description: 'Empresa encontrada' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Empresa encontrada' })
   async findByDocument(@Param('cnpj') cnpj: string) {
     const data = await this.service.findByDocument(cnpj);
     return {
       message: 'Empresa encontrada',
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data: data,
     };
   }
@@ -95,12 +96,12 @@ export class EmpresaController {
   @UseGuards(RolesGuard)
   @SetMetadata('roles', ['Administrador', 'Editor'])
   @ApiOperation({ summary: 'Atualizar empresa' })
-  @ApiResponse({ status: 200, description: 'Empresa atualizada' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Empresa atualizada' })
   async update(@Param('id') id: string, @Body() dto: UpdateEmpresaDto) {
     const data = await this.service.update(id, dto);
     return {
       message: 'Empresa atualizada',
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data: sanitizeEmpresaResponse(data),
     };
   }
@@ -109,10 +110,10 @@ export class EmpresaController {
   @UseGuards(RolesGuard, EmpresaGuard)
   @SetMetadata('roles', ['Administrador'])
   @ApiOperation({ summary: 'Remover (soft) empresa' })
-  @ApiResponse({ status: 200, description: 'Empresa removida' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Empresa removida' })
   async remove(@Param('id') id: string) {
     await this.service.softDelete(id);
-    return { message: 'Empresa deletada', statusCode: 200 };
+    return { message: 'Empresa deletada', statusCode: HttpStatus.OK };
   }
 
   @Post(':id/filiais')
@@ -124,7 +125,7 @@ export class EmpresaController {
     const data = await this.service.createFilial(dto);
     return {
       message: 'Filial criada',
-      statusCode: 201,
+      statusCode: HttpStatus.CREATED,
       data: sanitizeEmpresaResponse(data),
     };
   }
@@ -133,12 +134,12 @@ export class EmpresaController {
   @UseGuards(RolesGuard, EmpresaGuard)
   @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
   @ApiOperation({ summary: 'Listar filiais por empresa' })
-  @ApiResponse({ status: 200, description: 'Filiais encontradas' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Filiais encontradas' })
   async listFiliais(@Param('id') id: string) {
     const data = await this.service.findFiliaisBySede(id);
     return {
       message: 'Filiais encontradas',
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data: sanitizeEmpresasResponse(data),
     };
   }
@@ -147,7 +148,7 @@ export class EmpresaController {
   @UseGuards(RolesGuard, EmpresaGuard)
   @SetMetadata('roles', ['Administrador', 'Editor'])
   @ApiOperation({ summary: 'Atualizar filial' })
-  @ApiResponse({ status: 200, description: 'Filial atualizada' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Filial atualizada' })
   async updateFilial(
     @Param('filialId') filialId: string,
     @Body() dto: UpdateFilialDto,
@@ -155,7 +156,7 @@ export class EmpresaController {
     const data = await this.service.updateFilial(filialId, dto);
     return {
       message: 'Filial atualizada',
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data: sanitizeEmpresaResponse(data),
     };
   }
@@ -164,9 +165,9 @@ export class EmpresaController {
   @UseGuards(RolesGuard, EmpresaGuard)
   @SetMetadata('roles', ['Administrador'])
   @ApiOperation({ summary: 'Remover (soft) filial' })
-  @ApiResponse({ status: 200, description: 'Filial removida' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Filial removida' })
   async removeFilial(@Param('filialId') filialId: string) {
     await this.service.softDeleteFilial(filialId);
-    return { message: 'Filial deletada', statusCode: 200 };
+    return { message: 'Filial deletada', statusCode: HttpStatus.OK };
   }
 }

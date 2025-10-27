@@ -17,6 +17,10 @@ import { AuthMiddleware } from './middlewares/auth.middleware';
 import { JwtModule } from '@nestjs/jwt';
 import { CidadeModule } from './cidade/cidade.module';
 import { ContatoModule } from './contato/contato.module';
+import { ContaBancariaModule } from './conta-bancaria/conta-bancaria.module';
+import { MovimentacaoBancariaModule } from './movimentacao-bancaria/movimentacao-bancaria.module';
+import { ContaPagarModule } from './conta-pagar/conta-pagar.module';
+import { ContaReceberModule } from './conta-receber/conta-receber.module';
 
 @Module({
   imports: [
@@ -28,6 +32,10 @@ import { ContatoModule } from './contato/contato.module';
     CidadeModule,
     ContatoModule,
     UsuarioPerfilModule,
+    ContaBancariaModule,
+    MovimentacaoBancariaModule,
+    ContaPagarModule,
+    ContaReceberModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET || 'your-secret-key',
       signOptions: { expiresIn: '7d' },

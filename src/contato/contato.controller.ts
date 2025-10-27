@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   SetMetadata,
+  HttpStatus,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { EmpresaGuard } from '../auth/empresa.guard';
@@ -38,7 +39,7 @@ export class ContatoController {
     });
     return {
       message: 'Contato criado',
-      statusCode: 201,
+      statusCode: HttpStatus.CREATED,
       data: sanitizeContatoResponse(data),
     };
   }
@@ -50,7 +51,7 @@ export class ContatoController {
     const contatos = await this.contatoService.findAll(clienteId);
     return {
       message: 'Contatos encontrados',
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data: sanitizeContatosResponse(contatos),
     };
   }
@@ -62,7 +63,7 @@ export class ContatoController {
     const contato = await this.contatoService.findOne(id, clienteId);
     return {
       message: 'Contato encontrado',
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data: contato,
     };
   }
@@ -80,7 +81,7 @@ export class ContatoController {
     );
     return {
       message: 'Contato encontrado',
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data: sanitizeContatoResponse(contato),
     };
   }
@@ -100,7 +101,7 @@ export class ContatoController {
     );
     return {
       message: 'Contato atualizado',
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data: sanitizeContatoResponse(contato),
     };
   }
@@ -110,6 +111,6 @@ export class ContatoController {
   @SetMetadata('roles', ['Administrador', 'Editor'])
   async remove(@Param('id') id: string, @CurrentCliente() clienteId: string) {
     await this.contatoService.remove(id, clienteId);
-    return { message: 'Contato removido', statusCode: 200 };
+    return { message: 'Contato removido', statusCode: HttpStatus.OK };
   }
 }

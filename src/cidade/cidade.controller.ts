@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   SetMetadata,
+  HttpStatus,
 } from '@nestjs/common';
 import { CidadeService } from './cidade.service';
 import { CreateCidadeDto } from './dto/create-cidade.dto';
@@ -38,7 +39,7 @@ export class CidadeController {
     });
     return {
       message: 'Cidade criada',
-      statusCode: 201,
+      statusCode: HttpStatus.CREATED,
       data: sanitizeCidadeResponse(data),
     };
   }
@@ -50,7 +51,7 @@ export class CidadeController {
     const cidades = await this.cidadeService.findAll(clienteId);
     return {
       message: 'Cidades encontradas',
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data: sanitizeCidadesResponse(cidades),
     };
   }
@@ -65,7 +66,7 @@ export class CidadeController {
     );
     return {
       message: 'Cidades encontradas',
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data: sanitizeCidadesResponse(cidades),
     };
   }
@@ -83,7 +84,7 @@ export class CidadeController {
     );
     return {
       message: 'Cidade encontrada',
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data: sanitizeCidadeResponse(cidade),
     };
   }
@@ -95,7 +96,7 @@ export class CidadeController {
     const cidade = await this.cidadeService.findOne(id, clienteId);
     return {
       message: 'Cidade encontrada',
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data: sanitizeCidadeResponse(cidade),
     };
   }
@@ -115,7 +116,7 @@ export class CidadeController {
     );
     return {
       message: 'Cidade atualizada',
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data: sanitizeCidadeResponse(cidade),
     };
   }
@@ -125,6 +126,6 @@ export class CidadeController {
   @SetMetadata('roles', ['Administrador', 'Editor'])
   async remove(@Param('id') id: string, @CurrentCliente() clienteId: string) {
     await this.cidadeService.remove(id, clienteId);
-    return { message: 'Cidade removida', statusCode: 200 };
+    return { message: 'Cidade removida', statusCode: HttpStatus.OK };
   }
 }

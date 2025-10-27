@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Patch,
+  HttpStatus,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UsuarioCreateRequestDto } from './dto/usuario-create-request.dto';
@@ -32,7 +33,7 @@ export class UsuarioController {
   constructor(private readonly usuarioService: UsuarioService) {}
 
   @ApiResponse({
-    status: 201,
+    status: HttpStatus.CREATED,
     type: Usuario,
     description: 'Usuário criado',
   })
@@ -43,13 +44,13 @@ export class UsuarioController {
     const usuario = await this.usuarioService.create(dto);
     return {
       message: 'Usuário criado',
-      statusCode: 201,
+      statusCode: HttpStatus.CREATED,
       data: sanitizeUserResponse(usuario),
     };
   }
 
   @ApiResponse({
-    status: 200,
+    status: HttpStatus.OK,
     type: Usuario,
     description: 'Usuário',
   })
@@ -62,13 +63,13 @@ export class UsuarioController {
     const usuario = await this.usuarioService.findOne(cliente);
     return {
       message: 'Usuário encontrado com sucesso',
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data: sanitizeUserResponse(usuario),
     };
   }
 
   @ApiResponse({
-    status: 200,
+    status: HttpStatus.OK,
     type: Usuario,
     description: 'Usuários',
   })
@@ -81,13 +82,13 @@ export class UsuarioController {
     const usuarios = await this.usuarioService.findAll(empresaIds[0]);
     return {
       message: 'Usuários encontrado com sucesso',
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data: sanitizeUsersResponse(usuarios),
     };
   }
 
   @ApiResponse({
-    status: 200,
+    status: HttpStatus.OK,
     type: Usuario,
     description: 'Usuário por ID',
   })
@@ -98,13 +99,13 @@ export class UsuarioController {
     const usuario = await this.usuarioService.findOne(id);
     return {
       message: 'Usuário encontrado com sucesso',
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data: usuario,
     };
   }
 
   @ApiResponse({
-    status: 200,
+    status: HttpStatus.OK,
     type: Usuario,
     description: 'Usuário atualizado',
   })
@@ -118,13 +119,13 @@ export class UsuarioController {
     const usuario = await this.usuarioService.update(id, dto);
     return {
       message: 'Usuário atualizado',
-      statusCode: 200,
+      statusCode: HttpStatus.OK,
       data: sanitizeUserResponse(usuario),
     };
   }
 
   @ApiResponse({
-    status: 200,
+    status: HttpStatus.OK,
     type: BaseResponse<UsuarioEmpresaFilial>,
     description: 'Associar usuario a empresa ou filial',
   })
@@ -143,13 +144,13 @@ export class UsuarioController {
     );
     return new BaseResponse<UsuarioEmpresaFilial>(
       'Associação feita com sucesso!',
-      200,
+      HttpStatus.OK,
       result,
     );
   }
 
   @ApiResponse({
-    status: 200,
+    status: HttpStatus.OK,
     type: BaseResponse<UsuarioEmpresaFilial>,
     description: 'Listar usuarios associados a empresa',
   })
@@ -162,7 +163,7 @@ export class UsuarioController {
     const result = await this.usuarioService.listarAssociacoes(usuarioId);
     return new BaseResponse<UsuarioEmpresaFilial[]>(
       'Associações listadas com sucesso!',
-      200,
+      HttpStatus.OK,
       result,
     );
   }
@@ -175,6 +176,9 @@ export class UsuarioController {
     @Param('assocId') assocId: string,
   ): Promise<BaseResponse<void>> {
     await this.usuarioService.removerAssociacao(usuarioId, assocId);
-    return new BaseResponse<void>('Associação removida com sucesso!', 200);
+    return new BaseResponse<void>(
+      'Associação removida com sucesso!',
+      HttpStatus.OK,
+    );
   }
 }

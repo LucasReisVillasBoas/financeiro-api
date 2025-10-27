@@ -1,7 +1,287 @@
 {
-  "namespaces": ["public"],
+  "namespaces": [
+    "public"
+  ],
   "name": "public",
   "tables": [
+    {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "uuid"
+        },
+        "descricao": {
+          "name": "descricao",
+          "type": "varchar(500)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 500,
+          "mappedType": "string"
+        },
+        "valor": {
+          "name": "valor",
+          "type": "numeric(15,2)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "precision": 15,
+          "scale": 2,
+          "mappedType": "decimal"
+        },
+        "vencimento": {
+          "name": "vencimento",
+          "type": "date",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 0,
+          "mappedType": "date"
+        },
+        "status": {
+          "name": "status",
+          "type": "varchar(50)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 50,
+          "mappedType": "string"
+        },
+        "fornecedor": {
+          "name": "fornecedor",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 255,
+          "mappedType": "string"
+        },
+        "data_pagamento": {
+          "name": "data_pagamento",
+          "type": "date",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 0,
+          "mappedType": "date"
+        },
+        "empresa_id": {
+          "name": "empresa_id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "uuid"
+        },
+        "filial_id": {
+          "name": "filial_id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "uuid"
+        },
+        "criado_em": {
+          "name": "criado_em",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "mappedType": "datetime"
+        },
+        "atualizado_em": {
+          "name": "atualizado_em",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "mappedType": "datetime"
+        },
+        "deletado_em": {
+          "name": "deletado_em",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 6,
+          "mappedType": "datetime"
+        }
+      },
+      "name": "contas_pagar",
+      "schema": "public",
+      "indexes": [
+        {
+          "keyName": "contas_pagar_pkey",
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "constraint": true,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {},
+      "nativeEnums": {}
+    },
+    {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "uuid"
+        },
+        "descricao": {
+          "name": "descricao",
+          "type": "varchar(500)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 500,
+          "mappedType": "string"
+        },
+        "valor": {
+          "name": "valor",
+          "type": "numeric(15,2)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "precision": 15,
+          "scale": 2,
+          "mappedType": "decimal"
+        },
+        "vencimento": {
+          "name": "vencimento",
+          "type": "date",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 0,
+          "mappedType": "date"
+        },
+        "status": {
+          "name": "status",
+          "type": "varchar(50)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 50,
+          "mappedType": "string"
+        },
+        "cliente": {
+          "name": "cliente",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 255,
+          "mappedType": "string"
+        },
+        "data_recebimento": {
+          "name": "data_recebimento",
+          "type": "date",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 0,
+          "mappedType": "date"
+        },
+        "empresa_id": {
+          "name": "empresa_id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "uuid"
+        },
+        "filial_id": {
+          "name": "filial_id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "uuid"
+        },
+        "criado_em": {
+          "name": "criado_em",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "mappedType": "datetime"
+        },
+        "atualizado_em": {
+          "name": "atualizado_em",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "mappedType": "datetime"
+        },
+        "deletado_em": {
+          "name": "deletado_em",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 6,
+          "mappedType": "datetime"
+        }
+      },
+      "name": "contas_receber",
+      "schema": "public",
+      "indexes": [
+        {
+          "keyName": "contas_receber_pkey",
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "constraint": true,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {},
+      "nativeEnums": {}
+    },
     {
       "columns": {
         "id": {
@@ -239,7 +519,9 @@
       "indexes": [
         {
           "keyName": "empresa_pkey",
-          "columnNames": ["id"],
+          "columnNames": [
+            "id"
+          ],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -250,9 +532,167 @@
       "foreignKeys": {
         "empresa_sede_id_foreign": {
           "constraintName": "empresa_sede_id_foreign",
-          "columnNames": ["sede_id"],
+          "columnNames": [
+            "sede_id"
+          ],
           "localTableName": "public.empresa",
-          "referencedColumnNames": ["id"],
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.empresa",
+          "deleteRule": "set null",
+          "updateRule": "cascade"
+        }
+      },
+      "nativeEnums": {}
+    },
+    {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "uuid"
+        },
+        "banco": {
+          "name": "banco",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 255,
+          "mappedType": "string"
+        },
+        "agencia": {
+          "name": "agencia",
+          "type": "varchar(50)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 50,
+          "mappedType": "string"
+        },
+        "conta": {
+          "name": "conta",
+          "type": "varchar(50)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 50,
+          "mappedType": "string"
+        },
+        "tipo_conta": {
+          "name": "tipo_conta",
+          "type": "varchar(50)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 50,
+          "mappedType": "string"
+        },
+        "saldo_disponivel": {
+          "name": "saldo_disponivel",
+          "type": "numeric(15,2)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "precision": 15,
+          "scale": 2,
+          "default": "0",
+          "mappedType": "decimal"
+        },
+        "ativo": {
+          "name": "ativo",
+          "type": "boolean",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "true",
+          "mappedType": "boolean"
+        },
+        "empresa_id": {
+          "name": "empresa_id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "uuid"
+        },
+        "filial_id": {
+          "name": "filial_id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "uuid"
+        },
+        "criado_em": {
+          "name": "criado_em",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "mappedType": "datetime"
+        },
+        "atualizado_em": {
+          "name": "atualizado_em",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "mappedType": "datetime"
+        },
+        "deletado_em": {
+          "name": "deletado_em",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 6,
+          "mappedType": "datetime"
+        }
+      },
+      "name": "contas_bancarias",
+      "schema": "public",
+      "indexes": [
+        {
+          "keyName": "contas_bancarias_pkey",
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "constraint": true,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "contas_bancarias_empresa_id_foreign": {
+          "constraintName": "contas_bancarias_empresa_id_foreign",
+          "columnNames": [
+            "empresa_id"
+          ],
+          "localTableName": "public.contas_bancarias",
+          "referencedColumnNames": [
+            "id"
+          ],
           "referencedTableName": "public.empresa",
           "deleteRule": "set null",
           "updateRule": "cascade"
@@ -398,7 +838,9 @@
       "indexes": [
         {
           "keyName": "endereco_pkey",
-          "columnNames": ["id"],
+          "columnNames": [
+            "id"
+          ],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -407,6 +849,167 @@
       ],
       "checks": [],
       "foreignKeys": {},
+      "nativeEnums": {}
+    },
+    {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "uuid"
+        },
+        "data": {
+          "name": "data",
+          "type": "date",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 0,
+          "mappedType": "date"
+        },
+        "descricao": {
+          "name": "descricao",
+          "type": "varchar(500)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 500,
+          "mappedType": "string"
+        },
+        "conta": {
+          "name": "conta",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 255,
+          "mappedType": "string"
+        },
+        "categoria": {
+          "name": "categoria",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 255,
+          "mappedType": "string"
+        },
+        "valor": {
+          "name": "valor",
+          "type": "numeric(15,2)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "precision": 15,
+          "scale": 2,
+          "mappedType": "decimal"
+        },
+        "tipo": {
+          "name": "tipo",
+          "type": "varchar(20)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 20,
+          "mappedType": "string"
+        },
+        "conta_bancaria_id": {
+          "name": "conta_bancaria_id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "uuid"
+        },
+        "empresa_id": {
+          "name": "empresa_id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "uuid"
+        },
+        "filial_id": {
+          "name": "filial_id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "uuid"
+        },
+        "criado_em": {
+          "name": "criado_em",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "mappedType": "datetime"
+        },
+        "atualizado_em": {
+          "name": "atualizado_em",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "mappedType": "datetime"
+        },
+        "deletado_em": {
+          "name": "deletado_em",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 6,
+          "mappedType": "datetime"
+        }
+      },
+      "name": "movimentacoes_bancarias",
+      "schema": "public",
+      "indexes": [
+        {
+          "keyName": "movimentacoes_bancarias_pkey",
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "constraint": true,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "movimentacoes_bancarias_conta_bancaria_id_foreign": {
+          "constraintName": "movimentacoes_bancarias_conta_bancaria_id_foreign",
+          "columnNames": [
+            "conta_bancaria_id"
+          ],
+          "localTableName": "public.movimentacoes_bancarias",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.contas_bancarias",
+          "updateRule": "cascade"
+        }
+      },
       "nativeEnums": {}
     },
     {
@@ -476,7 +1079,9 @@
       "indexes": [
         {
           "keyName": "perfil_pkey",
-          "columnNames": ["id"],
+          "columnNames": [
+            "id"
+          ],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -525,7 +1130,9 @@
       "indexes": [
         {
           "keyName": "tipo_contato_pkey",
-          "columnNames": ["id"],
+          "columnNames": [
+            "id"
+          ],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -534,158 +1141,6 @@
       ],
       "checks": [],
       "foreignKeys": {},
-      "nativeEnums": {}
-    },
-    {
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "default": "gen_random_uuid()",
-          "mappedType": "uuid"
-        },
-        "cliente_id": {
-          "name": "cliente_id",
-          "type": "uuid",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "uuid"
-        },
-        "filial_id": {
-          "name": "filial_id",
-          "type": "uuid",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "mappedType": "uuid"
-        },
-        "nome": {
-          "name": "nome",
-          "type": "varchar(100)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 100,
-          "mappedType": "string"
-        },
-        "funcao": {
-          "name": "funcao",
-          "type": "varchar(100)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 100,
-          "mappedType": "string"
-        },
-        "telefone": {
-          "name": "telefone",
-          "type": "varchar(15)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 15,
-          "mappedType": "string"
-        },
-        "celular": {
-          "name": "celular",
-          "type": "varchar(15)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 15,
-          "mappedType": "string"
-        },
-        "email": {
-          "name": "email",
-          "type": "varchar(100)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 100,
-          "mappedType": "string"
-        },
-        "deletado_em": {
-          "name": "deletado_em",
-          "type": "timestamptz",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "length": 6,
-          "mappedType": "datetime"
-        },
-        "criado_em": {
-          "name": "criado_em",
-          "type": "timestamptz",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 6,
-          "mappedType": "datetime"
-        },
-        "atualizado_em": {
-          "name": "atualizado_em",
-          "type": "timestamptz",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 6,
-          "mappedType": "datetime"
-        }
-      },
-      "name": "contato",
-      "schema": "public",
-      "indexes": [
-        {
-          "columnNames": ["entity_type"],
-          "composite": false,
-          "keyName": "contato_entity_type_index",
-          "constraint": false,
-          "primary": false,
-          "unique": false
-        },
-        {
-          "columnNames": ["entity_id"],
-          "composite": false,
-          "keyName": "contato_entity_id_index",
-          "constraint": false,
-          "primary": false,
-          "unique": false
-        },
-        {
-          "keyName": "contato_pkey",
-          "columnNames": ["id"],
-          "composite": false,
-          "constraint": true,
-          "primary": true,
-          "unique": true
-        }
-      ],
-      "checks": [],
-      "foreignKeys": {
-        "contato_tipo_contato_id_foreign": {
-          "constraintName": "contato_tipo_contato_id_foreign",
-          "columnNames": ["tipo_contato_id"],
-          "localTableName": "public.contato",
-          "referencedColumnNames": ["id"],
-          "referencedTableName": "public.tipo_contato",
-          "updateRule": "cascade"
-        }
-      },
       "nativeEnums": {}
     },
     {
@@ -780,6 +1235,15 @@
           "length": 6,
           "mappedType": "datetime"
         },
+        "cidade_id": {
+          "name": "cidade_id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "uuid"
+        },
         "criado_em": {
           "name": "criado_em",
           "type": "timestamptz",
@@ -805,7 +1269,9 @@
       "schema": "public",
       "indexes": [
         {
-          "columnNames": ["login"],
+          "columnNames": [
+            "login"
+          ],
           "composite": false,
           "keyName": "usuario_login_index",
           "constraint": false,
@@ -813,8 +1279,20 @@
           "unique": false
         },
         {
+          "columnNames": [
+            "cidade_id"
+          ],
+          "composite": false,
+          "keyName": "usuario_cidade_id_index",
+          "constraint": false,
+          "primary": false,
+          "unique": false
+        },
+        {
           "keyName": "usuario_pkey",
-          "columnNames": ["id"],
+          "columnNames": [
+            "id"
+          ],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -822,7 +1300,21 @@
         }
       ],
       "checks": [],
-      "foreignKeys": {},
+      "foreignKeys": {
+        "usuario_cidade_id_foreign": {
+          "constraintName": "usuario_cidade_id_foreign",
+          "columnNames": [
+            "cidade_id"
+          ],
+          "localTableName": "public.usuario",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.cidade",
+          "deleteRule": "set null",
+          "updateRule": "cascade"
+        }
+      },
       "nativeEnums": {}
     },
     {
@@ -968,7 +1460,9 @@
       "schema": "public",
       "indexes": [
         {
-          "columnNames": ["empresa_id"],
+          "columnNames": [
+            "empresa_id"
+          ],
           "composite": false,
           "keyName": "pessoa_empresa_id_index",
           "constraint": false,
@@ -976,7 +1470,9 @@
           "unique": false
         },
         {
-          "columnNames": ["endereco_id"],
+          "columnNames": [
+            "endereco_id"
+          ],
           "composite": false,
           "keyName": "pessoa_endereco_id_index",
           "constraint": false,
@@ -984,7 +1480,9 @@
           "unique": false
         },
         {
-          "columnNames": ["criado_por_id"],
+          "columnNames": [
+            "criado_por_id"
+          ],
           "composite": false,
           "keyName": "pessoa_criado_por_id_index",
           "constraint": false,
@@ -992,7 +1490,9 @@
           "unique": false
         },
         {
-          "columnNames": ["atualizado_por_id"],
+          "columnNames": [
+            "atualizado_por_id"
+          ],
           "composite": false,
           "keyName": "pessoa_atualizado_por_id_index",
           "constraint": false,
@@ -1001,7 +1501,9 @@
         },
         {
           "keyName": "pessoa_pkey",
-          "columnNames": ["id"],
+          "columnNames": [
+            "id"
+          ],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -1012,34 +1514,50 @@
       "foreignKeys": {
         "pessoa_empresa_id_foreign": {
           "constraintName": "pessoa_empresa_id_foreign",
-          "columnNames": ["empresa_id"],
+          "columnNames": [
+            "empresa_id"
+          ],
           "localTableName": "public.pessoa",
-          "referencedColumnNames": ["id"],
+          "referencedColumnNames": [
+            "id"
+          ],
           "referencedTableName": "public.empresa",
           "updateRule": "cascade"
         },
         "pessoa_endereco_id_foreign": {
           "constraintName": "pessoa_endereco_id_foreign",
-          "columnNames": ["endereco_id"],
+          "columnNames": [
+            "endereco_id"
+          ],
           "localTableName": "public.pessoa",
-          "referencedColumnNames": ["id"],
+          "referencedColumnNames": [
+            "id"
+          ],
           "referencedTableName": "public.endereco",
           "updateRule": "cascade"
         },
         "pessoa_criado_por_id_foreign": {
           "constraintName": "pessoa_criado_por_id_foreign",
-          "columnNames": ["criado_por_id"],
+          "columnNames": [
+            "criado_por_id"
+          ],
           "localTableName": "public.pessoa",
-          "referencedColumnNames": ["id"],
+          "referencedColumnNames": [
+            "id"
+          ],
           "referencedTableName": "public.usuario",
           "deleteRule": "set null",
           "updateRule": "cascade"
         },
         "pessoa_atualizado_por_id_foreign": {
           "constraintName": "pessoa_atualizado_por_id_foreign",
-          "columnNames": ["atualizado_por_id"],
+          "columnNames": [
+            "atualizado_por_id"
+          ],
           "localTableName": "public.pessoa",
-          "referencedColumnNames": ["id"],
+          "referencedColumnNames": [
+            "id"
+          ],
           "referencedTableName": "public.usuario",
           "deleteRule": "set null",
           "updateRule": "cascade"
@@ -1059,152 +1577,73 @@
           "default": "gen_random_uuid()",
           "mappedType": "uuid"
         },
-        "usuario_id": {
-          "name": "usuario_id",
+        "nome": {
+          "name": "nome",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 255,
+          "mappedType": "string"
+        },
+        "cliente_id": {
+          "name": "cliente_id",
           "type": "uuid",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": false,
+          "nullable": true,
           "mappedType": "uuid"
         },
-        "empresa_id": {
-          "name": "empresa_id",
+        "filial_id": {
+          "name": "filial_id",
           "type": "uuid",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": false,
+          "nullable": true,
           "mappedType": "uuid"
         },
-        "filial": {
-          "name": "filial",
-          "type": "boolean",
+        "funcao": {
+          "name": "funcao",
+          "type": "varchar(255)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "default": "false",
-          "mappedType": "boolean"
+          "length": 255,
+          "mappedType": "string"
         },
-        "criado_em": {
-          "name": "criado_em",
-          "type": "timestamptz",
+        "telefone": {
+          "name": "telefone",
+          "type": "varchar(255)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 6,
-          "mappedType": "datetime"
+          "length": 255,
+          "mappedType": "string"
         },
-        "atualizado_em": {
-          "name": "atualizado_em",
-          "type": "timestamptz",
+        "celular": {
+          "name": "celular",
+          "type": "varchar(255)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 6,
-          "mappedType": "datetime"
-        }
-      },
-      "name": "usuario_empresa_filial",
-      "schema": "public",
-      "indexes": [
-        {
-          "columnNames": ["usuario_id"],
-          "composite": false,
-          "keyName": "usuario_empresa_filial_usuario_id_index",
-          "constraint": false,
-          "primary": false,
-          "unique": false
+          "length": 255,
+          "mappedType": "string"
         },
-        {
-          "columnNames": ["empresa_id"],
-          "composite": false,
-          "keyName": "usuario_empresa_filial_empresa_id_index",
-          "constraint": false,
-          "primary": false,
-          "unique": false
-        },
-        {
-          "keyName": "usuario_empresa_filial_pkey",
-          "columnNames": ["id"],
-          "composite": false,
-          "constraint": true,
-          "primary": true,
-          "unique": true
-        }
-      ],
-      "checks": [],
-      "foreignKeys": {
-        "usuario_empresa_filial_usuario_id_foreign": {
-          "constraintName": "usuario_empresa_filial_usuario_id_foreign",
-          "columnNames": ["usuario_id"],
-          "localTableName": "public.usuario_empresa_filial",
-          "referencedColumnNames": ["id"],
-          "referencedTableName": "public.usuario",
-          "updateRule": "cascade"
-        },
-        "usuario_empresa_filial_empresa_id_foreign": {
-          "constraintName": "usuario_empresa_filial_empresa_id_foreign",
-          "columnNames": ["empresa_id"],
-          "localTableName": "public.usuario_empresa_filial",
-          "referencedColumnNames": ["id"],
-          "referencedTableName": "public.empresa",
-          "updateRule": "cascade"
-        }
-      },
-      "nativeEnums": {}
-    },
-    {
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
+        "email": {
+          "name": "email",
+          "type": "varchar(255)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "default": "gen_random_uuid()",
-          "mappedType": "uuid"
-        },
-        "usuario_id": {
-          "name": "usuario_id",
-          "type": "uuid",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "uuid"
-        },
-        "empresa_id": {
-          "name": "empresa_id",
-          "type": "uuid",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "uuid"
-        },
-        "perfil_id": {
-          "name": "perfil_id",
-          "type": "uuid",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "uuid"
-        },
-        "ativo": {
-          "name": "ativo",
-          "type": "boolean",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "default": "true",
-          "mappedType": "boolean"
+          "length": 255,
+          "mappedType": "string"
         },
         "deletado_em": {
           "name": "deletado_em",
@@ -1237,12 +1676,14 @@
           "mappedType": "datetime"
         }
       },
-      "name": "usuario_perfil",
+      "name": "contato",
       "schema": "public",
       "indexes": [
         {
-          "keyName": "usuario_perfil_pkey",
-          "columnNames": ["id"],
+          "keyName": "contato_pkey",
+          "columnNames": [
+            "id"
+          ],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -1251,28 +1692,30 @@
       ],
       "checks": [],
       "foreignKeys": {
-        "usuario_perfil_usuario_id_foreign": {
-          "constraintName": "usuario_perfil_usuario_id_foreign",
-          "columnNames": ["usuario_id"],
-          "localTableName": "public.usuario_perfil",
-          "referencedColumnNames": ["id"],
+        "contato_cliente_id_foreign": {
+          "constraintName": "contato_cliente_id_foreign",
+          "columnNames": [
+            "cliente_id"
+          ],
+          "localTableName": "public.contato",
+          "referencedColumnNames": [
+            "id"
+          ],
           "referencedTableName": "public.usuario",
+          "deleteRule": "set null",
           "updateRule": "cascade"
         },
-        "usuario_perfil_empresa_id_foreign": {
-          "constraintName": "usuario_perfil_empresa_id_foreign",
-          "columnNames": ["empresa_id"],
-          "localTableName": "public.usuario_perfil",
-          "referencedColumnNames": ["id"],
+        "contato_filial_id_foreign": {
+          "constraintName": "contato_filial_id_foreign",
+          "columnNames": [
+            "filial_id"
+          ],
+          "localTableName": "public.contato",
+          "referencedColumnNames": [
+            "id"
+          ],
           "referencedTableName": "public.empresa",
-          "updateRule": "cascade"
-        },
-        "usuario_perfil_perfil_id_foreign": {
-          "constraintName": "usuario_perfil_perfil_id_foreign",
-          "columnNames": ["perfil_id"],
-          "localTableName": "public.usuario_perfil",
-          "referencedColumnNames": ["id"],
-          "referencedTableName": "public.perfil",
+          "deleteRule": "set null",
           "updateRule": "cascade"
         }
       },
@@ -1384,7 +1827,9 @@
       "schema": "public",
       "indexes": [
         {
-          "columnNames": ["cliente_id"],
+          "columnNames": [
+            "cliente_id"
+          ],
           "composite": false,
           "keyName": "cidade_cliente_id_index",
           "constraint": false,
@@ -1392,7 +1837,9 @@
           "unique": false
         },
         {
-          "columnNames": ["filial_id"],
+          "columnNames": [
+            "filial_id"
+          ],
           "composite": false,
           "keyName": "cidade_filial_id_index",
           "constraint": false,
@@ -1400,7 +1847,9 @@
           "unique": false
         },
         {
-          "columnNames": ["codigo_ibge"],
+          "columnNames": [
+            "codigo_ibge"
+          ],
           "composite": false,
           "keyName": "cidade_codigo_ibge_index",
           "constraint": false,
@@ -1409,7 +1858,9 @@
         },
         {
           "keyName": "cidade_pkey",
-          "columnNames": ["id"],
+          "columnNames": [
+            "id"
+          ],
           "composite": false,
           "constraint": true,
           "primary": true,
@@ -1420,19 +1871,390 @@
       "foreignKeys": {
         "cidade_cliente_id_foreign": {
           "constraintName": "cidade_cliente_id_foreign",
-          "columnNames": ["cliente_id"],
+          "columnNames": [
+            "cliente_id"
+          ],
           "localTableName": "public.cidade",
-          "referencedColumnNames": ["id"],
+          "referencedColumnNames": [
+            "id"
+          ],
           "referencedTableName": "public.usuario",
           "updateRule": "cascade"
         },
         "cidade_filial_id_foreign": {
           "constraintName": "cidade_filial_id_foreign",
-          "columnNames": ["filial_id"],
+          "columnNames": [
+            "filial_id"
+          ],
           "localTableName": "public.cidade",
-          "referencedColumnNames": ["id"],
+          "referencedColumnNames": [
+            "id"
+          ],
           "referencedTableName": "public.empresa",
           "deleteRule": "set null",
+          "updateRule": "cascade"
+        }
+      },
+      "nativeEnums": {}
+    },
+    {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "gen_random_uuid()",
+          "mappedType": "uuid"
+        },
+        "usuario_id": {
+          "name": "usuario_id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "uuid"
+        },
+        "contato_id": {
+          "name": "contato_id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "uuid"
+        },
+        "criado_em": {
+          "name": "criado_em",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "mappedType": "datetime"
+        }
+      },
+      "name": "usuario_contato",
+      "schema": "public",
+      "indexes": [
+        {
+          "columnNames": [
+            "usuario_id"
+          ],
+          "composite": false,
+          "keyName": "usuario_contato_usuario_id_index",
+          "constraint": false,
+          "primary": false,
+          "unique": false
+        },
+        {
+          "columnNames": [
+            "contato_id"
+          ],
+          "composite": false,
+          "keyName": "usuario_contato_contato_id_index",
+          "constraint": false,
+          "primary": false,
+          "unique": false
+        },
+        {
+          "keyName": "usuario_contato_pkey",
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "constraint": true,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "usuario_contato_usuario_id_foreign": {
+          "constraintName": "usuario_contato_usuario_id_foreign",
+          "columnNames": [
+            "usuario_id"
+          ],
+          "localTableName": "public.usuario_contato",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.usuario",
+          "updateRule": "cascade"
+        },
+        "usuario_contato_contato_id_foreign": {
+          "constraintName": "usuario_contato_contato_id_foreign",
+          "columnNames": [
+            "contato_id"
+          ],
+          "localTableName": "public.usuario_contato",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.contato",
+          "updateRule": "cascade"
+        }
+      },
+      "nativeEnums": {}
+    },
+    {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "gen_random_uuid()",
+          "mappedType": "uuid"
+        },
+        "usuario_id": {
+          "name": "usuario_id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "uuid"
+        },
+        "empresa_id": {
+          "name": "empresa_id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "uuid"
+        },
+        "filial": {
+          "name": "filial",
+          "type": "boolean",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "false",
+          "mappedType": "boolean"
+        },
+        "criado_em": {
+          "name": "criado_em",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "mappedType": "datetime"
+        },
+        "atualizado_em": {
+          "name": "atualizado_em",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "mappedType": "datetime"
+        }
+      },
+      "name": "usuario_empresa_filial",
+      "schema": "public",
+      "indexes": [
+        {
+          "columnNames": [
+            "usuario_id"
+          ],
+          "composite": false,
+          "keyName": "usuario_empresa_filial_usuario_id_index",
+          "constraint": false,
+          "primary": false,
+          "unique": false
+        },
+        {
+          "columnNames": [
+            "empresa_id"
+          ],
+          "composite": false,
+          "keyName": "usuario_empresa_filial_empresa_id_index",
+          "constraint": false,
+          "primary": false,
+          "unique": false
+        },
+        {
+          "keyName": "usuario_empresa_filial_pkey",
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "constraint": true,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "usuario_empresa_filial_usuario_id_foreign": {
+          "constraintName": "usuario_empresa_filial_usuario_id_foreign",
+          "columnNames": [
+            "usuario_id"
+          ],
+          "localTableName": "public.usuario_empresa_filial",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.usuario",
+          "updateRule": "cascade"
+        },
+        "usuario_empresa_filial_empresa_id_foreign": {
+          "constraintName": "usuario_empresa_filial_empresa_id_foreign",
+          "columnNames": [
+            "empresa_id"
+          ],
+          "localTableName": "public.usuario_empresa_filial",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.empresa",
+          "updateRule": "cascade"
+        }
+      },
+      "nativeEnums": {}
+    },
+    {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "gen_random_uuid()",
+          "mappedType": "uuid"
+        },
+        "usuario_id": {
+          "name": "usuario_id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "uuid"
+        },
+        "empresa_id": {
+          "name": "empresa_id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "uuid"
+        },
+        "perfil_id": {
+          "name": "perfil_id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "uuid"
+        },
+        "ativo": {
+          "name": "ativo",
+          "type": "boolean",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "true",
+          "mappedType": "boolean"
+        },
+        "deletado_em": {
+          "name": "deletado_em",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 6,
+          "mappedType": "datetime"
+        },
+        "criado_em": {
+          "name": "criado_em",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "mappedType": "datetime"
+        },
+        "atualizado_em": {
+          "name": "atualizado_em",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "mappedType": "datetime"
+        }
+      },
+      "name": "usuario_perfil",
+      "schema": "public",
+      "indexes": [
+        {
+          "keyName": "usuario_perfil_pkey",
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "constraint": true,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "usuario_perfil_usuario_id_foreign": {
+          "constraintName": "usuario_perfil_usuario_id_foreign",
+          "columnNames": [
+            "usuario_id"
+          ],
+          "localTableName": "public.usuario_perfil",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.usuario",
+          "updateRule": "cascade"
+        },
+        "usuario_perfil_empresa_id_foreign": {
+          "constraintName": "usuario_perfil_empresa_id_foreign",
+          "columnNames": [
+            "empresa_id"
+          ],
+          "localTableName": "public.usuario_perfil",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.empresa",
+          "updateRule": "cascade"
+        },
+        "usuario_perfil_perfil_id_foreign": {
+          "constraintName": "usuario_perfil_perfil_id_foreign",
+          "columnNames": [
+            "perfil_id"
+          ],
+          "localTableName": "public.usuario_perfil",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.perfil",
           "updateRule": "cascade"
         }
       },
