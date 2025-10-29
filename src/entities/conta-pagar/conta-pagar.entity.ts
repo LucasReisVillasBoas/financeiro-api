@@ -1,8 +1,8 @@
 import { Entity, Property, PrimaryKey } from '@mikro-orm/core';
-import { ContaPagarRepository } from '../../conta-pagar/conta-pagar.repository';
+import { ContasPagarRepository } from '../../conta-pagar/conta-pagar.repository';
 
-@Entity({ repository: () => ContaPagarRepository })
-export class ContaPagar {
+@Entity({ repository: () => ContasPagarRepository })
+export class ContasPagar {
   @PrimaryKey({ type: 'uuid', defaultRaw: 'gen_random_uuid()' })
   id!: string;
 

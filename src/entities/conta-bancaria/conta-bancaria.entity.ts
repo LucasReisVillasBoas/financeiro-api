@@ -1,9 +1,9 @@
 import { Entity, Property, ManyToOne, PrimaryKey } from '@mikro-orm/core';
 import { Empresa } from '../empresa/empresa.entity';
-import { ContaBancariaRepository } from '../../conta-bancaria/conta-bancaria.repository';
+import { ContasBancariasRepository } from '../../conta-bancaria/conta-bancaria.repository';
 
-@Entity({ repository: () => ContaBancariaRepository })
-export class ContaBancaria {
+@Entity({ repository: () => ContasBancariasRepository })
+export class ContasBancarias {
   @PrimaryKey({ type: 'uuid', defaultRaw: 'gen_random_uuid()' })
   id!: string;
 

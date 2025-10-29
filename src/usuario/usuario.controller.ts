@@ -79,7 +79,7 @@ export class UsuarioController {
   async getAll(
     @CurrentEmpresaIds() empresaIds: string[],
   ): Promise<BaseResponse<Usuario[]>> {
-    const usuarios = await this.usuarioService.findAll(empresaIds[0]);
+    const usuarios = await this.usuarioService.findAll(empresaIds);
     return {
       message: 'Usuários encontrado com sucesso',
       statusCode: HttpStatus.OK,

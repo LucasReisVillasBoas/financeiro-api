@@ -1,6 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { CreateMovimentacaoBancariaDto } from './create-movimentacao-bancaria.dto';
+import { CreateMovimentacoesBancariasDto } from './create-movimentacao-bancaria.dto';
 
-export class UpdateMovimentacaoBancariaDto extends PartialType(
-  CreateMovimentacaoBancariaDto,
+export class UpdateMovimentacoesBancariasDto extends PartialType(
+  CreateMovimentacoesBancariasDto,
 ) {}

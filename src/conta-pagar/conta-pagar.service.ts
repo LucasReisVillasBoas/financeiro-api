@@ -1,18 +1,18 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
-import { ContaPagarRepository } from './conta-pagar.repository';
+import { ContasPagarRepository } from './conta-pagar.repository';
 import { CreateContaPagarDto } from './dto/create-conta-pagar.dto';
 import { UpdateContaPagarDto } from './dto/update-conta-pagar.dto';
-import { ContaPagar } from '../entities/conta-pagar/conta-pagar.entity';
+import { ContasPagar } from '../entities/conta-pagar/conta-pagar.entity';
 
 @Injectable()
-export class ContaPagarService {
+export class ContasPagarService {
   constructor(
-    @InjectRepository(ContaPagar)
-    private readonly contaPagarRepository: ContaPagarRepository,
+    @InjectRepository(ContasPagar)
+    private readonly contaPagarRepository: ContasPagarRepository,
   ) {}
 
-  async create(dto: CreateContaPagarDto): Promise<ContaPagar> {
+  async create(dto: CreateContaPagarDto): Promise<ContasPagar> {
     const conta = this.contaPagarRepository.create({
       ...dto,
       vencimento: new Date(dto.vencimento),
@@ -24,18 +24,18 @@ export class ContaPagarService {
     return conta;
   }
 
-  async findAll(): Promise<ContaPagar[]> {
+  async findAll(): Promise<ContasPagar[]> {
     return await this.contaPagarRepository.find({ deletadoEm: null });
   }
 
-  async findByEmpresa(empresaId: string): Promise<ContaPagar[]> {
+  async findByEmpresa(empresaId: string): Promise<ContasPagar[]> {
     return await this.contaPagarRepository.find({
       empresaId,
       deletadoEm: null,
     });
   }
 
-  async findOne(id: string): Promise<ContaPagar> {
+  async findOne(id: string): Promise<ContasPagar> {
     const conta = await this.contaPagarRepository.findOne({
       id,
       deletadoEm: null,
@@ -48,7 +48,7 @@ export class ContaPagarService {
     return conta;
   }
 
-  async update(id: string, dto: UpdateContaPagarDto): Promise<ContaPagar> {
+  async update(id: string, dto: UpdateContaPagarDto): Promise<ContasPagar> {
     const conta = await this.findOne(id);
     const updateData: any = { ...dto };
 
@@ -65,7 +65,7 @@ export class ContaPagarService {
     return conta;
   }
 
-  async marcarComoPaga(id: string): Promise<ContaPagar> {
+  async marcarComoPaga(id: string): Promise<ContasPagar> {
     const conta = await this.findOne(id);
     conta.status = 'Paga';
     conta.dataPagamento = new Date();

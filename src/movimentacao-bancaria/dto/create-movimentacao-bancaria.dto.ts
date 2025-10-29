@@ -13,7 +13,7 @@ export enum TipoMovimentacao {
   SAIDA = 'Saída',
 }
 
-export class CreateMovimentacaoBancariaDto {
+export class CreateMovimentacoesBancariasDto {
   @IsDateString()
   data!: string;
 

@@ -1,29 +1,45 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
-import { MovimentacaoBancariaRepository } from './movimentacao-bancaria.repository';
-import { CreateMovimentacaoBancariaDto } from './dto/create-movimentacao-bancaria.dto';
-import { UpdateMovimentacaoBancariaDto } from './dto/update-movimentacao-bancaria.dto';
-import { MovimentacaoBancaria } from '../entities/movimentacao-bancaria/movimentacao-bancaria.entity';
+import { MovimentacoesBancariasRepository } from './movimentacao-bancaria.repository';
+import { CreateMovimentacoesBancariasDto } from './dto/create-movimentacao-bancaria.dto';
+import { UpdateMovimentacoesBancariasDto } from './dto/update-movimentacao-bancaria.dto';
+import { MovimentacoesBancarias } from '../entities/movimentacao-bancaria/movimentacao-bancaria.entity';
+import { ContasBancarias } from '../entities/conta-bancaria/conta-bancaria.entity';
+import { ContasBancariasRepository } from '../conta-bancaria/conta-bancaria.repository';
 
 @Injectable()
-export class MovimentacaoBancariaService {
+export class MovimentacoesBancariasService {
   constructor(
-    @InjectRepository(MovimentacaoBancaria)
-    private readonly movimentacaoRepository: MovimentacaoBancariaRepository,
+    @InjectRepository(MovimentacoesBancarias)
+    private readonly movimentacaoRepository: MovimentacoesBancariasRepository,
+    private readonly contasBancariasRepository: ContasBancariasRepository,
   ) {}
 
   async create(
-    dto: CreateMovimentacaoBancariaDto,
-  ): Promise<MovimentacaoBancaria> {
+    dto: CreateMovimentacoesBancariasDto,
+  ): Promise<MovimentacoesBancarias> {
+    // Buscar a conta bancária
+    const contaBancaria = await this.contasBancariasRepository.findOne({
+      id: dto.contaBancaria,
+      deletadoEm: null,
+    });
+
+    if (!contaBancaria) {
+      throw new NotFoundException('Conta bancária não encontrada');
+    }
+
+    // Criar a movimentação com o objeto contaBancaria
+    const { contaBancaria: contaBancariaId, ...dadosMovimentacao } = dto;
     const movimentacao = this.movimentacaoRepository.create({
-      ...dto,
+      ...dadosMovimentacao,
       data: new Date(dto.data),
+      contaBancaria,
     });
     await this.movimentacaoRepository.persistAndFlush(movimentacao);
     return movimentacao;
   }
 
-  async findAll(): Promise<MovimentacaoBancaria[]> {
+  async findAll(): Promise<MovimentacoesBancarias[]> {
     return await this.movimentacaoRepository.find(
       { deletadoEm: null },
       { populate: ['contaBancaria'] },
@@ -33,7 +49,7 @@ export class MovimentacaoBancariaService {
   async findByPeriodo(
     dataInicio: string,
     dataFim: string,
-  ): Promise<MovimentacaoBancaria[]> {
+  ): Promise<MovimentacoesBancarias[]> {
     return await this.movimentacaoRepository.find(
       {
         data: {
@@ -46,7 +62,7 @@ export class MovimentacaoBancariaService {
     );
   }
 
-  async findByConta(contaId: string): Promise<MovimentacaoBancaria[]> {
+  async findByConta(contaId: string): Promise<MovimentacoesBancarias[]> {
     return await this.movimentacaoRepository.find(
       {
         contaBancaria: contaId,
@@ -56,7 +72,7 @@ export class MovimentacaoBancariaService {
     );
   }
 
-  async findOne(id: string): Promise<MovimentacaoBancaria> {
+  async findOne(id: string): Promise<MovimentacoesBancarias> {
     const movimentacao = await this.movimentacaoRepository.findOne(
       {
         id,
@@ -74,8 +90,8 @@ export class MovimentacaoBancariaService {
 
   async update(
     id: string,
-    dto: UpdateMovimentacaoBancariaDto,
-  ): Promise<MovimentacaoBancaria> {
+    dto: UpdateMovimentacoesBancariasDto,
+  ): Promise<MovimentacoesBancarias> {
     const movimentacao = await this.findOne(id);
     const updateData = { ...dto };
 

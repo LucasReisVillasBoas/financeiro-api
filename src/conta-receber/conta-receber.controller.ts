@@ -10,13 +10,13 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { ContaReceberService } from './conta-receber.service';
+import { ContasReceberService } from './conta-receber.service';
 import { CreateContaReceberDto } from './dto/create-conta-receber.dto';
 import { UpdateContaReceberDto } from './dto/update-conta-receber.dto';
 
 @Controller('contas-receber')
-export class ContaReceberController {
-  constructor(private readonly contaReceberService: ContaReceberService) {}
+export class ContasReceberController {
+  constructor(private readonly contaReceberService: ContasReceberService) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)

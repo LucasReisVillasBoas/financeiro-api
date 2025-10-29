@@ -1,13 +1,14 @@
 import { Module } from '@nestjs/common';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
-import { MovimentacaoBancaria } from '../entities/movimentacao-bancaria/movimentacao-bancaria.entity';
-import { MovimentacaoBancariaController } from './movimentacao-bancaria.controller';
-import { MovimentacaoBancariaService } from './movimentacao-bancaria.service';
+import { MovimentacoesBancarias } from '../entities/movimentacao-bancaria/movimentacao-bancaria.entity';
+import { ContasBancarias } from '../entities/conta-bancaria/conta-bancaria.entity';
+import { MovimentacoesBancariasController } from './movimentacao-bancaria.controller';
+import { MovimentacoesBancariasService } from './movimentacao-bancaria.service';
 
 @Module({
-  imports: [MikroOrmModule.forFeature([MovimentacaoBancaria])],
-  controllers: [MovimentacaoBancariaController],
-  providers: [MovimentacaoBancariaService],
-  exports: [MovimentacaoBancariaService],
+  imports: [MikroOrmModule.forFeature([MovimentacoesBancarias, ContasBancarias])],
+  controllers: [MovimentacoesBancariasController],
+  providers: [MovimentacoesBancariasService],
+  exports: [MovimentacoesBancariasService],
 })
-export class MovimentacaoBancariaModule {}
+export class MovimentacoesBancariasModule {}
