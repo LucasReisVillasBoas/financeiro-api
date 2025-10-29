@@ -228,9 +228,14 @@ export class UsuarioService {
     return usuario;
   }
 
-  async findAll(empresaId: string): Promise<Usuario[]> {
-    const empresa = await this.empresaService.findOne(empresaId);
-    if (!empresa) throw new NotFoundException('Empresa não encontrada');
+  async findAll(empresaId: string[]): Promise<Usuario[]> {
+    let empresas = [];
+    empresaId.map(async (id) => {
+      const empresa = await this.empresaService.findOne(id);
+      if (empresa) empresas.push(empresa);
+    });
+
+    if (!empresas) throw new NotFoundException('Nenhuma não encontrada');
 
     const associacao = await this.usuarioEmpresaFilialRepository.find(
       { empresa: { id: empresaId } },

@@ -10,19 +10,19 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { MovimentacaoBancariaService } from './movimentacao-bancaria.service';
-import { CreateMovimentacaoBancariaDto } from './dto/create-movimentacao-bancaria.dto';
-import { UpdateMovimentacaoBancariaDto } from './dto/update-movimentacao-bancaria.dto';
+import { MovimentacoesBancariasService } from './movimentacao-bancaria.service';
+import { CreateMovimentacoesBancariasDto } from './dto/create-movimentacao-bancaria.dto';
+import { UpdateMovimentacoesBancariasDto } from './dto/update-movimentacao-bancaria.dto';
 
 @Controller('movimentacoes-bancarias')
-export class MovimentacaoBancariaController {
+export class MovimentacoesBancariasController {
   constructor(
-    private readonly movimentacaoService: MovimentacaoBancariaService,
+    private readonly movimentacaoService: MovimentacoesBancariasService,
   ) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() dto: CreateMovimentacaoBancariaDto) {
+  async create(@Body() dto: CreateMovimentacoesBancariasDto) {
     const movimentacao = await this.movimentacaoService.create(dto);
     return {
       message: 'Movimentação bancária criada com sucesso',
@@ -80,7 +80,7 @@ export class MovimentacaoBancariaController {
   @Put(':id')
   async update(
     @Param('id') id: string,
-    @Body() dto: UpdateMovimentacaoBancariaDto,
+    @Body() dto: UpdateMovimentacoesBancariasDto,
   ) {
     const movimentacao = await this.movimentacaoService.update(id, dto);
     return {

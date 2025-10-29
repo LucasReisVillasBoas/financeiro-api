@@ -1,4 +1,4 @@
 import { PostgresEntityRepository } from '../database/postgres-entity.repository';
-import { ContaPagar } from '../entities/conta-pagar/conta-pagar.entity';
+import { ContasPagar } from '../entities/conta-pagar/conta-pagar.entity';
 
-export class ContaPagarRepository extends PostgresEntityRepository<ContaPagar> {}
+export class ContasPagarRepository extends PostgresEntityRepository<ContasPagar> {}

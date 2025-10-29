@@ -1,9 +1,9 @@
 import { Entity, Property, ManyToOne, PrimaryKey } from '@mikro-orm/core';
-import { ContaBancaria } from '../conta-bancaria/conta-bancaria.entity';
-import { MovimentacaoBancariaRepository } from '../../movimentacao-bancaria/movimentacao-bancaria.repository';
+import { ContasBancarias } from '../conta-bancaria/conta-bancaria.entity';
+import { MovimentacoesBancariasRepository } from '../../movimentacao-bancaria/movimentacao-bancaria.repository';
 
-@Entity({ repository: () => MovimentacaoBancariaRepository })
-export class MovimentacaoBancaria {
+@Entity({ repository: () => MovimentacoesBancariasRepository })
+export class MovimentacoesBancarias {
   @PrimaryKey({ type: 'uuid', defaultRaw: 'gen_random_uuid()' })
   id!: string;
 
@@ -25,8 +25,8 @@ export class MovimentacaoBancaria {
   @Property({ type: 'varchar', length: 20 })
   tipo!: string; // Entrada ou Saída
 
-  @ManyToOne(() => ContaBancaria, { fieldName: 'conta_bancaria_id' })
-  contaBancaria!: ContaBancaria;
+  @ManyToOne(() => ContasBancarias, { fieldName: 'conta_bancaria_id' })
+  contaBancaria!: ContasBancarias;
 
   @Property({ type: 'uuid', nullable: true })
   empresaId?: string;

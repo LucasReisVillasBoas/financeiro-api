@@ -4,19 +4,22 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
-import { ContaBancariaRepository } from './conta-bancaria.repository';
+import { ContasBancariasRepository } from './conta-bancaria.repository';
 import { CreateContaBancariaDto } from './dto/create-conta-bancaria.dto';
 import { UpdateContaBancariaDto } from './dto/update-conta-bancaria.dto';
-import { ContaBancaria } from '../entities/conta-bancaria/conta-bancaria.entity';
+import { ContasBancarias } from '../entities/conta-bancaria/conta-bancaria.entity';
+import { Empresa } from '../entities/empresa/empresa.entity';
+import { EmpresaService } from '../empresa/empresa.service';
 
 @Injectable()
-export class ContaBancariaService {
+export class ContasBancariasService {
   constructor(
-    @InjectRepository(ContaBancaria)
-    private readonly contaBancariaRepository: ContaBancariaRepository,
+    @InjectRepository(ContasBancarias)
+    private readonly contasBancariasRepository: ContasBancariasRepository,
+    private readonly empresaService: EmpresaService,
   ) {}
 
-  async create(dto: CreateContaBancariaDto): Promise<ContaBancaria> {
+  async create(dto: CreateContaBancariaDto): Promise<ContasBancarias> {
     const contasExistentes = await this.findByEmpresa(dto.empresaId);
     if (contasExistentes.length > 0) {
       const existe = contasExistentes.find((c) => c.conta === dto.conta);
@@ -26,26 +29,41 @@ export class ContaBancariaService {
         );
       }
     }
-    const conta = this.contaBancariaRepository.create(dto);
-    await this.contaBancariaRepository.persistAndFlush(conta);
+
+    let empresa: Empresa | undefined;
+    if (dto.empresaId) {
+      empresa = await this.empresaService.findOne(dto.empresaId);
+      if (!empresa) {
+        throw new NotFoundException('Empresa não encontrada');
+      }
+    }
+
+    const { empresaId, ...dadosConta } = dto;
+    const conta = this.contasBancariasRepository.create({
+      ...dadosConta,
+      empresa,
+    });
+    await this.contasBancariasRepository.persistAndFlush(conta);
     return conta;
   }
 
-  async findAll(): Promise<ContaBancaria[]> {
-    return await this.contaBancariaRepository.find({
+  async findAll(): Promise<ContasBancarias[]> {
+    return await this.contasBancariasRepository.find({
       deletadoEm: null,
     });
   }
 
-  async findByEmpresa(empresaId: string): Promise<ContaBancaria[]> {
-    return await this.contaBancariaRepository.find({
+  async findByEmpresa(empresaId: string): Promise<ContasBancarias[]> {
+    const empresas = await this.contasBancariasRepository.find({
       empresa: empresaId,
       deletadoEm: null,
     });
+
+    return empresas ?? [];
   }
 
-  async findOne(id: string): Promise<ContaBancaria> {
-    const conta = await this.contaBancariaRepository.findOne({
+  async findOne(id: string): Promise<ContasBancarias> {
+    const conta = await this.contasBancariasRepository.findOne({
       id,
       deletadoEm: null,
     });
@@ -60,17 +78,17 @@ export class ContaBancariaService {
   async update(
     id: string,
     dto: UpdateContaBancariaDto,
-  ): Promise<ContaBancaria> {
+  ): Promise<ContasBancarias> {
     const conta = await this.findOne(id);
-    this.contaBancariaRepository.assign(conta, dto);
-    await this.contaBancariaRepository.flush();
+    this.contasBancariasRepository.assign(conta, dto);
+    await this.contasBancariasRepository.flush();
     return conta;
   }
 
-  async toggleStatus(id: string): Promise<ContaBancaria> {
+  async toggleStatus(id: string): Promise<ContasBancarias> {
     const conta = await this.findOne(id);
     conta.ativo = !conta.ativo;
-    await this.contaBancariaRepository.persistAndFlush(conta);
+    await this.contasBancariasRepository.persistAndFlush(conta);
     return conta;
   }
 
@@ -78,6 +96,6 @@ export class ContaBancariaService {
     const conta = await this.findOne(id);
     conta.deletadoEm = new Date();
     conta.ativo = false;
-    await this.contaBancariaRepository.persistAndFlush(conta);
+    await this.contasBancariasRepository.persistAndFlush(conta);
   }
 }

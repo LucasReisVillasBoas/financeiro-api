@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
-import { ContaBancaria } from '../entities/conta-bancaria/conta-bancaria.entity';
+import { ContasBancarias } from '../entities/conta-bancaria/conta-bancaria.entity';
 import { ContaBancariaController } from './conta-bancaria.controller';
-import { ContaBancariaService } from './conta-bancaria.service';
+import { ContasBancariasService } from './conta-bancaria.service';
 
 @Module({
-  imports: [MikroOrmModule.forFeature([ContaBancaria])],
+  imports: [MikroOrmModule.forFeature([ContasBancarias])],
   controllers: [ContaBancariaController],
-  providers: [ContaBancariaService],
-  exports: [ContaBancariaService],
+  providers: [ContasBancariasService],
+  exports: [ContasBancariasService],
 })
 export class ContaBancariaModule {}

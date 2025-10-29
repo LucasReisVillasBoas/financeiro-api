@@ -9,10 +9,10 @@ import { Endereco } from '../entities/endereco/endereco.entity';
 import { Pessoa } from '../entities/pessoa/pessoa.entity';
 import { Perfil } from '../entities/perfil/perfil.entity';
 import { UsuarioPerfil } from '../entities/usuario-perfil/usuario-perfil.entity';
-import { ContaBancaria } from '../entities/conta-bancaria/conta-bancaria.entity';
-import { MovimentacaoBancaria } from '../entities/movimentacao-bancaria/movimentacao-bancaria.entity';
-import { ContaPagar } from '../entities/conta-pagar/conta-pagar.entity';
-import { ContaReceber } from '../entities/conta-receber/conta-receber.entity';
+import { ContasBancarias } from '../entities/conta-bancaria/conta-bancaria.entity';
+import { MovimentacoesBancarias } from '../entities/movimentacao-bancaria/movimentacao-bancaria.entity';
+import { ContasPagar } from '../entities/conta-pagar/conta-pagar.entity';
+import { ContasReceber } from '../entities/conta-receber/conta-receber.entity';
 
 export default defineConfig({
   dbName: DATABASE_NAME,
@@ -28,10 +28,10 @@ export default defineConfig({
     Pessoa,
     Perfil,
     UsuarioPerfil,
-    ContaBancaria,
-    MovimentacaoBancaria,
-    ContaPagar,
-    ContaReceber,
+    ContasBancarias,
+    MovimentacoesBancarias,
+    ContasPagar,
+    ContasReceber,
   ],
   migrations: {
     path: 'src/database/migrations',

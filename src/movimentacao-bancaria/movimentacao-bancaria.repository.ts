@@ -1,4 +1,4 @@
 import { PostgresEntityRepository } from '../database/postgres-entity.repository';
-import { MovimentacaoBancaria } from '../entities/movimentacao-bancaria/movimentacao-bancaria.entity';
+import { MovimentacoesBancarias } from '../entities/movimentacao-bancaria/movimentacao-bancaria.entity';
 
-export class MovimentacaoBancariaRepository extends PostgresEntityRepository<MovimentacaoBancaria> {}
+export class MovimentacoesBancariasRepository extends PostgresEntityRepository<MovimentacoesBancarias> {}

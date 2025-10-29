@@ -128,7 +128,7 @@ export class EmpresaService {
 
   async findOne(id: string): Promise<Empresa> {
     const empresa = await this.empresaRepo.findOne({ id, ativo: true });
-    if (!empresa) throw new NotFoundException('Empresa não encontrada.');
+    if (!empresa) return null
     return empresa;
   }
 
