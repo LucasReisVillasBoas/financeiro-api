@@ -2,12 +2,14 @@ import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Usuario } from 'src/entities/usuario/usuario.entity';
 import { UsuarioPerfilService } from '../usuario-perfil/usuario-perfil.service';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
     private usuarioPerfilService: UsuarioPerfilService,
+    private auditService: AuditService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -20,7 +22,28 @@ export class RolesGuard implements CanActivate {
     if (!user) {
       return false;
     }
-    return await this.matchRoles(roles, user.id);
+
+    const userRoles = await this.getUserRoles(user.id);
+    const hasAccess = await this.matchRoles(roles, user.id);
+
+    if (!hasAccess) {
+      // Registrar tentativa de acesso negado
+      const ipAddress = AuditService.extractIpAddress(request);
+      const resource = request.route?.path || request.url;
+      const action = request.method;
+
+      await this.auditService.logAccessDeniedNoRole(
+        user.id,
+        user.email,
+        roles,
+        userRoles,
+        resource,
+        action,
+        ipAddress,
+      );
+    }
+
+    return hasAccess;
   }
 
   async matchRoles(roles: string[], userId: string): Promise<boolean> {

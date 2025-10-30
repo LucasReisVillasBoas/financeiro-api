@@ -13,6 +13,7 @@ import { CreateFilialDto } from './dto/create-filial.dto';
 import { UpdateFilialDto } from './dto/update-filial.dto';
 import { UsuarioEmpresaFilial } from '../entities/usuario-empresa-filial/usuario-empresa-filial.entity';
 import { UsuarioEmpresaFilialRepository } from '../usuario/usuario-empresa-filial.repository';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class EmpresaService {
@@ -20,6 +21,7 @@ export class EmpresaService {
     private readonly empresaRepo: EmpresaRepository,
     @InjectRepository(UsuarioEmpresaFilial)
     private readonly usuarioEmpresaFilialRepository: UsuarioEmpresaFilialRepository,
+    private readonly auditService: AuditService,
   ) {}
 
   async create(dto: CreateEmpresaDto): Promise<Empresa> {
@@ -190,7 +192,7 @@ export class EmpresaService {
     return empresa;
   }
 
-  async softDelete(id: string): Promise<void> {
+  async softDelete(id: string, user: any): Promise<void> {
     const empresa = await this.findOne(id);
 
     // Se for uma sede, buscar e excluir todas as filiais
@@ -201,6 +203,22 @@ export class EmpresaService {
       for (const filial of filiais) {
         filial.ativo = false;
         filial.deletadoEm = deletadoEm;
+
+        // Registrar exclusão da filial
+        await this.auditService.logEntityDeleted(
+          'EMPRESA',
+          filial.id,
+          user.sub || user.id,
+          user.username || user.email,
+          filial.id, // empresa_id da filial
+          {
+            razao_social: filial.razao_social,
+            cnpj_cpf: filial.cnpj_cpf,
+            cliente_id: filial.cliente_id,
+            tipo: 'filial',
+            motivo: 'Exclusão em cascata junto com a sede',
+          },
+        );
       }
     }
 
@@ -208,6 +226,22 @@ export class EmpresaService {
     empresa.ativo = false;
     empresa.deletadoEm = new Date();
     await this.empresaRepo.flush();
+
+    // Registrar exclusão da empresa
+    await this.auditService.logEntityDeleted(
+      'EMPRESA',
+      empresa.id,
+      user.sub || user.id,
+      user.username || user.email,
+      empresa.id,
+      {
+        razao_social: empresa.razao_social,
+        cnpj_cpf: empresa.cnpj_cpf,
+        cliente_id: empresa.cliente_id,
+        tipo: empresa.sede ? 'filial' : 'sede',
+        filiaisExcluidas: filiais.length,
+      },
+    );
   }
 
   async updateFilial(filialId: string, dto: UpdateFilialDto) {
@@ -225,7 +259,7 @@ export class EmpresaService {
     return filial;
   }
 
-  async softDeleteFilial(filialId: string) {
+  async softDeleteFilial(filialId: string, user: any) {
     const filial = await this.empresaRepo.findOne({ id: filialId });
     if (!filial) {
       throw new NotFoundException('Filial não encontrada');
@@ -235,5 +269,21 @@ export class EmpresaService {
     filial.deletadoEm = new Date();
 
     await this.empresaRepo.flush();
+
+    // Registrar exclusão da filial
+    await this.auditService.logEntityDeleted(
+      'EMPRESA',
+      filial.id,
+      user.sub || user.id,
+      user.username || user.email,
+      filial.id,
+      {
+        razao_social: filial.razao_social,
+        cnpj_cpf: filial.cnpj_cpf,
+        cliente_id: filial.cliente_id,
+        sede_id: filial.sede?.id,
+        tipo: 'filial',
+      },
+    );
   }
 }

@@ -7,6 +7,7 @@ import { UsuarioService } from '../usuario/usuario.service';
 import { Usuario } from '../entities/usuario/usuario.entity';
 import { EntityManager } from '@mikro-orm/postgresql';
 import { UsuarioEmpresaFilial } from '../entities/usuario-empresa-filial/usuario-empresa-filial.entity';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class AuthService {
@@ -14,12 +15,29 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly usuarioService: UsuarioService,
     private readonly em: EntityManager,
+    private readonly auditService: AuditService,
   ) {}
 
-  async login(loginDto: LoginDto): Promise<LoginResponseDto> {
+  async login(loginDto: LoginDto, request?: any): Promise<LoginResponseDto> {
     const user: Usuario = await this.validateLogin(loginDto);
 
+    const ipAddress = request
+      ? AuditService.extractIpAddress(request)
+      : undefined;
+    const userAgent = request
+      ? AuditService.extractUserAgent(request)
+      : undefined;
+
     if (!user) {
+      // Registrar tentativa de login falhada
+      await this.auditService.logLoginAttempt(
+        loginDto.email,
+        false,
+        ipAddress,
+        userAgent,
+        'Usuário ou senha inválido',
+      );
+
       throw new BadRequestException('Usuário ou senha inválido');
     }
 
@@ -49,6 +67,13 @@ export class AuthService {
     const loginResponseDto = new LoginResponseDto();
     loginResponseDto.token = this.jwtService.sign(payload);
 
+    await this.auditService.logLoginAttempt(
+      loginDto.email,
+      true,
+      ipAddress,
+      userAgent,
+    );
+
     return loginResponseDto;
   }
 
@@ -62,6 +87,25 @@ export class AuthService {
     }
 
     return user;
+  }
+
+  /**
+   * Logout do usuário (registra no audit log)
+   */
+  async logout(user: any, request?: any): Promise<void> {
+    const ipAddress = request
+      ? AuditService.extractIpAddress(request)
+      : undefined;
+    const userAgent = request
+      ? AuditService.extractUserAgent(request)
+      : undefined;
+
+    await this.auditService.logLogout(
+      user.sub || user.id,
+      user.username || user.email,
+      ipAddress,
+      userAgent,
+    );
   }
 
   private async comparePasswords(
