@@ -182,12 +182,15 @@ export class AuditService {
           ? 'NEGADO'
           : 'FALHA';
 
-      // Criar entidade de auditoria
       const auditoria = this.auditoriaRepository.create({
-        usuario: entry.userId ? this.em.getReference(Usuario, entry.userId) : undefined,
+        usuario: entry.userId
+          ? this.em.getReference(Usuario, entry.userId)
+          : undefined,
         acao: mapping.acao,
         modulo: mapping.modulo,
-        empresa: entry.empresaId ? this.em.getReference(Empresa, entry.empresaId) : undefined,
+        empresa: entry.empresaId
+          ? this.em.getReference(Empresa, entry.empresaId)
+          : undefined,
         data_hora: entry.timestamp,
         resultado: resultado as 'SUCESSO' | 'FALHA' | 'NEGADO',
         ip_address: entry.ipAddress,
@@ -235,6 +238,7 @@ export class AuditService {
     userAgent?: string,
     errorMessage?: string,
     userId?: string,
+    empresaId?: string,
   ): Promise<void> {
     await this.log({
       timestamp: new Date(),
@@ -251,6 +255,7 @@ export class AuditService {
       details: {
         email,
       },
+      empresaId,
     });
   }
 

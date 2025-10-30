@@ -29,7 +29,6 @@ export class AuthService {
       : undefined;
 
     if (!user) {
-      // Registrar tentativa de login falhada
       await this.auditService.logLoginAttempt(
         loginDto.email,
         false,
@@ -72,6 +71,8 @@ export class AuthService {
       true,
       ipAddress,
       userAgent,
+      undefined,
+      user.id,
     );
 
     return loginResponseDto;
