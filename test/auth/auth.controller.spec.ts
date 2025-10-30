@@ -41,11 +41,14 @@ describe('AuthController', () => {
 
       jest.spyOn(service, 'login').mockResolvedValue(expectedResult);
 
-      const req: any = {};
+      const req: any = {
+        ip: '127.0.0.1',
+        headers: { 'user-agent': 'test' },
+      };
       const result = await controller.login(req, loginDto);
 
       expect(result).toEqual(expectedResult);
-      expect(service.login).toHaveBeenCalledWith(loginDto);
+      expect(service.login).toHaveBeenCalledWith(loginDto, req);
     });
   });
 });

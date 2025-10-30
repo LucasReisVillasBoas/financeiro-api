@@ -19,6 +19,7 @@ import { UpdateFilialDto } from './dto/update-filial.dto';
 import { RolesGuard } from '../auth/roles.guard';
 import { EmpresaGuard } from '../auth/empresa.guard';
 import { CurrentClienteIds } from '../auth/decorators/current-empresa.decorator';
+import { CurrentUser } from '../decorators/current-user.decorator';
 import {
   sanitizeEmpresaResponse,
   sanitizeEmpresasResponse,
@@ -111,8 +112,8 @@ export class EmpresaController {
   @SetMetadata('roles', ['Administrador'])
   @ApiOperation({ summary: 'Remover (soft) empresa' })
   @ApiResponse({ status: HttpStatus.OK, description: 'Empresa removida' })
-  async remove(@Param('id') id: string) {
-    await this.service.softDelete(id);
+  async remove(@Param('id') id: string, @CurrentUser() user: any) {
+    await this.service.softDelete(id, user);
     return { message: 'Empresa deletada', statusCode: HttpStatus.OK };
   }
 
@@ -166,8 +167,11 @@ export class EmpresaController {
   @SetMetadata('roles', ['Administrador'])
   @ApiOperation({ summary: 'Remover (soft) filial' })
   @ApiResponse({ status: HttpStatus.OK, description: 'Filial removida' })
-  async removeFilial(@Param('filialId') filialId: string) {
-    await this.service.softDeleteFilial(filialId);
+  async removeFilial(
+    @Param('filialId') filialId: string,
+    @CurrentUser() user: any,
+  ) {
+    await this.service.softDeleteFilial(filialId, user);
     return { message: 'Filial deletada', statusCode: HttpStatus.OK };
   }
 }

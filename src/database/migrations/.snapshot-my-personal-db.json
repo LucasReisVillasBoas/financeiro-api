@@ -13,6 +13,7 @@
           "autoincrement": false,
           "primary": false,
           "nullable": false,
+          "default": "gen_random_uuid()",
           "mappedType": "uuid"
         },
         "descricao": {
@@ -85,15 +86,6 @@
           "nullable": true,
           "mappedType": "uuid"
         },
-        "filial_id": {
-          "name": "filial_id",
-          "type": "uuid",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "mappedType": "uuid"
-        },
         "criado_em": {
           "name": "criado_em",
           "type": "timestamptz",
@@ -152,6 +144,7 @@
           "autoincrement": false,
           "primary": false,
           "nullable": false,
+          "default": "gen_random_uuid()",
           "mappedType": "uuid"
         },
         "descricao": {
@@ -217,15 +210,6 @@
         },
         "empresa_id": {
           "name": "empresa_id",
-          "type": "uuid",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "mappedType": "uuid"
-        },
-        "filial_id": {
-          "name": "filial_id",
           "type": "uuid",
           "unsigned": false,
           "autoincrement": false,
@@ -555,6 +539,7 @@
           "autoincrement": false,
           "primary": false,
           "nullable": false,
+          "default": "gen_random_uuid()",
           "mappedType": "uuid"
         },
         "banco": {
@@ -621,15 +606,6 @@
         },
         "empresa_id": {
           "name": "empresa_id",
-          "type": "uuid",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "mappedType": "uuid"
-        },
-        "filial_id": {
-          "name": "filial_id",
           "type": "uuid",
           "unsigned": false,
           "autoincrement": false,
@@ -860,6 +836,7 @@
           "autoincrement": false,
           "primary": false,
           "nullable": false,
+          "default": "gen_random_uuid()",
           "mappedType": "uuid"
         },
         "data": {
@@ -934,15 +911,6 @@
         },
         "empresa_id": {
           "name": "empresa_id",
-          "type": "uuid",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "mappedType": "uuid"
-        },
-        "filial_id": {
-          "name": "filial_id",
           "type": "uuid",
           "unsigned": false,
           "autoincrement": false,

@@ -21,10 +21,12 @@ import { ContaBancariaModule } from './conta-bancaria/conta-bancaria.module';
 import { MovimentacoesBancariasModule } from './movimentacao-bancaria/movimentacao-bancaria.module';
 import { ContaPagarModule } from './conta-pagar/conta-pagar.module';
 import { ContasReceberModule } from './conta-receber/conta-receber.module';
+import { AuditModule } from './audit/audit.module';
 
 @Module({
   imports: [
     MikroOrmModule.forRoot(mikroOrmConfig),
+    AuditModule,
     EmpresaModule,
     UsuarioModule,
     PerfilModule,
