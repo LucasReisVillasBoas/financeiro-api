@@ -23,7 +23,7 @@ export class MovimentacoesBancarias {
   valor!: number;
 
   @Property({ type: 'varchar', length: 20 })
-  tipo!: string; // Entrada ou Saída
+  tipo!: string;
 
   @ManyToOne(() => ContasBancarias, { fieldName: 'conta_bancaria_id' })
   contaBancaria!: ContasBancarias;

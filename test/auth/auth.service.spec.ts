@@ -136,6 +136,8 @@ describe('AuthService', () => {
         true,
         undefined,
         undefined,
+        undefined,
+        'someId',
       );
     });
 

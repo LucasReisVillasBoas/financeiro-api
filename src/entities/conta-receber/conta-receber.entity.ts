@@ -16,7 +16,7 @@ export class ContasReceber {
   vencimento!: Date;
 
   @Property({ type: 'varchar', length: 50 })
-  status!: string; // Pendente, Recebida
+  status!: string;
 
   @Property({ type: 'varchar', length: 255 })
   cliente!: string;

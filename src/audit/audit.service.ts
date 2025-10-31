@@ -45,6 +45,10 @@ export enum AuditEventType {
   CONTA_RECEBER_CREATED = 'CONTA_RECEBER_CREATED',
   CONTA_RECEBER_UPDATED = 'CONTA_RECEBER_UPDATED',
   CONTA_RECEBER_DELETED = 'CONTA_RECEBER_DELETED',
+  CONTA_BANCARIA_CREATED = 'CONTA_BANCARIA_CREATED',
+  CONTA_BANCARIA_UPDATED = 'CONTA_BANCARIA_UPDATED',
+  CONTA_BANCARIA_SALDO_INICIAL_UPDATED = 'CONTA_BANCARIA_SALDO_INICIAL_UPDATED',
+  CONTA_BANCARIA_DELETED = 'CONTA_BANCARIA_DELETED',
 }
 
 export enum AuditSeverity {
@@ -151,6 +155,22 @@ const EVENT_TYPE_MAPPING: Record<
   [AuditEventType.CONTA_RECEBER_DELETED]: {
     acao: 'DELETE',
     modulo: 'CONTA_RECEBER',
+  },
+  [AuditEventType.CONTA_BANCARIA_CREATED]: {
+    acao: 'CREATE',
+    modulo: 'CONTA_BANCARIA',
+  },
+  [AuditEventType.CONTA_BANCARIA_UPDATED]: {
+    acao: 'UPDATE',
+    modulo: 'CONTA_BANCARIA',
+  },
+  [AuditEventType.CONTA_BANCARIA_SALDO_INICIAL_UPDATED]: {
+    acao: 'SALDO_INICIAL_UPDATE',
+    modulo: 'CONTA_BANCARIA',
+  },
+  [AuditEventType.CONTA_BANCARIA_DELETED]: {
+    acao: 'DELETE',
+    modulo: 'CONTA_BANCARIA',
   },
 };
 
@@ -450,7 +470,7 @@ export class AuditService {
    * Registra criação de entidade
    */
   async logEntityCreated(
-    modulo: 'EMPRESA' | 'USUARIO' | 'PERFIL' | 'CONTA_PAGAR' | 'CONTA_RECEBER',
+    modulo: 'EMPRESA' | 'USUARIO' | 'PERFIL' | 'CONTA_PAGAR' | 'CONTA_RECEBER' | 'CONTA_BANCARIA',
     entityId: string,
     userId: string,
     userEmail: string,
@@ -463,6 +483,7 @@ export class AuditService {
       PERFIL: AuditEventType.PERFIL_CREATED,
       CONTA_PAGAR: AuditEventType.CONTA_PAGAR_CREATED,
       CONTA_RECEBER: AuditEventType.CONTA_RECEBER_CREATED,
+      CONTA_BANCARIA: AuditEventType.CONTA_BANCARIA_CREATED,
     };
 
     await this.log({
@@ -484,7 +505,7 @@ export class AuditService {
    * Registra atualização de entidade
    */
   async logEntityUpdated(
-    modulo: 'EMPRESA' | 'USUARIO' | 'PERFIL' | 'CONTA_PAGAR' | 'CONTA_RECEBER',
+    modulo: 'EMPRESA' | 'USUARIO' | 'PERFIL' | 'CONTA_PAGAR' | 'CONTA_RECEBER' | 'CONTA_BANCARIA',
     entityId: string,
     userId: string,
     userEmail: string,
@@ -497,6 +518,7 @@ export class AuditService {
       PERFIL: AuditEventType.PERFIL_UPDATED,
       CONTA_PAGAR: AuditEventType.CONTA_PAGAR_UPDATED,
       CONTA_RECEBER: AuditEventType.CONTA_RECEBER_UPDATED,
+      CONTA_BANCARIA: AuditEventType.CONTA_BANCARIA_UPDATED,
     };
 
     await this.log({
@@ -518,7 +540,7 @@ export class AuditService {
    * Registra exclusão de entidade (CRÍTICO)
    */
   async logEntityDeleted(
-    modulo: 'EMPRESA' | 'USUARIO' | 'PERFIL' | 'CONTA_PAGAR' | 'CONTA_RECEBER',
+    modulo: 'EMPRESA' | 'USUARIO' | 'PERFIL' | 'CONTA_PAGAR' | 'CONTA_RECEBER' | 'CONTA_BANCARIA',
     entityId: string,
     userId: string,
     userEmail: string,
@@ -531,6 +553,7 @@ export class AuditService {
       PERFIL: AuditEventType.PERFIL_DELETED,
       CONTA_PAGAR: AuditEventType.CONTA_PAGAR_DELETED,
       CONTA_RECEBER: AuditEventType.CONTA_RECEBER_DELETED,
+      CONTA_BANCARIA: AuditEventType.CONTA_BANCARIA_DELETED,
     };
 
     await this.log({
@@ -571,6 +594,36 @@ export class AuditService {
     }
 
     return parts.join(' | ');
+  }
+
+  /**
+   * Registra alteração crítica de saldo inicial (CRÍTICO)
+   */
+  async logSaldoInicialUpdated(
+    contaBancariaId: string,
+    userId: string,
+    userEmail: string,
+    empresaId: string,
+    saldoAnterior: number,
+    saldoNovo: number,
+    motivo?: string,
+  ): Promise<void> {
+    await this.log({
+      timestamp: new Date(),
+      eventType: AuditEventType.CONTA_BANCARIA_SALDO_INICIAL_UPDATED,
+      severity: AuditSeverity.CRITICAL, // Alteração de saldo inicial é sempre crítica
+      userId,
+      userEmail,
+      empresaId,
+      success: true,
+      details: {
+        contaBancariaId,
+        saldoAnterior,
+        saldoNovo,
+        diferenca: saldoNovo - saldoAnterior,
+        motivo: motivo || 'Não informado',
+      },
+    });
   }
 
   /**

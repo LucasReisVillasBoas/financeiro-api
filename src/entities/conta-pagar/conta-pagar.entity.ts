@@ -16,7 +16,7 @@ export class ContasPagar {
   vencimento!: Date;
 
   @Property({ type: 'varchar', length: 50 })
-  status!: string; // Pendente, Vencida, Paga
+  status!: string;
 
   @Property({ type: 'varchar', length: 255 })
   fornecedor!: string;
