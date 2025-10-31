@@ -80,6 +80,15 @@ export class PerfilService {
     return perfil;
   }
 
+  async findByCliente(clienteId: string): Promise<Perfil[]> {
+    const perfis = await this.perfilRepository.find({
+      clienteId,
+      ativo: true,
+    });
+    if (!perfis) throw new NotFoundException('Perfil não encontrado');
+    return perfis;
+  }
+
   async update(
     id: string,
     dto: UpdatePerfilDto,

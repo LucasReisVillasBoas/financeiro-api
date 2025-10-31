@@ -195,7 +195,6 @@ export class EmpresaService {
   async softDelete(id: string, user: any): Promise<void> {
     const empresa = await this.findOne(id);
 
-    // Se for uma sede, buscar e excluir todas as filiais
     const filiais = await this.empresaRepo.find({ sede: id, ativo: true });
 
     if (filiais.length > 0) {
@@ -204,13 +203,12 @@ export class EmpresaService {
         filial.ativo = false;
         filial.deletadoEm = deletadoEm;
 
-        // Registrar exclusão da filial
         await this.auditService.logEntityDeleted(
           'EMPRESA',
           filial.id,
           user.sub || user.id,
           user.username || user.email,
-          filial.id, // empresa_id da filial
+          filial.id,
           {
             razao_social: filial.razao_social,
             cnpj_cpf: filial.cnpj_cpf,
@@ -222,12 +220,10 @@ export class EmpresaService {
       }
     }
 
-    // Excluir a empresa (sede ou filial)
     empresa.ativo = false;
     empresa.deletadoEm = new Date();
     await this.empresaRepo.flush();
 
-    // Registrar exclusão da empresa
     await this.auditService.logEntityDeleted(
       'EMPRESA',
       empresa.id,
@@ -270,7 +266,6 @@ export class EmpresaService {
 
     await this.empresaRepo.flush();
 
-    // Registrar exclusão da filial
     await this.auditService.logEntityDeleted(
       'EMPRESA',
       filial.id,

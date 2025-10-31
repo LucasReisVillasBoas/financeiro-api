@@ -18,7 +18,6 @@ export class MovimentacoesBancariasService {
   async create(
     dto: CreateMovimentacoesBancariasDto,
   ): Promise<MovimentacoesBancarias> {
-    // Buscar a conta bancária
     const contaBancaria = await this.contasBancariasRepository.findOne({
       id: dto.contaBancaria,
       deletadoEm: null,
@@ -28,14 +27,18 @@ export class MovimentacoesBancariasService {
       throw new NotFoundException('Conta bancária não encontrada');
     }
 
-    // Criar a movimentação com o objeto contaBancaria
     const { contaBancaria: contaBancariaId, ...dadosMovimentacao } = dto;
     const movimentacao = this.movimentacaoRepository.create({
       ...dadosMovimentacao,
       data: new Date(dto.data),
       contaBancaria,
     });
-    await this.movimentacaoRepository.persistAndFlush(movimentacao);
+
+    const valorMovimentacao = dto.tipo === 'Entrada' ? dto.valor : -dto.valor;
+    contaBancaria.saldo_atual = contaBancaria.saldo_atual + valorMovimentacao;
+
+    await this.movimentacaoRepository.persistAndFlush([movimentacao, contaBancaria]);
+
     return movimentacao;
   }
 

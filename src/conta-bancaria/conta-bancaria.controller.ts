@@ -9,12 +9,20 @@ import {
   Param,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { ContasBancariasService } from './conta-bancaria.service';
 import { CreateContaBancariaDto } from './dto/create-conta-bancaria.dto';
 import { UpdateContaBancariaDto } from './dto/update-conta-bancaria.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from '../auth/roles.guard';
+import { Roles } from '../decorators/roles.decorator';
 
+@ApiTags('Contas Bancárias')
+@ApiBearerAuth()
 @Controller('contas-bancarias')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class ContaBancariaController {
   constructor(
     private readonly contasBancariasService: ContasBancariasService,
@@ -22,6 +30,11 @@ export class ContaBancariaController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
+  @Roles('Administrador', 'Financeiro')
+  @ApiOperation({
+    summary: 'Criar nova conta bancária',
+    description: 'Cria uma nova conta bancária. Requer perfil Administrador ou Financeiro.',
+  })
   async create(@Body() dto: CreateContaBancariaDto) {
     const conta = await this.contasBancariasService.create(dto);
     return {
@@ -32,6 +45,11 @@ export class ContaBancariaController {
   }
 
   @Get()
+  @Roles('Administrador', 'Financeiro', 'Visualizador')
+  @ApiOperation({
+    summary: 'Listar todas as contas bancárias',
+    description: 'Lista todas as contas bancárias. Requer perfil Administrador, Financeiro ou Visualizador.',
+  })
   async findAll() {
     const contas = await this.contasBancariasService.findAll();
     return {
@@ -42,6 +60,11 @@ export class ContaBancariaController {
   }
 
   @Get('empresa/:empresaId')
+  @Roles('Administrador', 'Financeiro', 'Visualizador')
+  @ApiOperation({
+    summary: 'Listar contas bancárias por empresa',
+    description: 'Lista contas bancárias de uma empresa específica.',
+  })
   async findByEmpresa(@Param('empresaId') empresaId: string) {
     const contas = await this.contasBancariasService.findByEmpresa(empresaId);
     return {
@@ -52,6 +75,11 @@ export class ContaBancariaController {
   }
 
   @Get(':id')
+  @Roles('Administrador', 'Financeiro', 'Visualizador')
+  @ApiOperation({
+    summary: 'Buscar conta bancária por ID',
+    description: 'Retorna uma conta bancária específica.',
+  })
   async findOne(@Param('id') id: string) {
     const conta = await this.contasBancariasService.findOne(id);
     return {
@@ -62,6 +90,11 @@ export class ContaBancariaController {
   }
 
   @Put(':id')
+  @Roles('Administrador', 'Financeiro')
+  @ApiOperation({
+    summary: 'Atualizar conta bancária',
+    description: 'Atualiza os dados de uma conta bancária. Requer perfil Administrador ou Financeiro.',
+  })
   async update(@Param('id') id: string, @Body() dto: UpdateContaBancariaDto) {
     const conta = await this.contasBancariasService.update(id, dto);
     return {
@@ -72,6 +105,11 @@ export class ContaBancariaController {
   }
 
   @Patch(':id/toggle-status')
+  @Roles('Administrador', 'Financeiro')
+  @ApiOperation({
+    summary: 'Ativar/Inativar conta bancária',
+    description: 'Altera o status ativo/inativo de uma conta bancária. Requer perfil Administrador ou Financeiro. Operação auditada.',
+  })
   async toggleStatus(@Param('id') id: string) {
     const conta = await this.contasBancariasService.toggleStatus(id);
     return {
@@ -83,6 +121,11 @@ export class ContaBancariaController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
+  @Roles('Administrador')
+  @ApiOperation({
+    summary: 'Excluir conta bancária (soft delete)',
+    description: 'Exclui logicamente uma conta bancária. Requer perfil Administrador. Operação auditada como CRÍTICA.',
+  })
   async delete(@Param('id') id: string) {
     await this.contasBancariasService.softDelete(id);
     return {

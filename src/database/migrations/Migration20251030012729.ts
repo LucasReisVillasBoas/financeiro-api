@@ -3,7 +3,6 @@ import { Migration } from '@mikro-orm/migrations';
 export class Migration20251030012729 extends Migration {
 
   override async up(): Promise<void> {
-    // Criar tabela de auditoria (IMUTÁVEL)
     this.addSql(`
       create table "auditoria" (
         "id" uuid not null default gen_random_uuid(),
@@ -23,7 +22,6 @@ export class Migration20251030012729 extends Migration {
       );
     `);
 
-    // Criar índices para otimizar consultas
     this.addSql(`create index "auditoria_usuario_id_data_hora_index" on "auditoria" ("usuario_id", "data_hora");`);
     this.addSql(`create index "auditoria_modulo_data_hora_index" on "auditoria" ("modulo", "data_hora");`);
     this.addSql(`create index "auditoria_empresa_id_data_hora_index" on "auditoria" ("empresa_id", "data_hora");`);
@@ -35,7 +33,6 @@ export class Migration20251030012729 extends Migration {
     this.addSql(`create index "auditoria_cliente_id_index" on "auditoria" ("cliente_id");`);
     this.addSql(`create index "auditoria_data_hora_index" on "auditoria" ("data_hora");`);
 
-    // Adicionar foreign keys
     this.addSql(`
       alter table "auditoria"
       add constraint "auditoria_usuario_id_foreign"
@@ -60,7 +57,6 @@ export class Migration20251030012729 extends Migration {
       on update cascade on delete set null;
     `);
 
-    // Remover triggers de UPDATE e DELETE para garantir imutabilidade
     this.addSql(`
       create or replace function prevent_auditoria_modification()
       returns trigger as $$
@@ -86,12 +82,10 @@ export class Migration20251030012729 extends Migration {
   }
 
   override async down(): Promise<void> {
-    // Remover triggers e função de imutabilidade
     this.addSql(`drop trigger if exists prevent_auditoria_update on "auditoria";`);
     this.addSql(`drop trigger if exists prevent_auditoria_delete on "auditoria";`);
     this.addSql(`drop function if exists prevent_auditoria_modification();`);
 
-    // Remover tabela de auditoria
     this.addSql(`drop table if exists "auditoria" cascade;`);
   }
 

@@ -205,7 +205,6 @@ export class AuditoriaRepository extends EntityRepository<Auditoria> {
       this.count({ ...where, resultado: 'NEGADO' }),
     ]);
 
-    // Agregar por módulo e ação
     const logs = await this.find(where, { fields: ['modulo', 'acao'] });
 
     const porModulo: Record<string, number> = {};

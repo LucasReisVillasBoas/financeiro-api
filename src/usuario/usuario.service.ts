@@ -267,7 +267,6 @@ export class UsuarioService {
     });
     if (!usuario) throw new NotFoundException('Usuário não encontrado');
 
-    // Determinar qual ID usar (empresaId ou filialId)
     const empresaOuFilialId = dto.empresaId || dto.filialId;
     if (!empresaOuFilialId) {
       throw new BadRequestException(
