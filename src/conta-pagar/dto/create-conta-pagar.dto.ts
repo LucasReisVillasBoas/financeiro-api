@@ -40,4 +40,8 @@ export class CreateContaPagarDto {
   @IsOptional()
   @IsUUID()
   empresaId?: string;
+
+  @IsOptional()
+  @IsUUID()
+  planoContasId?: string;
 }

@@ -1,5 +1,6 @@
 import { Entity, Property, ManyToOne, PrimaryKey } from '@mikro-orm/core';
 import { ContasBancarias } from '../conta-bancaria/conta-bancaria.entity';
+import { PlanoContas } from '../plano-contas/plano-contas.entity';
 import { MovimentacoesBancariasRepository } from '../../movimentacao-bancaria/movimentacao-bancaria.repository';
 
 @Entity({ repository: () => MovimentacoesBancariasRepository })
@@ -30,6 +31,9 @@ export class MovimentacoesBancarias {
 
   @Property({ type: 'uuid', nullable: true })
   empresaId?: string;
+
+  @ManyToOne(() => PlanoContas, { fieldName: 'plano_contas_id', nullable: true })
+  planoContas?: PlanoContas;
 
   @Property({ type: 'timestamp', onCreate: () => new Date() })
   criadoEm: Date = new Date();

@@ -22,6 +22,8 @@ import { MovimentacoesBancariasModule } from './movimentacao-bancaria/movimentac
 import { ContaPagarModule } from './conta-pagar/conta-pagar.module';
 import { ContasReceberModule } from './conta-receber/conta-receber.module';
 import { AuditModule } from './audit/audit.module';
+import { PlanoContasModule } from './plano-contas/plano-contas.module';
+import { DreModule } from './dre/dre.module';
 
 @Module({
   imports: [
@@ -38,6 +40,8 @@ import { AuditModule } from './audit/audit.module';
     MovimentacoesBancariasModule,
     ContaPagarModule,
     ContasReceberModule,
+    PlanoContasModule,
+    DreModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET || 'your-secret-key',
       signOptions: { expiresIn: '7d' },

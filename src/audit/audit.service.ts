@@ -49,6 +49,12 @@ export enum AuditEventType {
   CONTA_BANCARIA_UPDATED = 'CONTA_BANCARIA_UPDATED',
   CONTA_BANCARIA_SALDO_INICIAL_UPDATED = 'CONTA_BANCARIA_SALDO_INICIAL_UPDATED',
   CONTA_BANCARIA_DELETED = 'CONTA_BANCARIA_DELETED',
+
+  // Plano de Contas
+  PLANO_CONTAS_CREATED = 'PLANO_CONTAS_CREATED',
+  PLANO_CONTAS_UPDATED = 'PLANO_CONTAS_UPDATED',
+  PLANO_CONTAS_DELETED = 'PLANO_CONTAS_DELETED',
+  PLANO_CONTAS_STATUS_CHANGED = 'PLANO_CONTAS_STATUS_CHANGED',
 }
 
 export enum AuditSeverity {
@@ -171,6 +177,24 @@ const EVENT_TYPE_MAPPING: Record<
   [AuditEventType.CONTA_BANCARIA_DELETED]: {
     acao: 'DELETE',
     modulo: 'CONTA_BANCARIA',
+  },
+
+  // Plano de Contas
+  [AuditEventType.PLANO_CONTAS_CREATED]: {
+    acao: 'CREATE',
+    modulo: 'PLANO_CONTAS',
+  },
+  [AuditEventType.PLANO_CONTAS_UPDATED]: {
+    acao: 'UPDATE',
+    modulo: 'PLANO_CONTAS',
+  },
+  [AuditEventType.PLANO_CONTAS_DELETED]: {
+    acao: 'DELETE',
+    modulo: 'PLANO_CONTAS',
+  },
+  [AuditEventType.PLANO_CONTAS_STATUS_CHANGED]: {
+    acao: 'STATUS_CHANGE',
+    modulo: 'PLANO_CONTAS',
   },
 };
 
@@ -470,7 +494,7 @@ export class AuditService {
    * Registra criação de entidade
    */
   async logEntityCreated(
-    modulo: 'EMPRESA' | 'USUARIO' | 'PERFIL' | 'CONTA_PAGAR' | 'CONTA_RECEBER' | 'CONTA_BANCARIA',
+    modulo: 'EMPRESA' | 'USUARIO' | 'PERFIL' | 'CONTA_PAGAR' | 'CONTA_RECEBER' | 'CONTA_BANCARIA' | 'PLANO_CONTAS',
     entityId: string,
     userId: string,
     userEmail: string,
@@ -484,6 +508,7 @@ export class AuditService {
       CONTA_PAGAR: AuditEventType.CONTA_PAGAR_CREATED,
       CONTA_RECEBER: AuditEventType.CONTA_RECEBER_CREATED,
       CONTA_BANCARIA: AuditEventType.CONTA_BANCARIA_CREATED,
+      PLANO_CONTAS: AuditEventType.PLANO_CONTAS_CREATED,
     };
 
     await this.log({
@@ -505,7 +530,7 @@ export class AuditService {
    * Registra atualização de entidade
    */
   async logEntityUpdated(
-    modulo: 'EMPRESA' | 'USUARIO' | 'PERFIL' | 'CONTA_PAGAR' | 'CONTA_RECEBER' | 'CONTA_BANCARIA',
+    modulo: 'EMPRESA' | 'USUARIO' | 'PERFIL' | 'CONTA_PAGAR' | 'CONTA_RECEBER' | 'CONTA_BANCARIA' | 'PLANO_CONTAS',
     entityId: string,
     userId: string,
     userEmail: string,
@@ -519,6 +544,7 @@ export class AuditService {
       CONTA_PAGAR: AuditEventType.CONTA_PAGAR_UPDATED,
       CONTA_RECEBER: AuditEventType.CONTA_RECEBER_UPDATED,
       CONTA_BANCARIA: AuditEventType.CONTA_BANCARIA_UPDATED,
+      PLANO_CONTAS: AuditEventType.PLANO_CONTAS_UPDATED,
     };
 
     await this.log({
@@ -540,7 +566,7 @@ export class AuditService {
    * Registra exclusão de entidade (CRÍTICO)
    */
   async logEntityDeleted(
-    modulo: 'EMPRESA' | 'USUARIO' | 'PERFIL' | 'CONTA_PAGAR' | 'CONTA_RECEBER' | 'CONTA_BANCARIA',
+    modulo: 'EMPRESA' | 'USUARIO' | 'PERFIL' | 'CONTA_PAGAR' | 'CONTA_RECEBER' | 'CONTA_BANCARIA' | 'PLANO_CONTAS',
     entityId: string,
     userId: string,
     userEmail: string,
@@ -554,6 +580,7 @@ export class AuditService {
       CONTA_PAGAR: AuditEventType.CONTA_PAGAR_DELETED,
       CONTA_RECEBER: AuditEventType.CONTA_RECEBER_DELETED,
       CONTA_BANCARIA: AuditEventType.CONTA_BANCARIA_DELETED,
+      PLANO_CONTAS: AuditEventType.PLANO_CONTAS_DELETED,
     };
 
     await this.log({

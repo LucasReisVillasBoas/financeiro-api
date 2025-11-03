@@ -39,4 +39,8 @@ export class CreateContaReceberDto {
   @IsOptional()
   @IsUUID()
   empresaId?: string;
+
+  @IsOptional()
+  @IsUUID()
+  planoContasId?: string;
 }
