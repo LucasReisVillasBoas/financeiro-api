@@ -14,6 +14,7 @@ import { MovimentacoesBancarias } from '../entities/movimentacao-bancaria/movime
 import { ContasPagar } from '../entities/conta-pagar/conta-pagar.entity';
 import { ContasReceber } from '../entities/conta-receber/conta-receber.entity';
 import { Auditoria } from '../entities/auditoria/auditoria.entity';
+import { PlanoContas } from '../entities/plano-contas/plano-contas.entity';
 
 export default defineConfig({
   dbName: DATABASE_NAME,
@@ -34,6 +35,7 @@ export default defineConfig({
     ContasPagar,
     ContasReceber,
     Auditoria,
+    PlanoContas,
   ],
   migrations: {
     path: 'src/database/migrations',

@@ -1,25 +1,38 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
+import { EntityManager } from '@mikro-orm/core';
 import { ContasPagarRepository } from './conta-pagar.repository';
 import { CreateContaPagarDto } from './dto/create-conta-pagar.dto';
 import { UpdateContaPagarDto } from './dto/update-conta-pagar.dto';
 import { ContasPagar } from '../entities/conta-pagar/conta-pagar.entity';
+import { PlanoContas } from '../entities/plano-contas/plano-contas.entity';
 
 @Injectable()
 export class ContasPagarService {
   constructor(
     @InjectRepository(ContasPagar)
     private readonly contaPagarRepository: ContasPagarRepository,
+    private readonly em: EntityManager,
   ) {}
 
   async create(dto: CreateContaPagarDto): Promise<ContasPagar> {
-    const conta = this.contaPagarRepository.create({
-      ...dto,
+    const contaData: any = {
+      descricao: dto.descricao,
+      valor: dto.valor,
       vencimento: new Date(dto.vencimento),
+      status: dto.status || 'Pendente',
+      fornecedor: dto.fornecedor,
       dataPagamento: dto.dataPagamento
         ? new Date(dto.dataPagamento)
         : undefined,
-    });
+      empresaId: dto.empresaId,
+    };
+
+    if (dto.planoContasId) {
+      contaData.planoContas = this.em.getReference(PlanoContas, dto.planoContasId);
+    }
+
+    const conta = this.contaPagarRepository.create(contaData);
     await this.contaPagarRepository.persistAndFlush(conta);
     return conta;
   }
