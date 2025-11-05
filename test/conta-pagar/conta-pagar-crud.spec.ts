@@ -8,6 +8,14 @@ import { ContasPagarRepository } from '../../src/conta-pagar/conta-pagar.reposit
 import { CancelarContaPagarDto } from '../../src/conta-pagar/dto/cancelar-conta-pagar.dto';
 import { GerarParcelasDto } from '../../src/conta-pagar/dto/gerar-parcelas.dto';
 import { AuditService } from '../../src/audit/audit.service';
+import { MovimentacoesBancariasService } from '../../src/movimentacao-bancaria/movimentacao-bancaria.service';
+import { PessoaService } from '../../src/pessoa/pessoa.service';
+import { PlanoContasService } from '../../src/plano-contas/plano-contas.service';
+import { EmpresaService } from '../../src/empresa/empresa.service';
+import { UsuarioService } from '../../src/usuario/usuario.service';
+import { MovimentacoesBancarias } from '../../src/entities/movimentacao-bancaria/movimentacao-bancaria.entity';
+import { ContasBancarias } from '../../src/entities/conta-bancaria/conta-bancaria.entity';
+import { BaixaPagamento } from '../../src/entities/baixa-pagamento/baixa-pagamento.entity';
 
 describe('ContasPagarService - CRUD e Regras de Negócio', () => {
   let service: ContasPagarService;
@@ -40,6 +48,32 @@ describe('ContasPagarService - CRUD e Regras de Negócio', () => {
     create: jest.fn(),
   };
 
+  const mockBaixaPagamentoRepository = {
+    find: jest.fn(),
+    create: jest.fn(),
+    persistAndFlush: jest.fn(),
+  };
+
+  const mockMovimentacaoBancariaService = {
+    create: jest.fn(),
+  };
+
+  const mockPessoaService = {
+    findOne: jest.fn(),
+  };
+
+  const mockPlanoContasService = {
+    findOne: jest.fn(),
+  };
+
+  const mockEmpresaService = {
+    findOne: jest.fn(),
+  };
+
+  const mockUsuarioService = {
+    findOne: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -49,12 +83,16 @@ describe('ContasPagarService - CRUD e Regras de Negócio', () => {
           useValue: mockRepository,
         },
         {
-          provide: 'ContasBancariasRepository',
+          provide: getRepositoryToken(ContasBancarias),
           useValue: mockContaBancariaRepository,
         },
         {
-          provide: 'MovimentacoesBancariasRepository',
+          provide: getRepositoryToken(MovimentacoesBancarias),
           useValue: mockMovimentacaoRepository,
+        },
+        {
+          provide: getRepositoryToken(BaixaPagamento),
+          useValue: mockBaixaPagamentoRepository,
         },
         {
           provide: EntityManager,
@@ -63,6 +101,26 @@ describe('ContasPagarService - CRUD e Regras de Negócio', () => {
         {
           provide: AuditService,
           useValue: mockAuditService,
+        },
+        {
+          provide: MovimentacoesBancariasService,
+          useValue: mockMovimentacaoBancariaService,
+        },
+        {
+          provide: PessoaService,
+          useValue: mockPessoaService,
+        },
+        {
+          provide: PlanoContasService,
+          useValue: mockPlanoContasService,
+        },
+        {
+          provide: EmpresaService,
+          useValue: mockEmpresaService,
+        },
+        {
+          provide: UsuarioService,
+          useValue: mockUsuarioService,
         },
       ],
     }).compile();
