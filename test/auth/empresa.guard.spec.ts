@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ExecutionContext, ForbiddenException } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 import { EmpresaGuard } from '../../src/auth/empresa.guard';
 import { EntityManager } from '@mikro-orm/postgresql';
 import { UsuarioEmpresaFilial } from '../../src/entities/usuario-empresa-filial/usuario-empresa-filial.entity';
@@ -10,6 +11,7 @@ describe('EmpresaGuard', () => {
   let guard: EmpresaGuard;
   let entityManager: EntityManager;
   let auditService: AuditService;
+  let reflector: Reflector;
 
   const mockEntityManager = {
     find: jest.fn(),
@@ -19,6 +21,10 @@ describe('EmpresaGuard', () => {
     logAccessDeniedNoEmpresa: jest.fn(),
     logAccessDeniedWrongEmpresa: jest.fn(),
     logAccessDeniedWrongCliente: jest.fn(),
+  };
+
+  const mockReflector = {
+    get: jest.fn().mockReturnValue(false), // Por padrão, não pula validação
   };
 
   const createMockExecutionContext = (
@@ -77,12 +83,17 @@ describe('EmpresaGuard', () => {
           provide: AuditService,
           useValue: mockAuditService,
         },
+        {
+          provide: Reflector,
+          useValue: mockReflector,
+        },
       ],
     }).compile();
 
     guard = module.get<EmpresaGuard>(EmpresaGuard);
     entityManager = module.get<EntityManager>(EntityManager);
     auditService = module.get<AuditService>(AuditService);
+    reflector = module.get<Reflector>(Reflector);
   });
 
   afterEach(() => {

@@ -10,8 +10,9 @@ import { Endereco } from '../endereco/endereco.entity';
 import { Usuario } from '../usuario/usuario.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
+import { PessoaRepository } from '../../pessoa/pessoa.repository';
 
-@Entity()
+@Entity({ repository: () => PessoaRepository })
 export class Pessoa {
   @Expose()
   @ApiProperty()
@@ -54,6 +55,16 @@ export class Pessoa {
   @ApiProperty({ nullable: true })
   @Property({ nullable: true })
   aniversario?: Date;
+
+  @Expose()
+  @ApiProperty({ nullable: true })
+  @Property({ length: 100, nullable: true })
+  email?: string;
+
+  @Expose()
+  @ApiProperty({ nullable: true })
+  @Property({ length: 20, nullable: true })
+  telefone?: string;
 
   @Expose()
   @ApiProperty({ default: true })

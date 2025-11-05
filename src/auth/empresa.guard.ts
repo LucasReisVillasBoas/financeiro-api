@@ -4,6 +4,7 @@ import {
   ExecutionContext,
   ForbiddenException,
 } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 import { EntityManager } from '@mikro-orm/postgresql';
 import { UsuarioEmpresaFilial } from '../entities/usuario-empresa-filial/usuario-empresa-filial.entity';
 import { AuditService } from '../audit/audit.service';
@@ -13,9 +14,16 @@ export class EmpresaGuard implements CanActivate {
   constructor(
     private readonly em: EntityManager,
     private readonly auditService: AuditService,
+    private readonly reflector: Reflector,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    // Verifica se o método tem decorator para pular validação de empresa
+    const skipEmpresaValidation = this.reflector.get<boolean>(
+      'skipEmpresaValidation',
+      context.getHandler(),
+    );
+
     const request = context.switchToHttp().getRequest();
     const user = request.user;
 
@@ -58,6 +66,11 @@ export class EmpresaGuard implements CanActivate {
       isFilial: ue.filial,
       sedeId: ue.empresa.sede?.id || null,
     }));
+
+    // Se deve pular validação de empresa, apenas retorna true após carregar empresas
+    if (skipEmpresaValidation) {
+      return true;
+    }
 
     const empresaIdParam = request.params.empresaId || request.params.id;
     const empresaIdBody = request.body?.empresa_id;
