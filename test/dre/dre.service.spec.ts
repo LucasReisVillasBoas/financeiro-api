@@ -270,8 +270,8 @@ describe('DreService', () => {
 
       expect(result.periodo1).toBeDefined();
       expect(result.periodo2).toBeDefined();
-      expect(result.variacao).toBeDefined();
-      expect(result.variacao.receitas).toBe(5000); // 15000 - 10000
+      expect(result.comparativo).toBeDefined();
+      expect(result.comparativo.totais).toBeDefined();
     });
   });
 

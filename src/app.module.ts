@@ -24,6 +24,8 @@ import { ContasReceberModule } from './conta-receber/conta-receber.module';
 import { AuditModule } from './audit/audit.module';
 import { PlanoContasModule } from './plano-contas/plano-contas.module';
 import { DreModule } from './dre/dre.module';
+import { BaixaPagamentoModule } from './baixa-pagamento/baixa-pagamento.module';
+import { PessoaModule } from './pessoa/pessoa.module';
 
 @Module({
   imports: [
@@ -42,7 +44,10 @@ import { DreModule } from './dre/dre.module';
     ContasReceberModule,
     PlanoContasModule,
     DreModule,
+    BaixaPagamentoModule,
+    PessoaModule,
     JwtModule.register({
+      global: true,
       secret: process.env.JWT_SECRET || 'your-secret-key',
       signOptions: { expiresIn: '7d' },
     }),

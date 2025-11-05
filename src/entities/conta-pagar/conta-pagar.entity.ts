@@ -1,36 +1,93 @@
-import { Entity, Property, PrimaryKey, ManyToOne } from '@mikro-orm/core';
+import { Entity, Property, PrimaryKey, ManyToOne, BeforeCreate, BeforeUpdate } from '@mikro-orm/core';
 import { ContasPagarRepository } from '../../conta-pagar/conta-pagar.repository';
 import { PlanoContas } from '../plano-contas/plano-contas.entity';
+import { Pessoa } from '../pessoa/pessoa.entity';
+import { Empresa } from '../empresa/empresa.entity';
+
+export enum StatusContaPagar {
+  PENDENTE = 'Pendente',
+  VENCIDA = 'Vencida',
+  PAGA = 'Paga',
+  PARCIALMENTE_PAGA = 'Parcialmente Paga',
+}
+
+export enum TipoContaPagar {
+  FORNECEDOR = 'Fornecedor',
+  EMPRESTIMO = 'Empréstimo',
+  IMPOSTO = 'Imposto',
+  SALARIO = 'Salário',
+  ALUGUEL = 'Aluguel',
+  SERVICO = 'Serviço',
+  OUTROS = 'Outros',
+}
 
 @Entity({ repository: () => ContasPagarRepository })
 export class ContasPagar {
   @PrimaryKey({ type: 'uuid', defaultRaw: 'gen_random_uuid()' })
   id!: string;
 
+  // Campos obrigatórios
+  @Property({ type: 'varchar', length: 100 })
+  documento!: string;
+
+  @Property({ type: 'varchar', length: 20, nullable: true })
+  serie?: string;
+
+  @Property({ type: 'int' })
+  parcela!: number;
+
+  @Property({ type: 'varchar', length: 50 })
+  tipo!: string;
+
   @Property({ type: 'varchar', length: 500 })
   descricao!: string;
 
-  @Property({ type: 'decimal', precision: 15, scale: 2 })
-  valor!: number;
+  // Datas obrigatórias
+  @Property({ type: 'date' })
+  data_emissao!: Date;
 
   @Property({ type: 'date' })
   vencimento!: Date;
 
-  @Property({ type: 'varchar', length: 50 })
-  status!: string;
-
-  @Property({ type: 'varchar', length: 255 })
-  fornecedor!: string;
+  @Property({ type: 'date' })
+  data_lancamento!: Date;
 
   @Property({ type: 'date', nullable: true })
-  dataPagamento?: Date;
+  data_liquidacao?: Date;
 
-  @Property({ type: 'uuid', nullable: true })
-  empresaId?: string;
+  // Valores
+  @Property({ type: 'decimal', precision: 15, scale: 2 })
+  valor_principal!: number;
 
-  @ManyToOne(() => PlanoContas, { fieldName: 'plano_contas_id', nullable: true })
-  planoContas?: PlanoContas;
+  @Property({ type: 'decimal', precision: 15, scale: 2, default: 0 })
+  acrescimos: number = 0;
 
+  @Property({ type: 'decimal', precision: 15, scale: 2, default: 0 })
+  descontos: number = 0;
+
+  @Property({ type: 'decimal', precision: 15, scale: 2 })
+  valor_total!: number;
+
+  @Property({ type: 'decimal', precision: 15, scale: 2 })
+  saldo!: number;
+
+  @Property({ type: 'varchar', length: 50 })
+  status: string = StatusContaPagar.PENDENTE;
+
+  // Relacionamentos
+  @ManyToOne(() => Pessoa, { fieldName: 'pessoa_id' })
+  pessoa!: Pessoa;
+
+  @ManyToOne(() => PlanoContas, { fieldName: 'plano_contas_id' })
+  planoContas!: PlanoContas;
+
+  @ManyToOne(() => Empresa, { fieldName: 'empresa_id' })
+  empresa!: Empresa;
+
+  @Property({ type: 'uuid', nullable: true, fieldName: 'movimentacao_bancaria_id' })
+  movimentacaoBancariaId?: string;
+
+  // Auditoria
   @Property({ type: 'timestamp', onCreate: () => new Date() })
   criadoEm: Date = new Date();
 
@@ -43,4 +100,31 @@ export class ContasPagar {
 
   @Property({ type: 'timestamp', nullable: true })
   deletadoEm?: Date;
+
+  @Property({ type: 'timestamp', nullable: true })
+  canceladoEm?: Date;
+
+  @Property({ type: 'text', nullable: true })
+  justificativaCancelamento?: string;
+
+  @BeforeCreate()
+  @BeforeUpdate()
+  calcularValores() {
+    // Calcula valor_total
+    this.valor_total = this.valor_principal + this.acrescimos - this.descontos;
+
+    // Se for criação, saldo inicial = valor_total
+    if (!this.saldo && this.saldo !== 0) {
+      this.saldo = this.valor_total;
+    }
+
+    // Atualiza status baseado no saldo
+    if (this.saldo === 0) {
+      this.status = StatusContaPagar.PAGA;
+    } else if (this.saldo < this.valor_total && this.saldo > 0) {
+      this.status = StatusContaPagar.PARCIALMENTE_PAGA;
+    } else if (new Date() > this.vencimento && this.saldo > 0) {
+      this.status = StatusContaPagar.VENCIDA;
+    }
+  }
 }

@@ -55,6 +55,11 @@ export enum AuditEventType {
   PLANO_CONTAS_UPDATED = 'PLANO_CONTAS_UPDATED',
   PLANO_CONTAS_DELETED = 'PLANO_CONTAS_DELETED',
   PLANO_CONTAS_STATUS_CHANGED = 'PLANO_CONTAS_STATUS_CHANGED',
+
+  // Pessoas (Fornecedores/Clientes)
+  PESSOA_CREATED = 'PESSOA_CREATED',
+  PESSOA_UPDATED = 'PESSOA_UPDATED',
+  PESSOA_DELETED = 'PESSOA_DELETED',
 }
 
 export enum AuditSeverity {
@@ -196,6 +201,11 @@ const EVENT_TYPE_MAPPING: Record<
     acao: 'STATUS_CHANGE',
     modulo: 'PLANO_CONTAS',
   },
+
+  // Pessoas
+  [AuditEventType.PESSOA_CREATED]: { acao: 'CREATE', modulo: 'PESSOA' },
+  [AuditEventType.PESSOA_UPDATED]: { acao: 'UPDATE', modulo: 'PESSOA' },
+  [AuditEventType.PESSOA_DELETED]: { acao: 'DELETE', modulo: 'PESSOA' },
 };
 
 /**
@@ -226,15 +236,22 @@ export class AuditService {
           ? 'NEGADO'
           : 'FALHA';
 
+      // Validar se a empresa existe antes de criar a referência
+      let empresaRef = undefined;
+      if (entry.empresaId) {
+        const empresaExists = await this.em.findOne(Empresa, { id: entry.empresaId });
+        if (empresaExists) {
+          empresaRef = this.em.getReference(Empresa, entry.empresaId);
+        }
+      }
+
       const auditoria = this.auditoriaRepository.create({
         usuario: entry.userId
           ? this.em.getReference(Usuario, entry.userId)
           : undefined,
         acao: mapping.acao,
         modulo: mapping.modulo,
-        empresa: entry.empresaId
-          ? this.em.getReference(Empresa, entry.empresaId)
-          : undefined,
+        empresa: empresaRef,
         data_hora: entry.timestamp,
         resultado: resultado as 'SUCESSO' | 'FALHA' | 'NEGADO',
         ip_address: entry.ipAddress,
