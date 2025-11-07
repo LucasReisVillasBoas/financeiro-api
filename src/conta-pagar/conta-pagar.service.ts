@@ -491,15 +491,18 @@ export class ContasPagarService {
     conta.status = StatusContaPagar.PENDENTE;
 
     await this.movimentacaoBancariaService.create({
-      data: new Date().toString(),
+      dataMovimento: new Date().toString(),
+      data: new Date().toString(), // Compatibilidade
       descricao: 'Estorno',
       conta: `${contaBancaria.conta}-${contaBancaria.conta_digito}`,
       categoria: movimentacao.categoria,
       valor: valorEstornado,
-      tipo: 'Entrada',
+      tipoMovimento: 'Entrada',
+      tipo: 'Entrada', // Compatibilidade
       contaBancaria: contaBancaria.id,
       empresaId: movimentacao.empresaId,
-    });
+      referencia: 'Pagar' as any,
+    } as any);
 
     await this.contaBancariaRepository.persistAndFlush(contaBancaria);
     await this.movimentacaoRepository.persistAndFlush(movimentacao);
