@@ -12,7 +12,7 @@ import {
   StatusContaPagar,
 } from '../entities/conta-pagar/conta-pagar.entity';
 import { ContasBancarias } from '../entities/conta-bancaria/conta-bancaria.entity';
-import { MovimentacoesBancarias } from '../entities/movimentacao-bancaria/movimentacao-bancaria.entity';
+import { MovimentacoesBancarias, TipoReferencia } from '../entities/movimentacao-bancaria/movimentacao-bancaria.entity';
 import { ContasPagarRepository } from '../conta-pagar/conta-pagar.repository';
 import { ContasBancariasRepository } from '../conta-bancaria/conta-bancaria.repository';
 import { MovimentacoesBancariasRepository } from '../movimentacao-bancaria/movimentacao-bancaria.repository';
@@ -109,6 +109,8 @@ export class BaixaPagamentoService {
       contaBancaria,
       empresaId: contaPagar.empresa.id,
       planoContas: contaPagar.planoContas,
+      referencia: TipoReferencia.PAGAR,
+      observacao: dto.observacao,
     });
 
     contaBancaria.saldo_atual -= totalBaixa;
@@ -235,6 +237,8 @@ export class BaixaPagamentoService {
       contaBancaria,
       empresaId: contaPagar.empresa.id,
       planoContas: contaPagar.planoContas,
+      referencia: TipoReferencia.PAGAR,
+      observacao: justificativa,
     });
 
     baixa.deletadoEm = new Date();

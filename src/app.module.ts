@@ -26,6 +26,7 @@ import { PlanoContasModule } from './plano-contas/plano-contas.module';
 import { DreModule } from './dre/dre.module';
 import { BaixaPagamentoModule } from './baixa-pagamento/baixa-pagamento.module';
 import { PessoaModule } from './pessoa/pessoa.module';
+import { ExtratoBancarioModule } from './extrato-bancario/extrato-bancario.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { PessoaModule } from './pessoa/pessoa.module';
     DreModule,
     BaixaPagamentoModule,
     PessoaModule,
+    ExtratoBancarioModule,
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET || 'your-secret-key',

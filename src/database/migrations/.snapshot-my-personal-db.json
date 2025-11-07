@@ -1015,8 +1015,8 @@
           "default": "gen_random_uuid()",
           "mappedType": "uuid"
         },
-        "data": {
-          "name": "data",
+        "data_movimento": {
+          "name": "data_movimento",
           "type": "date",
           "unsigned": false,
           "autoincrement": false,
@@ -1066,13 +1066,62 @@
           "scale": 2,
           "mappedType": "decimal"
         },
-        "tipo": {
-          "name": "tipo",
+        "tipo_movimento": {
+          "name": "tipo_movimento",
           "type": "varchar(20)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
+          "length": 20,
+          "mappedType": "string"
+        },
+        "observacao": {
+          "name": "observacao",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "text"
+        },
+        "conciliado": {
+          "name": "conciliado",
+          "type": "char(1)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 1,
+          "default": "'N'",
+          "mappedType": "character"
+        },
+        "conciliado_em": {
+          "name": "conciliado_em",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 6,
+          "mappedType": "datetime"
+        },
+        "conciliado_por": {
+          "name": "conciliado_por",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "uuid"
+        },
+        "referencia": {
+          "name": "referencia",
+          "type": "varchar(20)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
           "length": 20,
           "mappedType": "string"
         },

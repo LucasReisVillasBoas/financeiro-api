@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as ExcelJS from 'exceljs';
-import * as PDFDocument from 'pdfkit';
+import PDFDocument from 'pdfkit';
 import { createObjectCsvStringifier } from 'csv-writer';
 import { RelatorioContasPagar } from './interfaces/relatorio-contas-pagar.interface';
 import { RelatorioContasPagarService } from './relatorio-contas-pagar.service';
