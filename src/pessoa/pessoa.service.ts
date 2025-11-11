@@ -7,9 +7,10 @@ import {
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityManager } from '@mikro-orm/core';
 import { Pessoa } from '../entities/pessoa/pessoa.entity';
+import { PessoaTipo } from '../entities/pessoa/pessoa-tipo.entity';
+import { TipoPessoa, SituacaoPessoa, SituacaoFinanceira } from '../entities/pessoa/tipo-pessoa.enum';
 import { Empresa } from '../entities/empresa/empresa.entity';
 import { Endereco } from '../entities/endereco/endereco.entity';
-import { Usuario } from '../entities/usuario/usuario.entity';
 import { Cidade } from '../entities/cidade/cidade.entity';
 import { UsuarioEmpresaFilial } from '../entities/usuario-empresa-filial/usuario-empresa-filial.entity';
 import { PessoaRepository } from './pessoa.repository';
@@ -93,32 +94,51 @@ export class PessoaService {
 
     const empresa = this.em.getReference(Empresa, empresaId);
 
+    // Verificar se filialId foi fornecido
+    let filial: Empresa | undefined;
+    if (dto.filialId) {
+      filial = this.em.getReference(Empresa, dto.filialId);
+    }
+
     const pessoaData: any = {
+      clienteId: dto.clienteId,
       empresa,
+      filial,
       endereco,
       razaoNome: dto.nome,
       fantasiaApelido: dto.tipo === 'Física' ? dto.nome : undefined,
       documento: documentoLimpo,
-      ieRg: undefined,
-      aniversario: undefined,
+      ieRg: dto.ieRg ? dto.ieRg.replace(/\D/g, '') : undefined,
+      im: dto.im ? dto.im.replace(/\D/g, '') : undefined,
+      tipoContribuinte: dto.tipoContribuinte,
+      consumidorFinal: dto.consumidorFinal ?? true,
+      aniversario: dto.aniversario ? new Date(dto.aniversario) : undefined,
+      limiteCredito: dto.limiteCredito ?? 0,
+      situacaoFinanceira: dto.situacaoFinanceira ?? SituacaoFinanceira.ATIVO,
       email: dto.email,
-      telefone: dto.telefone,
+      telefone: dto.telefone ? dto.telefone.replace(/\D/g, '') : undefined,
+      situacao: SituacaoPessoa.ATIVO,
       ativo: dto.ativo ?? true,
       criadoEm: new Date(),
       atualizadoEm: new Date(),
     };
 
-    if (usuarioId) {
-      try {
-        pessoaData.criadoPor = this.em.getReference(Usuario, usuarioId);
-      } catch (error) {
-        // Ignora se não conseguir criar a referência
-      }
-    }
-
     const pessoa = this.pessoaRepository.create(pessoaData);
 
     await this.em.persistAndFlush(pessoa);
+
+    // Criar os tipos de pessoa (many-to-many)
+    const tipos = dto.tipos && dto.tipos.length > 0 ? dto.tipos : [TipoPessoa.CLIENTE];
+    for (const tipo of tipos) {
+      const pessoaTipo = this.em.create(PessoaTipo, {
+        pessoa,
+        tipo,
+        criadoEm: new Date(),
+      });
+      this.em.persist(pessoaTipo);
+    }
+
+    await this.em.flush();
 
     await this.auditService.log({
       timestamp: new Date(),
@@ -134,6 +154,7 @@ export class PessoaService {
         razaoNome: pessoa.razaoNome,
         documento: pessoa.documento,
         tipo: dto.tipo,
+        tipos: tipos,
       },
     });
 
@@ -149,6 +170,11 @@ export class PessoaService {
       throw new BadRequestException(
         'Informe ao menos Razão/Nome ou Fantasia/Apelido',
       );
+    }
+
+    // Validar que foi fornecido pelo menos um tipo
+    if (!dto.tipos || dto.tipos.length === 0) {
+      throw new BadRequestException('Informe ao menos um tipo de pessoa');
     }
 
     if (dto.documento) {
@@ -167,25 +193,49 @@ export class PessoaService {
 
     const empresa = this.em.getReference(Empresa, dto.empresaId);
     const endereco = this.em.getReference(Endereco, dto.enderecoId);
-    const criadoPor = this.em.getReference(Usuario, usuarioId);
+
+    // Verificar se filialId foi fornecido
+    let filial: Empresa | undefined;
+    if (dto.filialId) {
+      filial = this.em.getReference(Empresa, dto.filialId);
+    }
 
     const pessoa = this.pessoaRepository.create({
+      clienteId: dto.clienteId,
       empresa,
+      filial,
       endereco,
       razaoNome: dto.razaoNome,
       fantasiaApelido: dto.fantasiaApelido,
-      documento: dto.documento,
-      ieRg: dto.ieRg,
+      documento: dto.documento ? dto.documento.replace(/\D/g, '') : undefined,
+      ieRg: dto.ieRg ? dto.ieRg.replace(/\D/g, '') : undefined,
+      im: dto.im ? dto.im.replace(/\D/g, '') : undefined,
+      tipoContribuinte: dto.tipoContribuinte,
+      consumidorFinal: dto.consumidorFinal ?? true,
       aniversario: dto.aniversario ? new Date(dto.aniversario) : undefined,
+      limiteCredito: dto.limiteCredito ?? 0,
+      situacaoFinanceira: dto.situacaoFinanceira ?? SituacaoFinanceira.ATIVO,
       email: dto.email,
-      telefone: dto.telefone,
+      telefone: dto.telefone ? dto.telefone.replace(/\D/g, '') : undefined,
+      situacao: dto.situacao ?? SituacaoPessoa.ATIVO,
       ativo: dto.ativo ?? true,
       criadoEm: new Date(),
       atualizadoEm: new Date(),
-      criadoPor,
     });
 
     await this.em.persistAndFlush(pessoa);
+
+    // Criar os tipos de pessoa (many-to-many)
+    for (const tipo of dto.tipos) {
+      const pessoaTipo = this.em.create(PessoaTipo, {
+        pessoa,
+        tipo,
+        criadoEm: new Date(),
+      });
+      this.em.persist(pessoaTipo);
+    }
+
+    await this.em.flush();
 
     await this.auditService.log({
       timestamp: new Date(),
@@ -201,6 +251,8 @@ export class PessoaService {
         razaoNome: pessoa.razaoNome,
         fantasiaApelido: pessoa.fantasiaApelido,
         documento: pessoa.documento,
+        tipos: dto.tipos,
+        situacao: pessoa.situacao,
       },
     });
 
@@ -332,10 +384,30 @@ export class PessoaService {
       pessoa.ieRg = dto.ieRg;
     }
 
+    if (dto.im !== undefined) {
+      pessoa.im = dto.im;
+    }
+
+    if (dto.tipoContribuinte !== undefined) {
+      pessoa.tipoContribuinte = dto.tipoContribuinte;
+    }
+
+    if (dto.consumidorFinal !== undefined) {
+      pessoa.consumidorFinal = dto.consumidorFinal;
+    }
+
     if (dto.aniversario !== undefined) {
       pessoa.aniversario = dto.aniversario
         ? new Date(dto.aniversario)
         : undefined;
+    }
+
+    if (dto.limiteCredito !== undefined) {
+      pessoa.limiteCredito = dto.limiteCredito;
+    }
+
+    if (dto.situacaoFinanceira !== undefined) {
+      pessoa.situacaoFinanceira = dto.situacaoFinanceira;
     }
 
     if (dto.email !== undefined) {
@@ -346,8 +418,39 @@ export class PessoaService {
       pessoa.telefone = dto.telefone;
     }
 
+    if (dto.clienteId !== undefined) {
+      pessoa.clienteId = dto.clienteId;
+    }
+
+    if (dto.filialId !== undefined) {
+      pessoa.filial = this.em.getReference(Empresa, dto.filialId);
+    }
+
+    if (dto.situacao !== undefined) {
+      pessoa.situacao = dto.situacao;
+    }
+
     if (dto.ativo !== undefined) {
       pessoa.ativo = dto.ativo;
+    }
+
+    // Atualizar tipos se fornecido
+    if (dto.tipos && dto.tipos.length > 0) {
+      // Remover tipos existentes
+      const tiposExistentes = await this.em.find(PessoaTipo, { pessoa: pessoa.id });
+      for (const tipoExistente of tiposExistentes) {
+        this.em.remove(tipoExistente);
+      }
+
+      // Criar novos tipos
+      for (const tipo of dto.tipos) {
+        const pessoaTipo = this.em.create(PessoaTipo, {
+          pessoa,
+          tipo,
+          criadoEm: new Date(),
+        });
+        this.em.persist(pessoaTipo);
+      }
     }
 
     // Atualizar endereço se houver campos de endereço no DTO
@@ -383,17 +486,6 @@ export class PessoaService {
     }
 
     pessoa.atualizadoEm = new Date();
-
-    if (usuarioId) {
-      try {
-        const usuario = await this.em.findOne(Usuario, { id: usuarioId });
-        if (usuario) {
-          pessoa.atualizadoPor = usuario;
-        }
-      } catch (error) {
-        console.warn(`Usuário ${usuarioId} não encontrado para atualizadoPor`);
-      }
-    }
 
     await this.em.flush();
 
@@ -506,19 +598,6 @@ export class PessoaService {
     pessoa.deletadoEm = undefined;
     pessoa.ativo = true;
     pessoa.atualizadoEm = new Date();
-
-    // Apenas atualizar atualizadoPor se o usuário for válido
-    if (usuarioId) {
-      try {
-        const usuario = await this.em.findOne(Usuario, { id: usuarioId });
-        if (usuario) {
-          pessoa.atualizadoPor = usuario;
-        }
-      } catch (error) {
-        // Ignorar erro se usuário não for encontrado
-        console.warn(`Usuário ${usuarioId} não encontrado para atualizadoPor`);
-      }
-    }
 
     await this.em.flush();
 
