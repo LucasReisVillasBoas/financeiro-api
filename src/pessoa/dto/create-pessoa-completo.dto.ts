@@ -1,5 +1,7 @@
-import { IsString, IsOptional, IsUUID, IsBoolean, IsDateString, MaxLength, MinLength, IsEnum } from 'class-validator';
+import { IsString, IsOptional, IsUUID, IsBoolean, IsDateString, MaxLength, MinLength, IsEnum, IsArray, IsNumber, Min, ArrayMinSize } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { TipoPessoa as TipoPessoaEnum, TipoContribuinte, SituacaoFinanceira } from '../../entities/pessoa/tipo-pessoa.enum';
+import { IsCpfCnpj, IsIE, IsIM } from '../../common/validators/documento.validator';
 
 export enum TipoPessoa {
   FISICA = 'Física',
@@ -83,4 +85,55 @@ export class CreatePessoaCompletoDto {
   @IsOptional()
   @IsString()
   observacoes?: string;
+
+  // Campos fiscais
+  @ApiProperty({ description: 'Inscrição Estadual ou RG', required: false })
+  @IsOptional()
+  @IsIE()
+  ieRg?: string;
+
+  @ApiProperty({ description: 'Inscrição Municipal', required: false })
+  @IsOptional()
+  @IsIM()
+  im?: string;
+
+  @ApiProperty({ enum: TipoContribuinte, description: 'Tipo de contribuinte (SEFAZ)', required: false })
+  @IsOptional()
+  @IsEnum(TipoContribuinte)
+  tipoContribuinte?: TipoContribuinte;
+
+  @ApiProperty({ description: 'Consumidor final', default: true })
+  @IsOptional()
+  @IsBoolean()
+  consumidorFinal?: boolean;
+
+  // Campos financeiros
+  @ApiProperty({ description: 'Limite de crédito (R$)', required: false })
+  @IsOptional()
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @Min(0)
+  limiteCredito?: number;
+
+  @ApiProperty({ enum: SituacaoFinanceira, description: 'Situação financeira', required: false })
+  @IsOptional()
+  @IsEnum(SituacaoFinanceira)
+  situacaoFinanceira?: SituacaoFinanceira;
+
+  @ApiProperty({ description: 'Data de aniversário', required: false })
+  @IsOptional()
+  @IsDateString()
+  aniversario?: string;
+
+  // Tipos de pessoa
+  @ApiProperty({ description: 'Tipos de pessoa', enum: TipoPessoaEnum, isArray: true })
+  @IsArray()
+  @ArrayMinSize(1)
+  @IsEnum(TipoPessoaEnum, { each: true })
+  tipos!: TipoPessoaEnum[];
+
+  // Multi-tenancy
+  @ApiProperty({ description: 'ID da filial', required: false })
+  @IsOptional()
+  @IsUUID('4')
+  filialId?: string;
 }
