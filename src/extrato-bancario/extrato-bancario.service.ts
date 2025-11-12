@@ -4,7 +4,10 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
-import { ExtratoBancario, StatusExtratoItem } from '../entities/extrato-bancario/extrato-bancario.entity';
+import {
+  ExtratoBancario,
+  StatusExtratoItem,
+} from '../entities/extrato-bancario/extrato-bancario.entity';
 import { ExtratoBancarioRepository } from './extrato-bancario.repository';
 import { ContasBancariasRepository } from '../conta-bancaria/conta-bancaria.repository';
 import { MovimentacoesBancariasRepository } from '../movimentacao-bancaria/movimentacao-bancaria.repository';
@@ -94,7 +97,9 @@ export class ExtratoBancarioService {
         documento: transacao.documento,
         valor: transacao.valor,
         tipoTransacao: transacao.tipo,
-        status: sugestao ? StatusExtratoItem.SUGESTAO : StatusExtratoItem.PENDENTE,
+        status: sugestao
+          ? StatusExtratoItem.SUGESTAO
+          : StatusExtratoItem.PENDENTE,
         movimentacaoSugerida: sugestao
           ? await this.movimentacaoRepository.findOne(sugestao.movimentacaoId)
           : undefined,
@@ -115,7 +120,9 @@ export class ExtratoBancarioService {
     }
 
     // Persistir todos os itens
-    await this.extratoRepository.getEntityManager().persistAndFlush(itensImportados);
+    await this.extratoRepository
+      .getEntityManager()
+      .persistAndFlush(itensImportados);
 
     // Registrar auditoria
     await this.auditService.log({
@@ -140,9 +147,8 @@ export class ExtratoBancarioService {
     });
 
     // Montar resultado
-    const itens: ItemExtratoImportado[] = await this.montarItensResultado(
-      itensImportados,
-    );
+    const itens: ItemExtratoImportado[] =
+      await this.montarItensResultado(itensImportados);
 
     return {
       totalImportado: transacoes.length,
@@ -160,7 +166,11 @@ export class ExtratoBancarioService {
     }
 
     return this.extratoRepository.find(where, {
-      populate: ['contaBancaria', 'movimentacaoSugerida', 'movimentacaoConciliada'],
+      populate: [
+        'contaBancaria',
+        'movimentacaoSugerida',
+        'movimentacaoConciliada',
+      ],
       orderBy: { dataTransacao: 'DESC' },
     });
   }
@@ -169,7 +179,9 @@ export class ExtratoBancarioService {
     return this.extratoRepository.find(
       {
         contaBancaria: contaBancariaId,
-        status: { $in: [StatusExtratoItem.PENDENTE, StatusExtratoItem.SUGESTAO] },
+        status: {
+          $in: [StatusExtratoItem.PENDENTE, StatusExtratoItem.SUGESTAO],
+        },
         deletadoEm: null,
       },
       {
@@ -211,7 +223,9 @@ export class ExtratoBancarioService {
     item.status = StatusExtratoItem.CONCILIADO;
     item.movimentacaoConciliada = movimentacao;
 
-    await this.extratoRepository.getEntityManager().persistAndFlush([item, movimentacao]);
+    await this.extratoRepository
+      .getEntityManager()
+      .persistAndFlush([item, movimentacao]);
 
     // Registrar auditoria
     await this.auditService.log({

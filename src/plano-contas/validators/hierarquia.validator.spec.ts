@@ -1,6 +1,9 @@
 import { BadRequestException } from '@nestjs/common';
 import { HierarquiaValidator } from './hierarquia.validator';
-import { PlanoContas, TipoPlanoContas } from '../../entities/plano-contas/plano-contas.entity';
+import {
+  PlanoContas,
+  TipoPlanoContas,
+} from '../../entities/plano-contas/plano-contas.entity';
 import { PlanoContasRepository } from '../plano-contas.repository';
 
 describe('HierarquiaValidator', () => {
@@ -167,7 +170,9 @@ describe('HierarquiaValidator', () => {
           true,
           false,
         );
-      }).toThrow('Não é possível tornar analítica uma conta que possui contas filhas');
+      }).toThrow(
+        'Não é possível tornar analítica uma conta que possui contas filhas',
+      );
     });
 
     it('deve lançar erro ao alterar permite_lancamento com lançamentos', () => {
@@ -182,7 +187,9 @@ describe('HierarquiaValidator', () => {
           false,
           true, // tem lançamentos
         );
-      }).toThrow('Não é possível alterar permite_lancamento de uma conta que possui lançamentos');
+      }).toThrow(
+        'Não é possível alterar permite_lancamento de uma conta que possui lançamentos',
+      );
     });
 
     it('deve lançar erro ao tornar sintética conta com lançamentos', () => {
@@ -197,7 +204,9 @@ describe('HierarquiaValidator', () => {
           false,
           true, // tem lançamentos
         );
-      }).toThrow('Não é possível alterar permite_lancamento de uma conta que possui lançamentos');
+      }).toThrow(
+        'Não é possível alterar permite_lancamento de uma conta que possui lançamentos',
+      );
     });
 
     it('deve passar se não houver filhos nem lançamentos', () => {
@@ -245,7 +254,9 @@ describe('HierarquiaValidator', () => {
           'novo-pai',
           2,
         ),
-      ).rejects.toThrow('Não é possível mover conta para pai de empresa diferente');
+      ).rejects.toThrow(
+        'Não é possível mover conta para pai de empresa diferente',
+      );
     });
 
     it('deve lançar erro se novo pai for analítico', async () => {

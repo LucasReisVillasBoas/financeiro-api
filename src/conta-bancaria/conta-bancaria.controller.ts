@@ -33,7 +33,8 @@ export class ContaBancariaController {
   @Roles('Administrador', 'Financeiro')
   @ApiOperation({
     summary: 'Criar nova conta bancária',
-    description: 'Cria uma nova conta bancária. Requer perfil Administrador ou Financeiro.',
+    description:
+      'Cria uma nova conta bancária. Requer perfil Administrador ou Financeiro.',
   })
   async create(@Body() dto: CreateContaBancariaDto) {
     const conta = await this.contasBancariasService.create(dto);
@@ -48,7 +49,8 @@ export class ContaBancariaController {
   @Roles('Administrador', 'Financeiro', 'Visualizador')
   @ApiOperation({
     summary: 'Listar todas as contas bancárias',
-    description: 'Lista todas as contas bancárias. Requer perfil Administrador, Financeiro ou Visualizador.',
+    description:
+      'Lista todas as contas bancárias. Requer perfil Administrador, Financeiro ou Visualizador.',
   })
   async findAll() {
     const contas = await this.contasBancariasService.findAll();
@@ -93,7 +95,8 @@ export class ContaBancariaController {
   @Roles('Administrador', 'Financeiro')
   @ApiOperation({
     summary: 'Atualizar conta bancária',
-    description: 'Atualiza os dados de uma conta bancária. Requer perfil Administrador ou Financeiro.',
+    description:
+      'Atualiza os dados de uma conta bancária. Requer perfil Administrador ou Financeiro.',
   })
   async update(@Param('id') id: string, @Body() dto: UpdateContaBancariaDto) {
     const conta = await this.contasBancariasService.update(id, dto);
@@ -108,7 +111,8 @@ export class ContaBancariaController {
   @Roles('Administrador', 'Financeiro')
   @ApiOperation({
     summary: 'Ativar/Inativar conta bancária',
-    description: 'Altera o status ativo/inativo de uma conta bancária. Requer perfil Administrador ou Financeiro. Operação auditada.',
+    description:
+      'Altera o status ativo/inativo de uma conta bancária. Requer perfil Administrador ou Financeiro. Operação auditada.',
   })
   async toggleStatus(@Param('id') id: string) {
     const conta = await this.contasBancariasService.toggleStatus(id);
@@ -124,7 +128,8 @@ export class ContaBancariaController {
   @Roles('Administrador')
   @ApiOperation({
     summary: 'Excluir conta bancária (soft delete)',
-    description: 'Exclui logicamente uma conta bancária. Requer perfil Administrador. Operação auditada como CRÍTICA.',
+    description:
+      'Exclui logicamente uma conta bancária. Requer perfil Administrador. Operação auditada como CRÍTICA.',
   })
   async delete(@Param('id') id: string) {
     await this.contasBancariasService.softDelete(id);

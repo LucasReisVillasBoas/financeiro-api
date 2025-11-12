@@ -8,7 +8,10 @@ import { UsuarioEmpresaFilial } from '../entities/usuario-empresa-filial/usuario
 import { AuditModule } from '../audit/audit.module';
 
 @Module({
-  imports: [MikroOrmModule.forFeature([Pessoa, Cidade, UsuarioEmpresaFilial]), AuditModule],
+  imports: [
+    MikroOrmModule.forFeature([Pessoa, Cidade, UsuarioEmpresaFilial]),
+    AuditModule,
+  ],
   controllers: [PessoaController],
   providers: [PessoaService],
   exports: [PessoaService],

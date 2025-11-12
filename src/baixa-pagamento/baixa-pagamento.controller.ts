@@ -16,7 +16,10 @@ export class BaixaPagamentoController {
   constructor(private readonly baixaPagamentoService: BaixaPagamentoService) {}
 
   @Post()
-  async create(@Body() createBaixaDto: CreateBaixaPagamentoDto, @Req() req: any) {
+  async create(
+    @Body() createBaixaDto: CreateBaixaPagamentoDto,
+    @Req() req: any,
+  ) {
     const baixa = await this.baixaPagamentoService.create(
       createBaixaDto,
       req.user.userId,
@@ -43,7 +46,8 @@ export class BaixaPagamentoController {
 
   @Get('conta-pagar/:contaPagarId')
   async findByContaPagar(@Param('contaPagarId') contaPagarId: string) {
-    const baixas = await this.baixaPagamentoService.findByContaPagar(contaPagarId);
+    const baixas =
+      await this.baixaPagamentoService.findByContaPagar(contaPagarId);
 
     return {
       message: 'Baixas da conta a pagar listadas com sucesso',

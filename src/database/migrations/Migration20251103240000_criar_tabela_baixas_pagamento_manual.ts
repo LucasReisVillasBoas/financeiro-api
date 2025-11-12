@@ -1,7 +1,6 @@
 import { Migration } from '@mikro-orm/migrations';
 
 export class Migration20251103240000_criar_tabela_baixas_pagamento_manual extends Migration {
-
   override async up(): Promise<void> {
     // Cria tabela baixas_pagamento
     this.addSql(`
@@ -45,19 +44,30 @@ export class Migration20251103240000_criar_tabela_baixas_pagamento_manual extend
     `);
 
     // Adiciona índices
-    this.addSql(`create index "baixas_pagamento_conta_pagar_id_index" on "baixas_pagamento" ("conta_pagar_id");`);
-    this.addSql(`create index "baixas_pagamento_conta_bancaria_id_index" on "baixas_pagamento" ("conta_bancaria_id");`);
-    this.addSql(`create index "baixas_pagamento_data_index" on "baixas_pagamento" ("data");`);
-    this.addSql(`create index "baixas_pagamento_deletado_em_index" on "baixas_pagamento" ("deletado_em");`);
+    this.addSql(
+      `create index "baixas_pagamento_conta_pagar_id_index" on "baixas_pagamento" ("conta_pagar_id");`,
+    );
+    this.addSql(
+      `create index "baixas_pagamento_conta_bancaria_id_index" on "baixas_pagamento" ("conta_bancaria_id");`,
+    );
+    this.addSql(
+      `create index "baixas_pagamento_data_index" on "baixas_pagamento" ("data");`,
+    );
+    this.addSql(
+      `create index "baixas_pagamento_deletado_em_index" on "baixas_pagamento" ("deletado_em");`,
+    );
   }
 
   override async down(): Promise<void> {
     // Remove foreign keys
-    this.addSql(`alter table "baixas_pagamento" drop constraint "baixas_pagamento_conta_pagar_id_foreign";`);
-    this.addSql(`alter table "baixas_pagamento" drop constraint "baixas_pagamento_conta_bancaria_id_foreign";`);
+    this.addSql(
+      `alter table "baixas_pagamento" drop constraint "baixas_pagamento_conta_pagar_id_foreign";`,
+    );
+    this.addSql(
+      `alter table "baixas_pagamento" drop constraint "baixas_pagamento_conta_bancaria_id_foreign";`,
+    );
 
     // Remove tabela
     this.addSql(`drop table if exists "baixas_pagamento" cascade;`);
   }
-
 }

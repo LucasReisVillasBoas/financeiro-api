@@ -13,9 +13,7 @@ import { AuditoriaRepository } from './audit.repository';
  */
 @Global()
 @Module({
-  imports: [
-    MikroOrmModule.forFeature([Auditoria]),
-  ],
+  imports: [MikroOrmModule.forFeature([Auditoria])],
   controllers: [AuditoriaController],
   providers: [AuditService, AuditoriaRepository],
   exports: [AuditService, AuditoriaRepository],

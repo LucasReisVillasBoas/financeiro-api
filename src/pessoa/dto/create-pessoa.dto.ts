@@ -1,4 +1,12 @@
-import { IsString, IsOptional, IsUUID, IsBoolean, IsDateString, MaxLength, MinLength } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsUUID,
+  IsBoolean,
+  IsDateString,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreatePessoaDto {
@@ -10,7 +18,10 @@ export class CreatePessoaDto {
   @IsUUID('4', { message: 'Endereço ID deve ser um UUID válido' })
   enderecoId!: string;
 
-  @ApiProperty({ description: 'Razão social ou nome completo', required: false })
+  @ApiProperty({
+    description: 'Razão social ou nome completo',
+    required: false,
+  })
   @IsOptional()
   @IsString({ message: 'Razão/Nome deve ser um texto' })
   @MaxLength(60, { message: 'Razão/Nome deve ter no máximo 60 caracteres' })
@@ -19,7 +30,9 @@ export class CreatePessoaDto {
   @ApiProperty({ description: 'Nome fantasia ou apelido', required: false })
   @IsOptional()
   @IsString({ message: 'Fantasia/Apelido deve ser um texto' })
-  @MaxLength(60, { message: 'Fantasia/Apelido deve ter no máximo 60 caracteres' })
+  @MaxLength(60, {
+    message: 'Fantasia/Apelido deve ter no máximo 60 caracteres',
+  })
   fantasiaApelido?: string;
 
   @ApiProperty({ description: 'CPF ou CNPJ', required: false })

@@ -25,12 +25,12 @@ export class Cidade {
   @Property({ length: 255 })
   nome!: string;
 
-  @Property({ length: 7 })
+  @Property({ length: 20, nullable: true })
   @Index()
-  codigoIbge!: string;
+  codigoIbge?: string;
 
-  @Property({ length: 2 })
-  uf!: string;
+  @Property({ length: 2, nullable: true })
+  uf?: string;
 
   @Property({ length: 100, default: 'Brasil' })
   pais: string = 'Brasil';

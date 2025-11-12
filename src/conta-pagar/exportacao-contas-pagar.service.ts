@@ -182,12 +182,17 @@ export class ExportacaoContasPagarService {
       worksheetFornecedor.getColumn(colNum).numFmt = 'R$ #,##0.00';
     });
 
-    return await workbook.xlsx.writeBuffer() as Buffer;
+    const buffer = await workbook.xlsx.writeBuffer();
+    return Buffer.from(buffer);
   }
 
   async exportarPDF(relatorio: RelatorioContasPagar): Promise<Buffer> {
     return new Promise((resolve, reject) => {
-      const doc = new PDFDocument({ margin: 50, size: 'A4', layout: 'landscape' });
+      const doc = new PDFDocument({
+        margin: 50,
+        size: 'A4',
+        layout: 'landscape',
+      });
       const buffers: Buffer[] = [];
 
       doc.on('data', buffers.push.bind(buffers));
@@ -195,9 +200,12 @@ export class ExportacaoContasPagarService {
       doc.on('error', reject);
 
       // Título
-      doc.fontSize(18).font('Helvetica-Bold').text('Relatório de Contas a Pagar', {
-        align: 'center',
-      });
+      doc
+        .fontSize(18)
+        .font('Helvetica-Bold')
+        .text('Relatório de Contas a Pagar', {
+          align: 'center',
+        });
 
       doc.moveDown();
 
@@ -211,9 +219,13 @@ export class ExportacaoContasPagarService {
         doc.text(periodo);
       }
       if (relatorio.filtros.status) {
-        doc.text(`Status: ${this.relatorioService.formatarStatus(relatorio.filtros.status)}`);
+        doc.text(
+          `Status: ${this.relatorioService.formatarStatus(relatorio.filtros.status)}`,
+        );
       }
-      doc.text(`Data de Geração: ${this.relatorioService.formatarData(relatorio.dataGeracao)}`);
+      doc.text(
+        `Data de Geração: ${this.relatorioService.formatarData(relatorio.dataGeracao)}`,
+      );
 
       doc.moveDown();
 
@@ -300,12 +312,21 @@ export class ExportacaoContasPagarService {
       // Nova página para totais por fornecedor
       if (relatorio.totaisPorFornecedor.length > 0) {
         doc.addPage();
-        doc.fontSize(14).font('Helvetica-Bold').text('Totais por Fornecedor', { align: 'center' });
+        doc
+          .fontSize(14)
+          .font('Helvetica-Bold')
+          .text('Totais por Fornecedor', { align: 'center' });
         doc.moveDown();
 
         const fornecedorTableTop = doc.y;
         const fornecedorColWidths = [200, 80, 120, 120, 120];
-        const fornecedorHeaders = ['Fornecedor', 'Quantidade', 'Valor Total', 'Valor Pago', 'Saldo'];
+        const fornecedorHeaders = [
+          'Fornecedor',
+          'Quantidade',
+          'Valor Total',
+          'Valor Pago',
+          'Saldo',
+        ];
 
         doc.fontSize(9).font('Helvetica-Bold');
         x = 50;
@@ -338,7 +359,10 @@ export class ExportacaoContasPagarService {
           ];
 
           values.forEach((value, i) => {
-            doc.text(value, x, y, { width: fornecedorColWidths[i], align: 'left' });
+            doc.text(value, x, y, {
+              width: fornecedorColWidths[i],
+              align: 'left',
+            });
             x += fornecedorColWidths[i];
           });
 

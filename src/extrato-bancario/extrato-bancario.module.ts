@@ -13,7 +13,11 @@ import { AuditModule } from '../audit/audit.module';
 
 @Module({
   imports: [
-    MikroOrmModule.forFeature([ExtratoBancario, MovimentacoesBancarias, ContasBancarias]),
+    MikroOrmModule.forFeature([
+      ExtratoBancario,
+      MovimentacoesBancarias,
+      ContasBancarias,
+    ]),
     MulterModule.register({
       limits: {
         fileSize: 5 * 1024 * 1024, // 5MB
@@ -22,12 +26,7 @@ import { AuditModule } from '../audit/audit.module';
     AuditModule,
   ],
   controllers: [ExtratoBancarioController],
-  providers: [
-    ExtratoBancarioService,
-    OfxParser,
-    CsvParser,
-    MatchingService,
-  ],
+  providers: [ExtratoBancarioService, OfxParser, CsvParser, MatchingService],
   exports: [ExtratoBancarioService],
 })
 export class ExtratoBancarioModule {}

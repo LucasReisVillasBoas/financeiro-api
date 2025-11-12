@@ -1,7 +1,6 @@
 import { Migration } from '@mikro-orm/migrations';
 
 export class Migration20251030012729 extends Migration {
-
   override async up(): Promise<void> {
     this.addSql(`
       create table "auditoria" (
@@ -22,16 +21,36 @@ export class Migration20251030012729 extends Migration {
       );
     `);
 
-    this.addSql(`create index "auditoria_usuario_id_data_hora_index" on "auditoria" ("usuario_id", "data_hora");`);
-    this.addSql(`create index "auditoria_modulo_data_hora_index" on "auditoria" ("modulo", "data_hora");`);
-    this.addSql(`create index "auditoria_empresa_id_data_hora_index" on "auditoria" ("empresa_id", "data_hora");`);
-    this.addSql(`create index "auditoria_cliente_id_data_hora_index" on "auditoria" ("cliente_id", "data_hora");`);
-    this.addSql(`create index "auditoria_acao_data_hora_index" on "auditoria" ("acao", "data_hora");`);
-    this.addSql(`create index "auditoria_usuario_id_index" on "auditoria" ("usuario_id");`);
-    this.addSql(`create index "auditoria_empresa_id_index" on "auditoria" ("empresa_id");`);
-    this.addSql(`create index "auditoria_filial_id_index" on "auditoria" ("filial_id");`);
-    this.addSql(`create index "auditoria_cliente_id_index" on "auditoria" ("cliente_id");`);
-    this.addSql(`create index "auditoria_data_hora_index" on "auditoria" ("data_hora");`);
+    this.addSql(
+      `create index "auditoria_usuario_id_data_hora_index" on "auditoria" ("usuario_id", "data_hora");`,
+    );
+    this.addSql(
+      `create index "auditoria_modulo_data_hora_index" on "auditoria" ("modulo", "data_hora");`,
+    );
+    this.addSql(
+      `create index "auditoria_empresa_id_data_hora_index" on "auditoria" ("empresa_id", "data_hora");`,
+    );
+    this.addSql(
+      `create index "auditoria_cliente_id_data_hora_index" on "auditoria" ("cliente_id", "data_hora");`,
+    );
+    this.addSql(
+      `create index "auditoria_acao_data_hora_index" on "auditoria" ("acao", "data_hora");`,
+    );
+    this.addSql(
+      `create index "auditoria_usuario_id_index" on "auditoria" ("usuario_id");`,
+    );
+    this.addSql(
+      `create index "auditoria_empresa_id_index" on "auditoria" ("empresa_id");`,
+    );
+    this.addSql(
+      `create index "auditoria_filial_id_index" on "auditoria" ("filial_id");`,
+    );
+    this.addSql(
+      `create index "auditoria_cliente_id_index" on "auditoria" ("cliente_id");`,
+    );
+    this.addSql(
+      `create index "auditoria_data_hora_index" on "auditoria" ("data_hora");`,
+    );
 
     this.addSql(`
       alter table "auditoria"
@@ -78,15 +97,17 @@ export class Migration20251030012729 extends Migration {
       before delete on "auditoria"
       for each row execute function prevent_auditoria_modification();
     `);
-
   }
 
   override async down(): Promise<void> {
-    this.addSql(`drop trigger if exists prevent_auditoria_update on "auditoria";`);
-    this.addSql(`drop trigger if exists prevent_auditoria_delete on "auditoria";`);
+    this.addSql(
+      `drop trigger if exists prevent_auditoria_update on "auditoria";`,
+    );
+    this.addSql(
+      `drop trigger if exists prevent_auditoria_delete on "auditoria";`,
+    );
     this.addSql(`drop function if exists prevent_auditoria_modification();`);
 
     this.addSql(`drop table if exists "auditoria" cascade;`);
   }
-
 }

@@ -29,7 +29,10 @@ export class ContasReceberService {
     };
 
     if (dto.planoContasId) {
-      contaData.planoContas = this.em.getReference(PlanoContas, dto.planoContasId);
+      contaData.planoContas = this.em.getReference(
+        PlanoContas,
+        dto.planoContasId,
+      );
     }
 
     const conta = this.contasReceberRepository.create(contaData);

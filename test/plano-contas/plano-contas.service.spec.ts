@@ -6,7 +6,10 @@ import { PlanoContasRepository } from '../../src/plano-contas/plano-contas.repos
 import { EmpresaService } from '../../src/empresa/empresa.service';
 import { AuditService } from '../../src/audit/audit.service';
 import { EntityManager } from '@mikro-orm/core';
-import { PlanoContas, TipoPlanoContas } from '../../src/entities/plano-contas/plano-contas.entity';
+import {
+  PlanoContas,
+  TipoPlanoContas,
+} from '../../src/entities/plano-contas/plano-contas.entity';
 import { CreatePlanoContasDto } from '../../src/plano-contas/dto/create-plano-contas.dto';
 
 describe('PlanoContasService', () => {
@@ -60,7 +63,11 @@ describe('PlanoContasService', () => {
     permite_lancamento: false,
     ativo: true,
     empresa: mockEmpresa as any,
-    filhos: { length: 0, isInitialized: () => false, getItems: () => [] } as any,
+    filhos: {
+      length: 0,
+      isInitialized: () => false,
+      getItems: () => [],
+    } as any,
   };
 
   beforeEach(async () => {
@@ -127,16 +134,24 @@ describe('PlanoContasService', () => {
     it('deve lançar erro se empresa não existir', async () => {
       mockEmpresaService.findOne.mockResolvedValue(null);
 
-      await expect(service.create(createDto)).rejects.toThrow(NotFoundException);
-      await expect(service.create(createDto)).rejects.toThrow('Empresa não encontrada');
+      await expect(service.create(createDto)).rejects.toThrow(
+        NotFoundException,
+      );
+      await expect(service.create(createDto)).rejects.toThrow(
+        'Empresa não encontrada',
+      );
     });
 
     it('deve lançar erro se código já existir', async () => {
       mockEmpresaService.findOne.mockResolvedValue(mockEmpresa);
       mockRepository.findOne.mockResolvedValue(mockPlanoContas); // Código já existe
 
-      await expect(service.create(createDto)).rejects.toThrow(BadRequestException);
-      await expect(service.create(createDto)).rejects.toThrow('Já existe uma conta com o código');
+      await expect(service.create(createDto)).rejects.toThrow(
+        BadRequestException,
+      );
+      await expect(service.create(createDto)).rejects.toThrow(
+        'Já existe uma conta com o código',
+      );
     });
 
     it('deve lançar erro se conta sem pai não for nível 1', async () => {
@@ -144,8 +159,12 @@ describe('PlanoContasService', () => {
       mockEmpresaService.findOne.mockResolvedValue(mockEmpresa);
       mockRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.create(invalidDto)).rejects.toThrow(BadRequestException);
-      await expect(service.create(invalidDto)).rejects.toThrow('Contas sem pai devem ser de nível 1');
+      await expect(service.create(invalidDto)).rejects.toThrow(
+        BadRequestException,
+      );
+      await expect(service.create(invalidDto)).rejects.toThrow(
+        'Contas sem pai devem ser de nível 1',
+      );
     });
   });
 
@@ -165,8 +184,12 @@ describe('PlanoContasService', () => {
     it('deve lançar NotFoundException se conta não existir', async () => {
       mockRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.findOne('id-invalido')).rejects.toThrow(NotFoundException);
-      await expect(service.findOne('id-invalido')).rejects.toThrow('Conta não encontrada');
+      await expect(service.findOne('id-invalido')).rejects.toThrow(
+        NotFoundException,
+      );
+      await expect(service.findOne('id-invalido')).rejects.toThrow(
+        'Conta não encontrada',
+      );
     });
   });
 
@@ -176,7 +199,10 @@ describe('PlanoContasService', () => {
       mockRepository.findOne.mockResolvedValue(contaAnalitica);
       mockRepository.persistAndFlush.mockResolvedValue(undefined);
 
-      const result = await service.toggleStatus(contaAnalitica.id as string, false);
+      const result = await service.toggleStatus(
+        contaAnalitica.id as string,
+        false,
+      );
 
       expect(result.ativo).toBe(false);
       expect(repository.persistAndFlush).toHaveBeenCalled();
@@ -196,10 +222,12 @@ describe('PlanoContasService', () => {
 
       mockRepository.find.mockResolvedValue([filhoAtivo]);
 
-      await expect(service.toggleStatus(contaSintetica.id as string, false))
-        .rejects.toThrow(BadRequestException);
-      await expect(service.toggleStatus(contaSintetica.id as string, false))
-        .rejects.toThrow('Inative primeiro as contas filhas');
+      await expect(
+        service.toggleStatus(contaSintetica.id as string, false),
+      ).rejects.toThrow(BadRequestException);
+      await expect(
+        service.toggleStatus(contaSintetica.id as string, false),
+      ).rejects.toThrow('Inative primeiro as contas filhas');
     });
 
     it('deve reativar uma conta', async () => {
@@ -207,7 +235,10 @@ describe('PlanoContasService', () => {
       mockRepository.findOne.mockResolvedValue(contaInativa);
       mockRepository.persistAndFlush.mockResolvedValue(undefined);
 
-      const result = await service.toggleStatus(contaInativa.id as string, true);
+      const result = await service.toggleStatus(
+        contaInativa.id as string,
+        true,
+      );
 
       expect(result.ativo).toBe(true);
       expect(repository.persistAndFlush).toHaveBeenCalled();
@@ -223,7 +254,10 @@ describe('PlanoContasService', () => {
       mockRepository.getEntityManager().flush.mockResolvedValue(undefined);
 
       const updateDto = { descricao: 'Nova Descrição' };
-      const result = await service.update(mockPlanoContas.id as string, updateDto);
+      const result = await service.update(
+        mockPlanoContas.id as string,
+        updateDto,
+      );
 
       expect(repository.assign).toHaveBeenCalledWith(
         mockPlanoContas,
@@ -235,15 +269,23 @@ describe('PlanoContasService', () => {
       const contaComFilhos = {
         ...mockPlanoContas,
         permite_lancamento: false,
-        filhos: { length: 2, isInitialized: () => true, getItems: () => [{}, {}] } as any,
+        filhos: {
+          length: 2,
+          isInitialized: () => true,
+          getItems: () => [{}, {}],
+        } as any,
       };
       mockRepository.findOne.mockResolvedValue(contaComFilhos);
 
       const updateDto = { permite_lancamento: true };
-      await expect(service.update(contaComFilhos.id as string, updateDto))
-        .rejects.toThrow(BadRequestException);
-      await expect(service.update(contaComFilhos.id as string, updateDto))
-        .rejects.toThrow('Não é possível tornar analítica uma conta que possui contas filhas');
+      await expect(
+        service.update(contaComFilhos.id as string, updateDto),
+      ).rejects.toThrow(BadRequestException);
+      await expect(
+        service.update(contaComFilhos.id as string, updateDto),
+      ).rejects.toThrow(
+        'Não é possível tornar analítica uma conta que possui contas filhas',
+      );
     });
   });
 
@@ -265,10 +307,14 @@ describe('PlanoContasService', () => {
       mockRepository.findOne.mockResolvedValue(mockPlanoContas);
       mockRepository.find.mockResolvedValue([{ id: 'filho' }]); // Com filhos
 
-      await expect(service.softDelete(mockPlanoContas.id as string))
-        .rejects.toThrow(BadRequestException);
-      await expect(service.softDelete(mockPlanoContas.id as string))
-        .rejects.toThrow('Não é possível excluir uma conta que possui contas filhas');
+      await expect(
+        service.softDelete(mockPlanoContas.id as string),
+      ).rejects.toThrow(BadRequestException);
+      await expect(
+        service.softDelete(mockPlanoContas.id as string),
+      ).rejects.toThrow(
+        'Não é possível excluir uma conta que possui contas filhas',
+      );
     });
 
     it('deve impedir exclusão de conta em uso', async () => {
@@ -279,8 +325,9 @@ describe('PlanoContasService', () => {
         .mockResolvedValueOnce(0) // 0 contas a receber
         .mockResolvedValueOnce(0); // 0 movimentações
 
-      await expect(service.softDelete(mockPlanoContas.id as string))
-        .rejects.toThrow(BadRequestException);
+      await expect(
+        service.softDelete(mockPlanoContas.id as string),
+      ).rejects.toThrow(BadRequestException);
 
       // Reset mocks e simular novamente para segundo expect
       mockRepository.findOne.mockResolvedValue(mockPlanoContas);
@@ -290,8 +337,9 @@ describe('PlanoContasService', () => {
         .mockResolvedValueOnce(0)
         .mockResolvedValueOnce(0);
 
-      await expect(service.softDelete(mockPlanoContas.id as string))
-        .rejects.toThrow('está sendo usada em 5 lançamento(s)');
+      await expect(
+        service.softDelete(mockPlanoContas.id as string),
+      ).rejects.toThrow('está sendo usada em 5 lançamento(s)');
     });
   });
 
@@ -355,7 +403,8 @@ describe('PlanoContasService', () => {
         .mockResolvedValueOnce(contaDestino);
 
       const mockConnection = {
-        execute: jest.fn()
+        execute: jest
+          .fn()
           .mockResolvedValueOnce({ affectedRows: 3 }) // Contas a pagar
           .mockResolvedValueOnce({ affectedRows: 2 }) // Contas a receber
           .mockResolvedValueOnce({ affectedRows: 1 }), // Movimentações
@@ -383,13 +432,21 @@ describe('PlanoContasService', () => {
     });
 
     it('deve lançar erro se conta destino não for analítica', async () => {
-      const contaDestinoSintetica = { ...contaDestino, permite_lancamento: false };
+      const contaDestinoSintetica = {
+        ...contaDestino,
+        permite_lancamento: false,
+      };
       mockRepository.findOne
         .mockResolvedValueOnce(contaOrigem)
         .mockResolvedValueOnce(contaDestinoSintetica);
 
       await expect(
-        service.substituirConta('origem-id', 'destino-id', 'user-id', 'user@test.com'),
+        service.substituirConta(
+          'origem-id',
+          'destino-id',
+          'user-id',
+          'user@test.com',
+        ),
       ).rejects.toThrow('A conta destino deve ser uma conta analítica');
     });
 
@@ -400,19 +457,32 @@ describe('PlanoContasService', () => {
         .mockResolvedValueOnce(contaDestinoInativa);
 
       await expect(
-        service.substituirConta('origem-id', 'destino-id', 'user-id', 'user@test.com'),
+        service.substituirConta(
+          'origem-id',
+          'destino-id',
+          'user-id',
+          'user@test.com',
+        ),
       ).rejects.toThrow('A conta destino deve estar ativa');
     });
 
     it('deve lançar erro se contas forem de empresas diferentes', async () => {
       const empresaDiferente = { ...mockEmpresa, id: 'empresa-diferente' };
-      const contaDestinoOutraEmpresa = { ...contaDestino, empresa: empresaDiferente };
+      const contaDestinoOutraEmpresa = {
+        ...contaDestino,
+        empresa: empresaDiferente,
+      };
       mockRepository.findOne
         .mockResolvedValueOnce(contaOrigem)
         .mockResolvedValueOnce(contaDestinoOutraEmpresa);
 
       await expect(
-        service.substituirConta('origem-id', 'destino-id', 'user-id', 'user@test.com'),
+        service.substituirConta(
+          'origem-id',
+          'destino-id',
+          'user-id',
+          'user@test.com',
+        ),
       ).rejects.toThrow('As contas devem pertencer à mesma empresa');
     });
 
@@ -422,7 +492,12 @@ describe('PlanoContasService', () => {
         .mockResolvedValueOnce(contaOrigem);
 
       await expect(
-        service.substituirConta('origem-id', 'origem-id', 'user-id', 'user@test.com'),
+        service.substituirConta(
+          'origem-id',
+          'origem-id',
+          'user-id',
+          'user@test.com',
+        ),
       ).rejects.toThrow('A conta origem e destino não podem ser a mesma');
     });
   });
@@ -455,7 +530,10 @@ describe('PlanoContasService', () => {
 
   describe('Multi-empresa validation', () => {
     it('deve impedir criar conta com parent de empresa diferente', async () => {
-      const empresaDiferente = { id: 'empresa-diferente', nome: 'Outra Empresa' };
+      const empresaDiferente = {
+        id: 'empresa-diferente',
+        nome: 'Outra Empresa',
+      };
       const parentOutraEmpresa = {
         id: 'parent-outra-empresa',
         codigo: '1',
@@ -469,7 +547,7 @@ describe('PlanoContasService', () => {
 
       const createDto: CreatePlanoContasDto = {
         empresaId: mockEmpresa.id,
-        codigo: '1.1.99',  // Código único para evitar conflito
+        codigo: '1.1.99', // Código único para evitar conflito
         descricao: 'Receitas de Vendas',
         tipo: TipoPlanoContas.RECEITA,
         nivel: 2,
@@ -487,7 +565,9 @@ describe('PlanoContasService', () => {
         fail('Deveria ter lançado exceção');
       } catch (error) {
         expect(error).toBeInstanceOf(BadRequestException);
-        expect(error.message).toContain('A conta pai deve pertencer à mesma empresa');
+        expect(error.message).toContain(
+          'A conta pai deve pertencer à mesma empresa',
+        );
       }
     });
   });

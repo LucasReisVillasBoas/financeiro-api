@@ -42,22 +42,18 @@ export class CidadeService {
       }
     }
 
-    if (isKnownIBGECode(cidadeData.codigoIbge, cidadeData.uf)) {
-    } else if (isKnownIBGECode(cidadeData.codigoIbge)) {
-      throw new BadRequestException(
-        `O código IBGE ${cidadeData.codigoIbge} não pertence ao estado ${cidadeData.uf}`,
-      );
-    }
+    // Validação de IBGE removida - campo agora é opcional
+    if (cidadeData.codigoIbge) {
+      const cidadeExistente = await this.cidadeRepository.findOne({
+        codigoIbge: cidadeData.codigoIbge,
+        cliente,
+      });
 
-    const cidadeExistente = await this.cidadeRepository.findOne({
-      codigoIbge: cidadeData.codigoIbge,
-      cliente,
-    });
-
-    if (cidadeExistente) {
-      throw new BadRequestException(
-        `Já existe uma cidade com código IBGE ${cidadeData.codigoIbge} para este cliente`,
-      );
+      if (cidadeExistente) {
+        throw new BadRequestException(
+          `Já existe uma cidade com código IBGE ${cidadeData.codigoIbge} para este cliente`,
+        );
+      }
     }
 
     const entity = this.cidadeRepository.create({

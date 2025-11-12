@@ -43,7 +43,7 @@ export class Usuario {
 
   @Expose()
   @ApiProperty({ nullable: true })
-  @Property({ length: 14, nullable: true })
+  @Property({ length: 20, nullable: true })
   telefone?: string;
 
   @Expose()

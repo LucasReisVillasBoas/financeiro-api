@@ -1,4 +1,13 @@
-import { IsString, IsOptional, IsUUID, IsBoolean, IsDateString, MaxLength, MinLength, IsEnum } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsUUID,
+  IsBoolean,
+  IsDateString,
+  MaxLength,
+  MinLength,
+  IsEnum,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export enum TipoPessoa {

@@ -130,7 +130,9 @@ describe('DataOrdemValidator', () => {
       dto.valor_principal = 0;
 
       const errors = await validate(dto);
-      const valorErrors = errors.filter((e) => e.property === 'valor_principal');
+      const valorErrors = errors.filter(
+        (e) => e.property === 'valor_principal',
+      );
 
       expect(valorErrors.length).toBeGreaterThan(0);
     });
@@ -182,7 +184,9 @@ describe('DataOrdemValidator', () => {
       dto.acrescimos = 0;
 
       const errors = await validate(dto);
-      const acrescimosErrors = errors.filter((e) => e.property === 'acrescimos');
+      const acrescimosErrors = errors.filter(
+        (e) => e.property === 'acrescimos',
+      );
 
       expect(acrescimosErrors).toHaveLength(0);
     });
@@ -192,7 +196,9 @@ describe('DataOrdemValidator', () => {
       dto.acrescimos = -50;
 
       const errors = await validate(dto);
-      const acrescimosErrors = errors.filter((e) => e.property === 'acrescimos');
+      const acrescimosErrors = errors.filter(
+        (e) => e.property === 'acrescimos',
+      );
 
       expect(acrescimosErrors.length).toBeGreaterThan(0);
     });

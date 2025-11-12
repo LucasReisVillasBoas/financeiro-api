@@ -6,10 +6,7 @@ import { ContatoService } from '../../src/contato/contato.service';
 import { EmpresaService } from '../../src/empresa/empresa.service';
 import { UsuarioContatoRepository } from '../../src/usuario/usuario-contato.repository';
 import { UsuarioEmpresaFilialRepository } from '../../src/usuario/usuario-empresa-filial.repository';
-import {
-  BadRequestException,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Usuario } from '../../src/entities/usuario/usuario.entity';
 import { UsuarioCreateRequestDto } from '../../src/usuario/dto/usuario-create-request.dto';
 import { UsuarioUpdateRequestDto } from '../../src/usuario/dto/usuario-update-request.dto';

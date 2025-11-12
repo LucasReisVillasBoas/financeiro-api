@@ -258,7 +258,9 @@ export class AuditService {
       // Validar se a empresa existe antes de criar a referência
       let empresaRef = undefined;
       if (entry.empresaId) {
-        const empresaExists = await this.em.findOne(Empresa, { id: entry.empresaId });
+        const empresaExists = await this.em.findOne(Empresa, {
+          id: entry.empresaId,
+        });
         if (empresaExists) {
           empresaRef = this.em.getReference(Empresa, entry.empresaId);
         }
@@ -530,7 +532,14 @@ export class AuditService {
    * Registra criação de entidade
    */
   async logEntityCreated(
-    modulo: 'EMPRESA' | 'USUARIO' | 'PERFIL' | 'CONTA_PAGAR' | 'CONTA_RECEBER' | 'CONTA_BANCARIA' | 'PLANO_CONTAS',
+    modulo:
+      | 'EMPRESA'
+      | 'USUARIO'
+      | 'PERFIL'
+      | 'CONTA_PAGAR'
+      | 'CONTA_RECEBER'
+      | 'CONTA_BANCARIA'
+      | 'PLANO_CONTAS',
     entityId: string,
     userId: string,
     userEmail: string,
@@ -566,7 +575,14 @@ export class AuditService {
    * Registra atualização de entidade
    */
   async logEntityUpdated(
-    modulo: 'EMPRESA' | 'USUARIO' | 'PERFIL' | 'CONTA_PAGAR' | 'CONTA_RECEBER' | 'CONTA_BANCARIA' | 'PLANO_CONTAS',
+    modulo:
+      | 'EMPRESA'
+      | 'USUARIO'
+      | 'PERFIL'
+      | 'CONTA_PAGAR'
+      | 'CONTA_RECEBER'
+      | 'CONTA_BANCARIA'
+      | 'PLANO_CONTAS',
     entityId: string,
     userId: string,
     userEmail: string,
@@ -602,7 +618,14 @@ export class AuditService {
    * Registra exclusão de entidade (CRÍTICO)
    */
   async logEntityDeleted(
-    modulo: 'EMPRESA' | 'USUARIO' | 'PERFIL' | 'CONTA_PAGAR' | 'CONTA_RECEBER' | 'CONTA_BANCARIA' | 'PLANO_CONTAS',
+    modulo:
+      | 'EMPRESA'
+      | 'USUARIO'
+      | 'PERFIL'
+      | 'CONTA_PAGAR'
+      | 'CONTA_RECEBER'
+      | 'CONTA_BANCARIA'
+      | 'PLANO_CONTAS',
     entityId: string,
     userId: string,
     userEmail: string,

@@ -3,7 +3,10 @@ import { BaixaPagamentoService } from '../../src/baixa-pagamento/baixa-pagamento
 import { getRepositoryToken } from '@mikro-orm/nestjs';
 import { EntityManager } from '@mikro-orm/core';
 import { BaixaPagamento } from '../../src/entities/baixa-pagamento/baixa-pagamento.entity';
-import { ContasPagar, StatusContaPagar } from '../../src/entities/conta-pagar/conta-pagar.entity';
+import {
+  ContasPagar,
+  StatusContaPagar,
+} from '../../src/entities/conta-pagar/conta-pagar.entity';
 import { AuditService } from '../../src/audit/audit.service';
 
 describe('BaixaPagamentoService - Estorno', () => {
@@ -84,7 +87,12 @@ describe('BaixaPagamentoService - Estorno', () => {
         id: 'baixa-123',
         total: 500,
         movimentacaoBancariaId: 'mov-123',
-        contaPagar: { id: 'conta-123', empresa: { id: 'empresa-123' }, documento: 'NF-123', parcela: 1 },
+        contaPagar: {
+          id: 'conta-123',
+          empresa: { id: 'empresa-123' },
+          documento: 'NF-123',
+          parcela: 1,
+        },
         contaBancaria: { id: 'banco-123', banco: 'Banco Teste' },
       };
 
@@ -115,7 +123,12 @@ describe('BaixaPagamentoService - Estorno', () => {
       mockContaBancariaRepository.findOne.mockResolvedValue(contaBancaria);
       mockMovimentacaoRepository.findOne.mockResolvedValue(movimentacao);
 
-      await service.estornar('baixa-123', 'Estorno de teste', 'user-123', 'user@test.com');
+      await service.estornar(
+        'baixa-123',
+        'Estorno de teste',
+        'user-123',
+        'user@test.com',
+      );
 
       // Saldo restaurado
       expect(contaPagar.saldo).toBe(1000); // 500 + 500
@@ -128,7 +141,12 @@ describe('BaixaPagamentoService - Estorno', () => {
         id: 'baixa-123',
         total: 750,
         movimentacaoBancariaId: 'mov-123',
-        contaPagar: { id: 'conta-123', empresa: { id: 'empresa-123' }, documento: 'NF-123', parcela: 1 },
+        contaPagar: {
+          id: 'conta-123',
+          empresa: { id: 'empresa-123' },
+          documento: 'NF-123',
+          parcela: 1,
+        },
         contaBancaria: { id: 'banco-123', banco: 'Banco Teste' },
       };
 
@@ -158,7 +176,12 @@ describe('BaixaPagamentoService - Estorno', () => {
       mockContaBancariaRepository.findOne.mockResolvedValue(contaBancaria);
       mockMovimentacaoRepository.findOne.mockResolvedValue(movimentacao);
 
-      await service.estornar('baixa-123', 'Estorno de teste', 'user-123', 'user@test.com');
+      await service.estornar(
+        'baixa-123',
+        'Estorno de teste',
+        'user-123',
+        'user@test.com',
+      );
 
       // Saldo bancário restaurado
       expect(contaBancaria.saldo_atual).toBe(3000); // 2250 + 750
@@ -169,7 +192,12 @@ describe('BaixaPagamentoService - Estorno', () => {
         id: 'baixa-123',
         total: 500,
         movimentacaoBancariaId: 'mov-123',
-        contaPagar: { id: 'conta-123', empresa: { id: 'empresa-123' }, documento: 'NF-123', parcela: 1 },
+        contaPagar: {
+          id: 'conta-123',
+          empresa: { id: 'empresa-123' },
+          documento: 'NF-123',
+          parcela: 1,
+        },
         contaBancaria: { id: 'banco-123', banco: 'Banco Teste' },
       };
 
@@ -193,7 +221,12 @@ describe('BaixaPagamentoService - Estorno', () => {
       mockContaPagarRepository.findOne.mockResolvedValue(contaPagar);
       mockContaBancariaRepository.findOne.mockResolvedValue(contaBancaria);
 
-      await service.estornar('baixa-123', 'Estorno de teste', 'user-123', 'user@test.com');
+      await service.estornar(
+        'baixa-123',
+        'Estorno de teste',
+        'user-123',
+        'user@test.com',
+      );
 
       // Movimentação original NÃO deve ser buscada ou modificada
       expect(mockMovimentacaoRepository.findOne).not.toHaveBeenCalled();
@@ -204,7 +237,12 @@ describe('BaixaPagamentoService - Estorno', () => {
         id: 'baixa-123',
         total: 500,
         movimentacaoBancariaId: 'mov-123',
-        contaPagar: { id: 'conta-123', empresa: { id: 'empresa-123' }, documento: 'NF-123', parcela: 1 },
+        contaPagar: {
+          id: 'conta-123',
+          empresa: { id: 'empresa-123' },
+          documento: 'NF-123',
+          parcela: 1,
+        },
         contaBancaria: { id: 'banco-123', banco: 'Banco Teste' },
       };
 
@@ -228,7 +266,12 @@ describe('BaixaPagamentoService - Estorno', () => {
       mockContaPagarRepository.findOne.mockResolvedValue(contaPagar);
       mockContaBancariaRepository.findOne.mockResolvedValue(contaBancaria);
 
-      await service.estornar('baixa-123', 'Estorno de teste', 'user-123', 'user@test.com');
+      await service.estornar(
+        'baixa-123',
+        'Estorno de teste',
+        'user-123',
+        'user@test.com',
+      );
 
       // Deve criar movimentação de entrada
       expect(mockMovimentacaoRepository.create).toHaveBeenCalledWith(
@@ -246,7 +289,12 @@ describe('BaixaPagamentoService - Estorno', () => {
         id: 'baixa-123',
         total: 500,
         movimentacaoBancariaId: 'mov-123',
-        contaPagar: { id: 'conta-123', empresa: { id: 'empresa-123' }, documento: 'NF-123', parcela: 1 },
+        contaPagar: {
+          id: 'conta-123',
+          empresa: { id: 'empresa-123' },
+          documento: 'NF-123',
+          parcela: 1,
+        },
         contaBancaria: { id: 'banco-123', banco: 'Banco Teste' },
         deletadoEm: null,
       };
@@ -276,7 +324,12 @@ describe('BaixaPagamentoService - Estorno', () => {
       mockContaBancariaRepository.findOne.mockResolvedValue(contaBancaria);
       mockMovimentacaoRepository.findOne.mockResolvedValue(movimentacao);
 
-      await service.estornar('baixa-123', 'Estorno de teste', 'user-123', 'user@test.com');
+      await service.estornar(
+        'baixa-123',
+        'Estorno de teste',
+        'user-123',
+        'user@test.com',
+      );
 
       // Baixa marcada como deletada
       expect(baixa.deletadoEm).toBeDefined();
@@ -290,7 +343,12 @@ describe('BaixaPagamentoService - Estorno', () => {
         id: 'baixa-123',
         total: 1000,
         movimentacaoBancariaId: 'mov-123',
-        contaPagar: { id: 'conta-123', empresa: { id: 'empresa-123' }, documento: 'NF-123', parcela: 1 },
+        contaPagar: {
+          id: 'conta-123',
+          empresa: { id: 'empresa-123' },
+          documento: 'NF-123',
+          parcela: 1,
+        },
         contaBancaria: { id: 'banco-123', banco: 'Banco Teste' },
       };
 
@@ -321,7 +379,12 @@ describe('BaixaPagamentoService - Estorno', () => {
       mockContaBancariaRepository.findOne.mockResolvedValue(contaBancaria);
       mockMovimentacaoRepository.findOne.mockResolvedValue(movimentacao);
 
-      await service.estornar('baixa-123', 'Estorno de teste', 'user-123', 'user@test.com');
+      await service.estornar(
+        'baixa-123',
+        'Estorno de teste',
+        'user-123',
+        'user@test.com',
+      );
 
       expect(contaPagar.saldo).toBe(1000); // 0 + 1000
       expect(contaPagar.status).toBe(StatusContaPagar.PENDENTE);
@@ -333,7 +396,12 @@ describe('BaixaPagamentoService - Estorno', () => {
         id: 'baixa-123',
         total: 500,
         movimentacaoBancariaId: 'mov-123',
-        contaPagar: { id: 'conta-123', empresa: { id: 'empresa-123' }, documento: 'NF-123', parcela: 1 },
+        contaPagar: {
+          id: 'conta-123',
+          empresa: { id: 'empresa-123' },
+          documento: 'NF-123',
+          parcela: 1,
+        },
         contaBancaria: { id: 'banco-123', banco: 'Banco Teste' },
       };
 
@@ -364,7 +432,12 @@ describe('BaixaPagamentoService - Estorno', () => {
       mockContaBancariaRepository.findOne.mockResolvedValue(contaBancaria);
       mockMovimentacaoRepository.findOne.mockResolvedValue(movimentacao);
 
-      await service.estornar('baixa-123', 'Estorno de teste', 'user-123', 'user@test.com');
+      await service.estornar(
+        'baixa-123',
+        'Estorno de teste',
+        'user-123',
+        'user@test.com',
+      );
 
       expect(contaPagar.saldo).toBe(500); // 0 + 500
       expect(contaPagar.status).toBe(StatusContaPagar.PARCIALMENTE_PAGA);
@@ -379,7 +452,12 @@ describe('BaixaPagamentoService - Estorno', () => {
         id: 'baixa-123',
         total: 500,
         movimentacaoBancariaId: 'mov-123',
-        contaPagar: { id: 'conta-123', empresa: { id: 'empresa-123' }, documento: 'NF-123', parcela: 1 },
+        contaPagar: {
+          id: 'conta-123',
+          empresa: { id: 'empresa-123' },
+          documento: 'NF-123',
+          parcela: 1,
+        },
         contaBancaria: { id: 'banco-123', banco: 'Banco Teste' },
       };
 
@@ -409,7 +487,12 @@ describe('BaixaPagamentoService - Estorno', () => {
       mockMovimentacaoRepository.findOne.mockResolvedValue(movimentacao);
 
       const justificativa = 'Pagamento realizado em duplicidade';
-      await service.estornar('baixa-123', justificativa, 'user-123', 'user@test.com');
+      await service.estornar(
+        'baixa-123',
+        justificativa,
+        'user-123',
+        'user@test.com',
+      );
 
       expect(mockAuditService.log).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -432,7 +515,12 @@ describe('BaixaPagamentoService - Estorno', () => {
         id: 'baixa-123',
         total: 500,
         movimentacaoBancariaId: 'mov-123',
-        contaPagar: { id: 'conta-123', empresa: { id: 'empresa-123' }, documento: 'NF-123', parcela: 1 },
+        contaPagar: {
+          id: 'conta-123',
+          empresa: { id: 'empresa-123' },
+          documento: 'NF-123',
+          parcela: 1,
+        },
         contaBancaria: { id: 'banco-123', banco: 'Banco Teste' },
       };
 
@@ -462,7 +550,12 @@ describe('BaixaPagamentoService - Estorno', () => {
       mockMovimentacaoRepository.findOne.mockResolvedValue(movimentacao);
 
       const justificativa = 'Erro no valor do pagamento';
-      await service.estornar('baixa-123', justificativa, 'user-123', 'user@test.com');
+      await service.estornar(
+        'baixa-123',
+        justificativa,
+        'user-123',
+        'user@test.com',
+      );
 
       expect(mockAuditService.log).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -480,7 +573,12 @@ describe('BaixaPagamentoService - Estorno', () => {
         id: 'baixa-123',
         total: 500,
         movimentacaoBancariaId: 'mov-123',
-        contaPagar: { id: 'conta-123', empresa: { id: 'empresa-123' }, documento: 'NF-123', parcela: 1 },
+        contaPagar: {
+          id: 'conta-123',
+          empresa: { id: 'empresa-123' },
+          documento: 'NF-123',
+          parcela: 1,
+        },
         contaBancaria: { id: 'banco-123', banco: 'Banco Teste' },
       };
 
@@ -504,15 +602,26 @@ describe('BaixaPagamentoService - Estorno', () => {
       mockContaPagarRepository.findOne.mockResolvedValue(contaPagar);
       mockContaBancariaRepository.findOne.mockResolvedValue(contaBancaria);
 
-      await service.estornar('baixa-123', 'Estorno de teste', 'user-123', 'user@test.com');
+      await service.estornar(
+        'baixa-123',
+        'Estorno de teste',
+        'user-123',
+        'user@test.com',
+      );
 
       // Deve ter persistido baixa, conta a pagar, conta bancária
       expect(mockBaixaRepository.persistAndFlush).toHaveBeenCalledWith(baixa);
-      expect(mockContaPagarRepository.persistAndFlush).toHaveBeenCalledWith(contaPagar);
-      expect(mockContaBancariaRepository.persistAndFlush).toHaveBeenCalledWith(contaBancaria);
+      expect(mockContaPagarRepository.persistAndFlush).toHaveBeenCalledWith(
+        contaPagar,
+      );
+      expect(mockContaBancariaRepository.persistAndFlush).toHaveBeenCalledWith(
+        contaBancaria,
+      );
 
       // Deve ter persistido apenas a movimentação de estorno (entrada)
-      expect(mockMovimentacaoRepository.persistAndFlush).toHaveBeenCalledTimes(1);
+      expect(mockMovimentacaoRepository.persistAndFlush).toHaveBeenCalledTimes(
+        1,
+      );
     });
 
     it('deve criar movimentação de estorno mesmo sem movimentação bancária original', async () => {
@@ -520,7 +629,12 @@ describe('BaixaPagamentoService - Estorno', () => {
         id: 'baixa-123',
         total: 500,
         movimentacaoBancariaId: null,
-        contaPagar: { id: 'conta-123', empresa: { id: 'empresa-123' }, documento: 'NF-123', parcela: 1 },
+        contaPagar: {
+          id: 'conta-123',
+          empresa: { id: 'empresa-123' },
+          documento: 'NF-123',
+          parcela: 1,
+        },
         contaBancaria: { id: 'banco-123', banco: 'Banco Teste' },
       };
 
@@ -544,12 +658,21 @@ describe('BaixaPagamentoService - Estorno', () => {
       mockContaPagarRepository.findOne.mockResolvedValue(contaPagar);
       mockContaBancariaRepository.findOne.mockResolvedValue(contaBancaria);
 
-      await service.estornar('baixa-123', 'Estorno de teste', 'user-123', 'user@test.com');
+      await service.estornar(
+        'baixa-123',
+        'Estorno de teste',
+        'user-123',
+        'user@test.com',
+      );
 
       // Deve persistir baixa, conta a pagar, conta bancária e movimentação de estorno
       expect(mockBaixaRepository.persistAndFlush).toHaveBeenCalledWith(baixa);
-      expect(mockContaPagarRepository.persistAndFlush).toHaveBeenCalledWith(contaPagar);
-      expect(mockContaBancariaRepository.persistAndFlush).toHaveBeenCalledWith(contaBancaria);
+      expect(mockContaPagarRepository.persistAndFlush).toHaveBeenCalledWith(
+        contaPagar,
+      );
+      expect(mockContaBancariaRepository.persistAndFlush).toHaveBeenCalledWith(
+        contaBancaria,
+      );
 
       // Deve ter criado e persistido a movimentação de estorno
       expect(mockMovimentacaoRepository.create).toHaveBeenCalled();

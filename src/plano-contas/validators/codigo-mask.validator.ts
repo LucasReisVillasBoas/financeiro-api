@@ -106,7 +106,10 @@ export function validarHierarquiaCodigo(
   }
 
   // Se tem pai, valida compatibilidade
-  if (codigoPai && !validarCodigoCompatibilidadeComPai(codigoLimpo, codigoPai)) {
+  if (
+    codigoPai &&
+    !validarCodigoCompatibilidadeComPai(codigoLimpo, codigoPai)
+  ) {
     return {
       valido: false,
       mensagem: `Código deve começar com "${codigoPai}." para ser filho desta conta`,

@@ -52,7 +52,13 @@ export class MovimentacoesBancariasService {
       throw new Error('Tipo de movimento é obrigatório');
     }
 
-    const { contaBancaria: contaBancariaId, data, tipo, referencia, ...dadosMovimentacao } = dto;
+    const {
+      contaBancaria: contaBancariaId,
+      data,
+      tipo,
+      referencia,
+      ...dadosMovimentacao
+    } = dto;
 
     // Se referência não informada e é lançamento manual, definir como MANUAL
     const referenciaFinal = dto.referencia || 'Manual';
@@ -72,7 +78,10 @@ export class MovimentacoesBancariasService {
     const saldoAnterior = contaBancaria.saldo_atual;
     contaBancaria.saldo_atual = contaBancaria.saldo_atual + valorMovimentacao;
 
-    await this.movimentacaoRepository.persistAndFlush([movimentacao, contaBancaria]);
+    await this.movimentacaoRepository.persistAndFlush([
+      movimentacao,
+      contaBancaria,
+    ]);
 
     // Auditoria para lançamentos manuais
     if (referenciaFinal === 'Manual' && userId) {

@@ -5,7 +5,10 @@ import { DreService } from '../../src/dre/dre.service';
 import { PlanoContasRepository } from '../../src/plano-contas/plano-contas.repository';
 import { EmpresaService } from '../../src/empresa/empresa.service';
 import { EntityManager } from '@mikro-orm/core';
-import { PlanoContas, TipoPlanoContas } from '../../src/entities/plano-contas/plano-contas.entity';
+import {
+  PlanoContas,
+  TipoPlanoContas,
+} from '../../src/entities/plano-contas/plano-contas.entity';
 import { FilterDreDto } from '../../src/dre/dto/filter-dre.dto';
 
 describe('DreService', () => {
@@ -130,7 +133,9 @@ describe('DreService', () => {
       expect(result.dataFim).toBe(filtro.dataFim);
 
       // DRE filtra contas com valor 0, então verifica que temos contas com movimento
-      expect(result.receitas.length + result.despesas.length).toBeGreaterThanOrEqual(0);
+      expect(
+        result.receitas.length + result.despesas.length,
+      ).toBeGreaterThanOrEqual(0);
       expect(result.totais).toBeDefined();
       expect(result.totalLancamentos).toBeGreaterThanOrEqual(0);
     });
@@ -139,7 +144,9 @@ describe('DreService', () => {
       mockEmpresaService.findOne.mockResolvedValue(null);
 
       await expect(service.gerarDre(filtro)).rejects.toThrow(NotFoundException);
-      await expect(service.gerarDre(filtro)).rejects.toThrow('Empresa não encontrada');
+      await expect(service.gerarDre(filtro)).rejects.toThrow(
+        'Empresa não encontrada',
+      );
     });
 
     it('deve filtrar contas sem movimento (valor = 0)', async () => {
@@ -190,7 +197,11 @@ describe('DreService', () => {
       // Mock para primeira empresa
       mockEmpresaService.findOne
         .mockResolvedValueOnce(mockEmpresa)
-        .mockResolvedValueOnce({ ...mockEmpresa, id: 'empresa-2-id', nome_fantasia: 'Empresa 2' });
+        .mockResolvedValueOnce({
+          ...mockEmpresa,
+          id: 'empresa-2-id',
+          nome_fantasia: 'Empresa 2',
+        });
 
       mockPlanoContasRepository.find
         .mockResolvedValueOnce([mockPlanoContasReceita])
@@ -198,7 +209,11 @@ describe('DreService', () => {
 
       mockConnection.execute.mockResolvedValue([{ total: 5000 }, { count: 1 }]);
 
-      const result = await service.gerarDreConsolidado(empresaIds, dataInicio, dataFim);
+      const result = await service.gerarDreConsolidado(
+        empresaIds,
+        dataInicio,
+        dataFim,
+      );
 
       expect(result.empresas).toHaveLength(2);
       expect(result.consolidado.receitas.length).toBeGreaterThanOrEqual(0);
@@ -284,7 +299,9 @@ describe('DreService', () => {
       };
 
       mockEmpresaService.findOne.mockResolvedValue(mockEmpresa);
-      mockPlanoContasRepository.find.mockResolvedValue([mockPlanoContasReceita]);
+      mockPlanoContasRepository.find.mockResolvedValue([
+        mockPlanoContasReceita,
+      ]);
 
       // Receita = Contas a Receber + Movimentações de Entrada
       mockConnection.execute
@@ -308,7 +325,9 @@ describe('DreService', () => {
       };
 
       mockEmpresaService.findOne.mockResolvedValue(mockEmpresa);
-      mockPlanoContasRepository.find.mockResolvedValue([mockPlanoContasDespesa]);
+      mockPlanoContasRepository.find.mockResolvedValue([
+        mockPlanoContasDespesa,
+      ]);
 
       // Despesa = Contas a Pagar + Movimentações de Saída (abs)
       mockConnection.execute
@@ -359,7 +378,9 @@ describe('DreService', () => {
       };
 
       mockEmpresaService.findOne.mockResolvedValue(mockEmpresa);
-      mockPlanoContasRepository.find.mockResolvedValue([mockPlanoContasReceita]);
+      mockPlanoContasRepository.find.mockResolvedValue([
+        mockPlanoContasReceita,
+      ]);
 
       mockConnection.execute.mockResolvedValue([{ total: 0 }, { count: 0 }]);
 
@@ -382,7 +403,9 @@ describe('DreService', () => {
       };
 
       mockEmpresaService.findOne.mockResolvedValue(mockEmpresa);
-      mockPlanoContasRepository.find.mockResolvedValue([mockPlanoContasReceita]);
+      mockPlanoContasRepository.find.mockResolvedValue([
+        mockPlanoContasReceita,
+      ]);
 
       mockConnection.execute.mockResolvedValue([{ total: 0 }, { count: 0 }]);
 

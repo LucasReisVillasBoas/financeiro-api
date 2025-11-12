@@ -109,7 +109,8 @@ export class PlanoContasController {
   @Get('empresa/:empresaId/analiticas-ativas')
   @Roles('Administrador', 'Financeiro', 'Contador', 'Visualizador')
   async findAnaliticasAtivas(@Param('empresaId') empresaId: string) {
-    const contas = await this.planoContasService.findAnaliticasAtivas(empresaId);
+    const contas =
+      await this.planoContasService.findAnaliticasAtivas(empresaId);
     return {
       message: 'Contas analíticas ativas recuperadas com sucesso',
       statusCode: 200,
@@ -203,7 +204,10 @@ export class PlanoContasController {
 
   @Post('empresa/:empresaId/import/validate')
   @Roles('Administrador', 'Financeiro', 'Contador')
-  async validateImport(@Param('empresaId') empresaId: string, @Body() dto: ImportPlanoContasDto) {
+  async validateImport(
+    @Param('empresaId') empresaId: string,
+    @Body() dto: ImportPlanoContasDto,
+  ) {
     // Sempre executar em modo dry-run
     const result = await this.importService.import({
       ...dto,
@@ -220,7 +224,10 @@ export class PlanoContasController {
 
   @Post('empresa/:empresaId/import')
   @Roles('Administrador', 'Financeiro', 'Contador')
-  async importData(@Param('empresaId') empresaId: string, @Body() dto: ImportPlanoContasDto) {
+  async importData(
+    @Param('empresaId') empresaId: string,
+    @Body() dto: ImportPlanoContasDto,
+  ) {
     const result = await this.importService.import({
       ...dto,
       empresaId,

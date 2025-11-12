@@ -20,8 +20,7 @@ export class OfxParser {
 
           // Tentar extrair transações de conta corrente
           const bankStatements =
-            ofx.BANKMSGSRSV1?.STMTTRNRS?.STMTRS?.BANKTRANLIST?.STMTTRN ||
-            [];
+            ofx.BANKMSGSRSV1?.STMTTRNRS?.STMTRS?.BANKTRANLIST?.STMTTRN || [];
 
           // Garantir que seja um array
           const statements = Array.isArray(bankStatements)

@@ -2,7 +2,10 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { EntityManager } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { PlanoContasRepository } from '../plano-contas/plano-contas.repository';
-import { PlanoContas, TipoPlanoContas } from '../entities/plano-contas/plano-contas.entity';
+import {
+  PlanoContas,
+  TipoPlanoContas,
+} from '../entities/plano-contas/plano-contas.entity';
 import { EmpresaService } from '../empresa/empresa.service';
 import { FilterDreDto } from './dto/filter-dre.dto';
 import {

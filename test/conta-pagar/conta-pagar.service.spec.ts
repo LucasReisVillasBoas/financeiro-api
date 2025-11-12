@@ -3,7 +3,11 @@ import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { getRepositoryToken } from '@mikro-orm/nestjs';
 import { EntityManager } from '@mikro-orm/core';
 import { ContasPagarService } from '../../src/conta-pagar/conta-pagar.service';
-import { ContasPagar, StatusContaPagar, TipoContaPagar } from '../../src/entities/conta-pagar/conta-pagar.entity';
+import {
+  ContasPagar,
+  StatusContaPagar,
+  TipoContaPagar,
+} from '../../src/entities/conta-pagar/conta-pagar.entity';
 import { ContasPagarRepository } from '../../src/conta-pagar/conta-pagar.repository';
 import { CreateContaPagarDto } from '../../src/conta-pagar/dto/create-conta-pagar.dto';
 import { AuditService } from '../../src/audit/audit.service';
@@ -156,9 +160,15 @@ describe('ContasPagarService', () => {
       const mockConta = { id: 'conta-123', ...validDto } as any;
       mockRepository.create.mockReturnValue(mockConta);
       mockRepository.persistAndFlush.mockResolvedValue(undefined);
-      mockPessoaService.findOne.mockResolvedValue({ id: validDto.pessoaId } as any);
-      mockPlanoContasService.findOne.mockResolvedValue({ id: validDto.planoContasId } as any);
-      mockEmpresaService.findOne.mockResolvedValue({ id: validDto.empresaId } as any);
+      mockPessoaService.findOne.mockResolvedValue({
+        id: validDto.pessoaId,
+      } as any);
+      mockPlanoContasService.findOne.mockResolvedValue({
+        id: validDto.planoContasId,
+      } as any);
+      mockEmpresaService.findOne.mockResolvedValue({
+        id: validDto.empresaId,
+      } as any);
 
       const result = await service.create(validDto);
 
@@ -179,7 +189,8 @@ describe('ContasPagarService', () => {
       };
 
       // Simula o hook @BeforeCreate
-      mockConta.valor_total = mockConta.valor_principal + mockConta.acrescimos - mockConta.descontos;
+      mockConta.valor_total =
+        mockConta.valor_principal + mockConta.acrescimos - mockConta.descontos;
       mockConta.saldo = mockConta.valor_total;
 
       expect(mockConta.valor_total).toBe(1020); // 1000 + 50 - 30
@@ -193,7 +204,9 @@ describe('ContasPagarService', () => {
         vencimento: '2025-01-01',
       };
 
-      await expect(service.create(invalidDto)).rejects.toThrow(BadRequestException);
+      await expect(service.create(invalidDto)).rejects.toThrow(
+        BadRequestException,
+      );
       await expect(service.create(invalidDto)).rejects.toThrow(
         'Data de emissão deve ser anterior ou igual ao vencimento',
       );
@@ -206,7 +219,9 @@ describe('ContasPagarService', () => {
         data_liquidacao: '2025-01-15',
       };
 
-      await expect(service.create(invalidDto)).rejects.toThrow(BadRequestException);
+      await expect(service.create(invalidDto)).rejects.toThrow(
+        BadRequestException,
+      );
       await expect(service.create(invalidDto)).rejects.toThrow(
         'Vencimento deve ser anterior ou igual à data de liquidação',
       );
@@ -223,9 +238,15 @@ describe('ContasPagarService', () => {
       const mockConta = { id: 'conta-123' } as any;
       mockRepository.create.mockReturnValue(mockConta);
       mockRepository.persistAndFlush.mockResolvedValue(undefined);
-      mockPessoaService.findOne.mockResolvedValue({ id: validDto.pessoaId } as any);
-      mockPlanoContasService.findOne.mockResolvedValue({ id: validDto.planoContasId } as any);
-      mockEmpresaService.findOne.mockResolvedValue({ id: validDto.empresaId } as any);
+      mockPessoaService.findOne.mockResolvedValue({
+        id: validDto.pessoaId,
+      } as any);
+      mockPlanoContasService.findOne.mockResolvedValue({
+        id: validDto.planoContasId,
+      } as any);
+      mockEmpresaService.findOne.mockResolvedValue({
+        id: validDto.empresaId,
+      } as any);
 
       await expect(service.create(dtoComLiquidacao)).resolves.toBeDefined();
     });
@@ -240,9 +261,15 @@ describe('ContasPagarService', () => {
       const mockConta = { id: 'conta-123' } as any;
       mockRepository.create.mockReturnValue(mockConta);
       mockRepository.persistAndFlush.mockResolvedValue(undefined);
-      mockPessoaService.findOne.mockResolvedValue({ id: validDto.pessoaId } as any);
-      mockPlanoContasService.findOne.mockResolvedValue({ id: validDto.planoContasId } as any);
-      mockEmpresaService.findOne.mockResolvedValue({ id: validDto.empresaId } as any);
+      mockPessoaService.findOne.mockResolvedValue({
+        id: validDto.pessoaId,
+      } as any);
+      mockPlanoContasService.findOne.mockResolvedValue({
+        id: validDto.planoContasId,
+      } as any);
+      mockEmpresaService.findOne.mockResolvedValue({
+        id: validDto.empresaId,
+      } as any);
 
       await service.create(dtoSemAcrescimos);
 
@@ -274,7 +301,9 @@ describe('ContasPagarService', () => {
     it('deve lançar NotFoundException se conta não existir', async () => {
       mockRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.findOne('conta-inexistente')).rejects.toThrow(NotFoundException);
+      await expect(service.findOne('conta-inexistente')).rejects.toThrow(
+        NotFoundException,
+      );
       await expect(service.findOne('conta-inexistente')).rejects.toThrow(
         'Conta a pagar não encontrada',
       );
@@ -307,7 +336,11 @@ describe('ContasPagarService', () => {
       mockRepository.findOne.mockResolvedValue(conta);
       mockRepository.persistAndFlush.mockResolvedValue(undefined);
 
-      await service.registrarPagamento('conta-123', 500, new Date('2025-01-15'));
+      await service.registrarPagamento(
+        'conta-123',
+        500,
+        new Date('2025-01-15'),
+      );
 
       conta.saldo = 500;
       // Simula hook @BeforeUpdate
@@ -390,7 +423,9 @@ describe('ContasPagarService', () => {
 
     it('deve atualizar campos da conta a pagar', async () => {
       mockRepository.findOne.mockResolvedValue(mockConta as ContasPagar);
-      mockRepository.assign.mockImplementation((entity, data) => Object.assign(entity, data));
+      mockRepository.assign.mockImplementation((entity, data) =>
+        Object.assign(entity, data),
+      );
       mockRepository.flush.mockResolvedValue(undefined);
 
       const updateDto = {
@@ -412,7 +447,9 @@ describe('ContasPagarService', () => {
         vencimento: '2025-01-01', // Inválido
       };
 
-      await expect(service.update('conta-123', updateDto)).rejects.toThrow(BadRequestException);
+      await expect(service.update('conta-123', updateDto)).rejects.toThrow(
+        BadRequestException,
+      );
     });
   });
 

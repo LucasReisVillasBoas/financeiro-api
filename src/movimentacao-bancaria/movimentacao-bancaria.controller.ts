@@ -70,13 +70,23 @@ export class MovimentacoesBancariasController {
     const saldoPeriodo = totalEntradas - totalSaidas;
 
     // Serializar datas corretamente
-    const movimentacoesSerializadas = movimentacoes.map(mov => ({
+    const movimentacoesSerializadas = movimentacoes.map((mov) => ({
       ...mov,
-      dataMovimento: mov.dataMovimento?.toISOString ? mov.dataMovimento.toISOString() : mov.dataMovimento,
-      conciliadoEm: mov.conciliadoEm?.toISOString ? mov.conciliadoEm.toISOString() : mov.conciliadoEm,
-      criadoEm: mov.criadoEm?.toISOString ? mov.criadoEm.toISOString() : mov.criadoEm,
-      atualizadoEm: mov.atualizadoEm?.toISOString ? mov.atualizadoEm.toISOString() : mov.atualizadoEm,
-      deletadoEm: mov.deletadoEm?.toISOString ? mov.deletadoEm.toISOString() : mov.deletadoEm,
+      dataMovimento: mov.dataMovimento?.toISOString
+        ? mov.dataMovimento.toISOString()
+        : mov.dataMovimento,
+      conciliadoEm: mov.conciliadoEm?.toISOString
+        ? mov.conciliadoEm.toISOString()
+        : mov.conciliadoEm,
+      criadoEm: mov.criadoEm?.toISOString
+        ? mov.criadoEm.toISOString()
+        : mov.criadoEm,
+      atualizadoEm: mov.atualizadoEm?.toISOString
+        ? mov.atualizadoEm.toISOString()
+        : mov.atualizadoEm,
+      deletadoEm: mov.deletadoEm?.toISOString
+        ? mov.deletadoEm.toISOString()
+        : mov.deletadoEm,
     }));
 
     return {
@@ -119,13 +129,23 @@ export class MovimentacoesBancariasController {
     const saldoPeriodo = totalEntradas - totalSaidas;
 
     // Serializar datas corretamente
-    const movimentacoesSerializadas = movimentacoes.map(mov => ({
+    const movimentacoesSerializadas = movimentacoes.map((mov) => ({
       ...mov,
-      dataMovimento: mov.dataMovimento?.toISOString ? mov.dataMovimento.toISOString() : mov.dataMovimento,
-      conciliadoEm: mov.conciliadoEm?.toISOString ? mov.conciliadoEm.toISOString() : mov.conciliadoEm,
-      criadoEm: mov.criadoEm?.toISOString ? mov.criadoEm.toISOString() : mov.criadoEm,
-      atualizadoEm: mov.atualizadoEm?.toISOString ? mov.atualizadoEm.toISOString() : mov.atualizadoEm,
-      deletadoEm: mov.deletadoEm?.toISOString ? mov.deletadoEm.toISOString() : mov.deletadoEm,
+      dataMovimento: mov.dataMovimento?.toISOString
+        ? mov.dataMovimento.toISOString()
+        : mov.dataMovimento,
+      conciliadoEm: mov.conciliadoEm?.toISOString
+        ? mov.conciliadoEm.toISOString()
+        : mov.conciliadoEm,
+      criadoEm: mov.criadoEm?.toISOString
+        ? mov.criadoEm.toISOString()
+        : mov.criadoEm,
+      atualizadoEm: mov.atualizadoEm?.toISOString
+        ? mov.atualizadoEm.toISOString()
+        : mov.atualizadoEm,
+      deletadoEm: mov.deletadoEm?.toISOString
+        ? mov.deletadoEm.toISOString()
+        : mov.deletadoEm,
     }));
 
     return {
@@ -162,13 +182,23 @@ export class MovimentacoesBancariasController {
     const saldoPeriodo = totalEntradas - totalSaidas;
 
     // Serializar datas corretamente
-    const movimentacoesSerializadas = movimentacoes.map(mov => ({
+    const movimentacoesSerializadas = movimentacoes.map((mov) => ({
       ...mov,
-      dataMovimento: mov.dataMovimento?.toISOString ? mov.dataMovimento.toISOString() : mov.dataMovimento,
-      conciliadoEm: mov.conciliadoEm?.toISOString ? mov.conciliadoEm.toISOString() : mov.conciliadoEm,
-      criadoEm: mov.criadoEm?.toISOString ? mov.criadoEm.toISOString() : mov.criadoEm,
-      atualizadoEm: mov.atualizadoEm?.toISOString ? mov.atualizadoEm.toISOString() : mov.atualizadoEm,
-      deletadoEm: mov.deletadoEm?.toISOString ? mov.deletadoEm.toISOString() : mov.deletadoEm,
+      dataMovimento: mov.dataMovimento?.toISOString
+        ? mov.dataMovimento.toISOString()
+        : mov.dataMovimento,
+      conciliadoEm: mov.conciliadoEm?.toISOString
+        ? mov.conciliadoEm.toISOString()
+        : mov.conciliadoEm,
+      criadoEm: mov.criadoEm?.toISOString
+        ? mov.criadoEm.toISOString()
+        : mov.criadoEm,
+      atualizadoEm: mov.atualizadoEm?.toISOString
+        ? mov.atualizadoEm.toISOString()
+        : mov.atualizadoEm,
+      deletadoEm: mov.deletadoEm?.toISOString
+        ? mov.deletadoEm.toISOString()
+        : mov.deletadoEm,
     }));
 
     return {
@@ -190,11 +220,21 @@ export class MovimentacoesBancariasController {
     // Serializar datas corretamente
     const movimentacaoSerializada = {
       ...movimentacao,
-      dataMovimento: movimentacao.dataMovimento?.toISOString ? movimentacao.dataMovimento.toISOString() : movimentacao.dataMovimento,
-      conciliadoEm: movimentacao.conciliadoEm?.toISOString ? movimentacao.conciliadoEm.toISOString() : movimentacao.conciliadoEm,
-      criadoEm: movimentacao.criadoEm?.toISOString ? movimentacao.criadoEm.toISOString() : movimentacao.criadoEm,
-      atualizadoEm: movimentacao.atualizadoEm?.toISOString ? movimentacao.atualizadoEm.toISOString() : movimentacao.atualizadoEm,
-      deletadoEm: movimentacao.deletadoEm?.toISOString ? movimentacao.deletadoEm.toISOString() : movimentacao.deletadoEm,
+      dataMovimento: movimentacao.dataMovimento?.toISOString
+        ? movimentacao.dataMovimento.toISOString()
+        : movimentacao.dataMovimento,
+      conciliadoEm: movimentacao.conciliadoEm?.toISOString
+        ? movimentacao.conciliadoEm.toISOString()
+        : movimentacao.conciliadoEm,
+      criadoEm: movimentacao.criadoEm?.toISOString
+        ? movimentacao.criadoEm.toISOString()
+        : movimentacao.criadoEm,
+      atualizadoEm: movimentacao.atualizadoEm?.toISOString
+        ? movimentacao.atualizadoEm.toISOString()
+        : movimentacao.atualizadoEm,
+      deletadoEm: movimentacao.deletadoEm?.toISOString
+        ? movimentacao.deletadoEm.toISOString()
+        : movimentacao.deletadoEm,
     };
 
     return {

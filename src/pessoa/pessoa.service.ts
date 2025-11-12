@@ -352,8 +352,14 @@ export class PessoaService {
 
     // Atualizar endereço se houver campos de endereço no DTO
     const hasEnderecoFields =
-      dto.cep || dto.logradouro || dto.numero || dto.complemento ||
-      dto.bairro || dto.cidade || dto.uf || dto.codigoIbge;
+      dto.cep ||
+      dto.logradouro ||
+      dto.numero ||
+      dto.complemento ||
+      dto.bairro ||
+      dto.cidade ||
+      dto.uf ||
+      dto.codigoIbge;
 
     if (hasEnderecoFields && pessoa.endereco) {
       if (dto.cep !== undefined) {
