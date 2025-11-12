@@ -1,10 +1,34 @@
-import { IsString, IsOptional, IsUUID, IsBoolean, IsDateString, MaxLength, MinLength, IsEnum, IsArray, IsNumber, Min } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsUUID,
+  IsBoolean,
+  IsDateString,
+  MaxLength,
+  MinLength,
+  IsEnum,
+  IsArray,
+  IsNumber,
+  Min,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { TipoPessoa, SituacaoPessoa, TipoContribuinte, SituacaoFinanceira } from '../../entities/pessoa/tipo-pessoa.enum';
-import { IsCpfCnpj, IsIE, IsIM } from '../../common/validators/documento.validator';
+import {
+  TipoPessoa,
+  SituacaoPessoa,
+  TipoContribuinte,
+  SituacaoFinanceira,
+} from '../../entities/pessoa/tipo-pessoa.enum';
+import {
+  IsCpfCnpj,
+  IsIE,
+  IsIM,
+} from '../../common/validators/documento.validator';
 
 export class UpdatePessoaDto {
-  @ApiProperty({ description: 'ID do cliente (multi-tenancy)', required: false })
+  @ApiProperty({
+    description: 'ID do cliente (multi-tenancy)',
+    required: false,
+  })
   @IsOptional()
   @IsString({ message: 'Cliente ID deve ser um texto' })
   @MaxLength(255, { message: 'Cliente ID deve ter no máximo 255 caracteres' })
@@ -15,7 +39,10 @@ export class UpdatePessoaDto {
   @IsUUID('4', { message: 'Empresa ID deve ser um UUID válido' })
   empresaId?: string;
 
-  @ApiProperty({ description: 'ID da filial (opcional para multi-tenancy)', required: false })
+  @ApiProperty({
+    description: 'ID da filial (opcional para multi-tenancy)',
+    required: false,
+  })
   @IsOptional()
   @IsUUID('4', { message: 'Filial ID deve ser um UUID válido' })
   filialId?: string;
@@ -26,17 +53,21 @@ export class UpdatePessoaDto {
   enderecoId?: string;
 
   @ApiProperty({
-    description: 'Tipos da pessoa (cliente, fornecedor, funcionário, transportadora, médico, convênio, hospital)',
+    description:
+      'Tipos da pessoa (cliente, fornecedor, funcionário, transportadora, médico, convênio, hospital)',
     enum: TipoPessoa,
     isArray: true,
-    required: false
+    required: false,
   })
   @IsOptional()
   @IsArray({ message: 'Tipos deve ser um array' })
   @IsEnum(TipoPessoa, { each: true, message: 'Tipo de pessoa inválido' })
   tipos?: TipoPessoa[];
 
-  @ApiProperty({ description: 'Razão social ou nome completo', required: false })
+  @ApiProperty({
+    description: 'Razão social ou nome completo',
+    required: false,
+  })
   @IsOptional()
   @IsString({ message: 'Razão/Nome deve ser um texto' })
   @MaxLength(60, { message: 'Razão/Nome deve ter no máximo 60 caracteres' })
@@ -45,10 +76,15 @@ export class UpdatePessoaDto {
   @ApiProperty({ description: 'Nome fantasia ou apelido', required: false })
   @IsOptional()
   @IsString({ message: 'Fantasia/Apelido deve ser um texto' })
-  @MaxLength(60, { message: 'Fantasia/Apelido deve ter no máximo 60 caracteres' })
+  @MaxLength(60, {
+    message: 'Fantasia/Apelido deve ter no máximo 60 caracteres',
+  })
   fantasiaApelido?: string;
 
-  @ApiProperty({ description: 'CPF ou CNPJ (apenas números ou com formatação)', required: false })
+  @ApiProperty({
+    description: 'CPF ou CNPJ (apenas números ou com formatação)',
+    required: false,
+  })
   @IsOptional()
   @IsString({ message: 'Documento deve ser um texto' })
   @IsCpfCnpj({ message: 'CPF ou CNPJ inválido' })
@@ -71,32 +107,53 @@ export class UpdatePessoaDto {
   @ApiProperty({
     description: 'Tipo de contribuinte conforme tabela SEFAZ',
     enum: TipoContribuinte,
-    required: false
+    required: false,
   })
   @IsOptional()
   @IsEnum(TipoContribuinte, { message: 'Tipo de contribuinte inválido' })
   tipoContribuinte?: TipoContribuinte;
 
-  @ApiProperty({ description: 'Indica se a pessoa é consumidor final', required: false })
+  @ApiProperty({
+    description: 'Indica se a pessoa é consumidor final',
+    required: false,
+  })
   @IsOptional()
   @IsBoolean({ message: 'Consumidor final deve ser verdadeiro ou falso' })
   consumidorFinal?: boolean;
 
-  @ApiProperty({ description: 'Data de aniversário (formato ISO: YYYY-MM-DD)', required: false })
+  @ApiProperty({
+    description: 'Data de aniversário (formato ISO: YYYY-MM-DD)',
+    required: false,
+  })
   @IsOptional()
-  @IsDateString({}, { message: 'Aniversário deve ser uma data válida no formato ISO (YYYY-MM-DD)' })
+  @IsDateString(
+    {},
+    {
+      message:
+        'Aniversário deve ser uma data válida no formato ISO (YYYY-MM-DD)',
+    },
+  )
   aniversario?: string;
 
-  @ApiProperty({ description: 'Limite de crédito disponível (em reais)', required: false })
+  @ApiProperty({
+    description: 'Limite de crédito disponível (em reais)',
+    required: false,
+  })
   @IsOptional()
-  @IsNumber({ maxDecimalPlaces: 2 }, { message: 'Limite de crédito deve ser um número com no máximo 2 casas decimais' })
+  @IsNumber(
+    { maxDecimalPlaces: 2 },
+    {
+      message:
+        'Limite de crédito deve ser um número com no máximo 2 casas decimais',
+    },
+  )
   @Min(0, { message: 'Limite de crédito não pode ser negativo' })
   limiteCredito?: number;
 
   @ApiProperty({
     description: 'Situação financeira da pessoa',
     enum: SituacaoFinanceira,
-    required: false
+    required: false,
   })
   @IsOptional()
   @IsEnum(SituacaoFinanceira, { message: 'Situação financeira inválida' })
@@ -117,10 +174,12 @@ export class UpdatePessoaDto {
   @ApiProperty({
     description: 'Situação da pessoa (ativo, inativo, bloqueado, pendente)',
     enum: SituacaoPessoa,
-    required: false
+    required: false,
   })
   @IsOptional()
-  @IsEnum(SituacaoPessoa, { message: 'Situação deve ser ativo, inativo, bloqueado ou pendente' })
+  @IsEnum(SituacaoPessoa, {
+    message: 'Situação deve ser ativo, inativo, bloqueado ou pendente',
+  })
   situacao?: SituacaoPessoa;
 
   @ApiProperty({ description: 'Pessoa ativa ou inativa', required: false })

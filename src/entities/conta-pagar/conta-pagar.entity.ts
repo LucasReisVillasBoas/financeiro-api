@@ -1,4 +1,11 @@
-import { Entity, Property, PrimaryKey, ManyToOne, BeforeCreate, BeforeUpdate } from '@mikro-orm/core';
+import {
+  Entity,
+  Property,
+  PrimaryKey,
+  ManyToOne,
+  BeforeCreate,
+  BeforeUpdate,
+} from '@mikro-orm/core';
 import { ContasPagarRepository } from '../../conta-pagar/conta-pagar.repository';
 import { PlanoContas } from '../plano-contas/plano-contas.entity';
 import { Pessoa } from '../pessoa/pessoa.entity';
@@ -84,7 +91,11 @@ export class ContasPagar {
   @ManyToOne(() => Empresa, { fieldName: 'empresa_id' })
   empresa!: Empresa;
 
-  @Property({ type: 'uuid', nullable: true, fieldName: 'movimentacao_bancaria_id' })
+  @Property({
+    type: 'uuid',
+    nullable: true,
+    fieldName: 'movimentacao_bancaria_id',
+  })
   movimentacaoBancariaId?: string;
 
   // Auditoria

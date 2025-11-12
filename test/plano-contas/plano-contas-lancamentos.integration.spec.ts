@@ -6,7 +6,10 @@ import { PlanoContasRepository } from '../../src/plano-contas/plano-contas.repos
 import { EmpresaService } from '../../src/empresa/empresa.service';
 import { AuditService } from '../../src/audit/audit.service';
 import { EntityManager } from '@mikro-orm/core';
-import { PlanoContas, TipoPlanoContas } from '../../src/entities/plano-contas/plano-contas.entity';
+import {
+  PlanoContas,
+  TipoPlanoContas,
+} from '../../src/entities/plano-contas/plano-contas.entity';
 
 /**
  * Testes de integração entre Plano de Contas e módulos de lançamentos
@@ -94,16 +97,40 @@ describe('PlanoContas - Integração com Lançamentos', () => {
   describe('Validação: Apenas contas analíticas aceitam lançamentos', () => {
     it('deve retornar apenas contas analíticas ativas para seletores', async () => {
       const contasAnaliticas = [
-        { ...mockContaAnalitica, id: '1', codigo: '1.1.1', permite_lancamento: true, ativo: true },
-        { ...mockContaAnalitica, id: '2', codigo: '1.1.2', permite_lancamento: true, ativo: true },
+        {
+          ...mockContaAnalitica,
+          id: '1',
+          codigo: '1.1.1',
+          permite_lancamento: true,
+          ativo: true,
+        },
+        {
+          ...mockContaAnalitica,
+          id: '2',
+          codigo: '1.1.2',
+          permite_lancamento: true,
+          ativo: true,
+        },
       ];
 
       const contasSinteticas = [
-        { ...mockContaAnalitica, id: '3', codigo: '1.1', permite_lancamento: false, ativo: true },
+        {
+          ...mockContaAnalitica,
+          id: '3',
+          codigo: '1.1',
+          permite_lancamento: false,
+          ativo: true,
+        },
       ];
 
       const contasInativas = [
-        { ...mockContaAnalitica, id: '4', codigo: '1.1.3', permite_lancamento: true, ativo: false },
+        {
+          ...mockContaAnalitica,
+          id: '4',
+          codigo: '1.1.3',
+          permite_lancamento: true,
+          ativo: false,
+        },
       ];
 
       mockRepository.find.mockResolvedValue(contasAnaliticas);
@@ -153,7 +180,11 @@ describe('PlanoContas - Integração com Lançamentos', () => {
       ).rejects.toThrow(BadRequestException);
 
       try {
-        await service.softDelete('conta-analitica-123', 'user-id', 'user@test.com');
+        await service.softDelete(
+          'conta-analitica-123',
+          'user-id',
+          'user@test.com',
+        );
       } catch (error) {
         expect(error.message).toContain('está sendo usada em');
         expect(error.message).toContain('3 conta(s) a pagar');
@@ -170,7 +201,11 @@ describe('PlanoContas - Integração com Lançamentos', () => {
         .mockResolvedValueOnce(0); // 0 movimentações
 
       try {
-        await service.softDelete('conta-analitica-123', 'user-id', 'user@test.com');
+        await service.softDelete(
+          'conta-analitica-123',
+          'user-id',
+          'user@test.com',
+        );
         fail('Deveria ter lançado exceção');
       } catch (error) {
         expect(error.message).toContain('está sendo usada em 5 lançamento(s)');
@@ -188,7 +223,11 @@ describe('PlanoContas - Integração com Lançamentos', () => {
         .mockResolvedValueOnce(2); // 2 movimentações
 
       try {
-        await service.softDelete('conta-analitica-123', 'user-id', 'user@test.com');
+        await service.softDelete(
+          'conta-analitica-123',
+          'user-id',
+          'user@test.com',
+        );
         fail('Deveria ter lançado exceção');
       } catch (error) {
         expect(error.message).toContain('está sendo usada em 2 lançamento(s)');
@@ -221,7 +260,9 @@ describe('PlanoContas - Integração com Lançamentos', () => {
 
       await expect(
         service.softDelete('conta-analitica-123', 'user-id', 'user@test.com'),
-      ).rejects.toThrow('primeiro substitua-a por outra usando a funcionalidade de merge/substituição');
+      ).rejects.toThrow(
+        'primeiro substitua-a por outra usando a funcionalidade de merge/substituição',
+      );
     });
   });
 
@@ -378,13 +419,21 @@ describe('PlanoContas - Integração com Lançamentos', () => {
     });
 
     it('deve validar que conta destino é analítica', async () => {
-      const contaDestinoSintetica = { ...contaDestino, permite_lancamento: false };
+      const contaDestinoSintetica = {
+        ...contaDestino,
+        permite_lancamento: false,
+      };
       mockRepository.findOne
         .mockResolvedValueOnce(contaOrigem)
         .mockResolvedValueOnce(contaDestinoSintetica);
 
       await expect(
-        service.substituirConta('conta-origem-123', 'conta-destino-456', 'user-id', 'user@test.com'),
+        service.substituirConta(
+          'conta-origem-123',
+          'conta-destino-456',
+          'user-id',
+          'user@test.com',
+        ),
       ).rejects.toThrow('A conta destino deve ser uma conta analítica');
     });
 
@@ -395,7 +444,12 @@ describe('PlanoContas - Integração com Lançamentos', () => {
         .mockResolvedValueOnce(contaDestinoInativa);
 
       await expect(
-        service.substituirConta('conta-origem-123', 'conta-destino-456', 'user-id', 'user@test.com'),
+        service.substituirConta(
+          'conta-origem-123',
+          'conta-destino-456',
+          'user-id',
+          'user@test.com',
+        ),
       ).rejects.toThrow('A conta destino deve estar ativa');
     });
   });

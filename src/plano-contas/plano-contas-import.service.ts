@@ -261,7 +261,9 @@ export class PlanoContasImportService {
     const contasCriadas = new Map<string, PlanoContas>();
 
     for (const linha of linhasOrdenadas) {
-      const validation = validationResults.find((v) => v.codigo === linha.codigo);
+      const validation = validationResults.find(
+        (v) => v.codigo === linha.codigo,
+      );
       if (!validation?.valido) continue;
 
       const contaExistente = contasExistentes.get(linha.codigo);

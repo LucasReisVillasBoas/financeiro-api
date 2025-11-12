@@ -21,7 +21,8 @@ export class GerarParcelasDto {
   serie?: string;
 
   @IsEnum(TipoContaPagar, {
-    message: 'Tipo deve ser: Fornecedor, Empréstimo, Imposto, Salário, Aluguel, Serviço ou Outros',
+    message:
+      'Tipo deve ser: Fornecedor, Empréstimo, Imposto, Salário, Aluguel, Serviço ou Outros',
   })
   tipo!: string;
 
@@ -37,7 +38,10 @@ export class GerarParcelasDto {
   @IsNotEmpty({ message: 'Data de lançamento é obrigatória' })
   data_lancamento!: string;
 
-  @IsDateString({}, { message: 'Vencimento da primeira parcela deve ser uma data válida' })
+  @IsDateString(
+    {},
+    { message: 'Vencimento da primeira parcela deve ser uma data válida' },
+  )
   @IsNotEmpty({ message: 'Vencimento da primeira parcela é obrigatório' })
   primeiro_vencimento!: string;
 

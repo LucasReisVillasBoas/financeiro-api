@@ -383,10 +383,18 @@ describe('BaixaPagamentoService - Integração Bancária', () => {
       await service.create(dto, 'user-123', 'user@test.com');
 
       // Verifica que cada repositório persistiu sua entidade
-      expect(mockBaixaRepository.persistAndFlush).toHaveBeenCalledWith(expect.any(Object));
-      expect(mockContaBancariaRepository.persistAndFlush).toHaveBeenCalledWith(contaBancaria);
-      expect(mockContaPagarRepository.persistAndFlush).toHaveBeenCalledWith(contaPagar);
-      expect(mockMovimentacaoRepository.persistAndFlush).toHaveBeenCalledWith(movimentacaoCriada);
+      expect(mockBaixaRepository.persistAndFlush).toHaveBeenCalledWith(
+        expect.any(Object),
+      );
+      expect(mockContaBancariaRepository.persistAndFlush).toHaveBeenCalledWith(
+        contaBancaria,
+      );
+      expect(mockContaPagarRepository.persistAndFlush).toHaveBeenCalledWith(
+        contaPagar,
+      );
+      expect(mockMovimentacaoRepository.persistAndFlush).toHaveBeenCalledWith(
+        movimentacaoCriada,
+      );
     });
   });
 

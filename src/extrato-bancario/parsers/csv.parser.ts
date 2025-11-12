@@ -53,9 +53,7 @@ export class CsvParser {
 
       return transacoes;
     } catch (error) {
-      throw new BadRequestException(
-        `Erro ao processar CSV: ${error.message}`,
-      );
+      throw new BadRequestException(`Erro ao processar CSV: ${error.message}`);
     }
   }
 

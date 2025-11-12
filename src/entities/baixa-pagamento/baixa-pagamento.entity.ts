@@ -1,4 +1,11 @@
-import { Entity, Property, PrimaryKey, ManyToOne, BeforeCreate, BeforeUpdate } from '@mikro-orm/core';
+import {
+  Entity,
+  Property,
+  PrimaryKey,
+  ManyToOne,
+  BeforeCreate,
+  BeforeUpdate,
+} from '@mikro-orm/core';
 import { ContasPagar } from '../conta-pagar/conta-pagar.entity';
 import { ContasBancarias } from '../conta-bancaria/conta-bancaria.entity';
 import { MovimentacoesBancarias } from '../movimentacao-bancaria/movimentacao-bancaria.entity';
@@ -9,7 +16,10 @@ export enum TipoBaixa {
   TOTAL = 'Total',
 }
 
-@Entity({ tableName: 'baixas_pagamento', repository: () => BaixaPagamentoRepository })
+@Entity({
+  tableName: 'baixas_pagamento',
+  repository: () => BaixaPagamentoRepository,
+})
 export class BaixaPagamento {
   @PrimaryKey({ type: 'uuid', defaultRaw: 'gen_random_uuid()' })
   id!: string;

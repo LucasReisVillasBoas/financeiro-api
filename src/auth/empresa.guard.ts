@@ -77,9 +77,7 @@ export class EmpresaGuard implements CanActivate {
     const clienteIdBody = request.body?.cliente_id;
 
     const empresaIdToCheck =
-      empresaIdParam ||
-      empresaIdBody ||
-      request.userEmpresas[0]?.empresaId;
+      empresaIdParam || empresaIdBody || request.userEmpresas[0]?.empresaId;
 
     if (empresaIdToCheck) {
       const hasAccess = request.userEmpresas.some(
@@ -116,9 +114,7 @@ export class EmpresaGuard implements CanActivate {
 
       if (!hasClientAccess) {
         // Registrar tentativa de acesso a cliente não autorizado
-        const userClienteIds = request.userEmpresas.map(
-          (emp) => emp.clienteId,
-        );
+        const userClienteIds = request.userEmpresas.map((emp) => emp.clienteId);
 
         await this.auditService.logAccessDeniedWrongCliente(
           user.id,

@@ -2,10 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { EmpresaService } from '../../src/empresa/empresa.service';
 import { EmpresaRepository } from '../../src/empresa/empresa.repository';
 import { UsuarioEmpresaFilialRepository } from '../../src/usuario/usuario-empresa-filial.repository';
-import {
-  BadRequestException,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Empresa } from '../../src/entities/empresa/empresa.entity';
 import { CreateEmpresaDto } from '../../src/empresa/dto/create-empresa.dto';
 import { UpdateEmpresaDto } from '../../src/empresa/dto/update-empresa.dto';
@@ -257,10 +254,7 @@ describe('EmpresaService', () => {
   describe('findByUsuarioId', () => {
     it('deve retornar empresas vinculadas ao usuário', async () => {
       const usuarioId = 'usuario-id';
-      const associacoes = [
-        { empresa: 'empresa-1' },
-        { empresa: 'empresa-2' },
-      ];
+      const associacoes = [{ empresa: 'empresa-1' }, { empresa: 'empresa-2' }];
       const empresas = [
         { id: 'empresa-1', razao_social: 'Empresa 1' },
         { id: 'empresa-2', razao_social: 'Empresa 2' },

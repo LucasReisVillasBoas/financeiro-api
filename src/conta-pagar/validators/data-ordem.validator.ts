@@ -7,7 +7,9 @@ import {
 } from 'class-validator';
 
 @ValidatorConstraint({ name: 'IsDataOrdemValida', async: false })
-export class IsDataOrdemValidaConstraint implements ValidatorConstraintInterface {
+export class IsDataOrdemValidaConstraint
+  implements ValidatorConstraintInterface
+{
   validate(dataLiquidacao: any, args: ValidationArguments) {
     const object = args.object as any;
     const dataEmissao = new Date(object.data_emissao);

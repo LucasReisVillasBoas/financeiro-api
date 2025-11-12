@@ -12,7 +12,10 @@ import {
   StatusContaPagar,
 } from '../entities/conta-pagar/conta-pagar.entity';
 import { ContasBancarias } from '../entities/conta-bancaria/conta-bancaria.entity';
-import { MovimentacoesBancarias, TipoReferencia } from '../entities/movimentacao-bancaria/movimentacao-bancaria.entity';
+import {
+  MovimentacoesBancarias,
+  TipoReferencia,
+} from '../entities/movimentacao-bancaria/movimentacao-bancaria.entity';
 import { ContasPagarRepository } from '../conta-pagar/conta-pagar.repository';
 import { ContasBancariasRepository } from '../conta-bancaria/conta-bancaria.repository';
 import { MovimentacoesBancariasRepository } from '../movimentacao-bancaria/movimentacao-bancaria.repository';

@@ -1,4 +1,12 @@
-import { IsUUID, IsNumber, IsDateString, IsNotEmpty, Min, IsOptional, IsString } from 'class-validator';
+import {
+  IsUUID,
+  IsNumber,
+  IsDateString,
+  IsNotEmpty,
+  Min,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class RegistrarBaixaDto {
   @IsUUID('4', { message: 'ID da conta bancária inválido' })

@@ -32,7 +32,11 @@ import { UsuarioModule } from '../usuario/usuario.module';
     UsuarioModule,
   ],
   controllers: [ContasPagarController, RelatorioContasPagarController],
-  providers: [ContasPagarService, RelatorioContasPagarService, ExportacaoContasPagarService],
+  providers: [
+    ContasPagarService,
+    RelatorioContasPagarService,
+    ExportacaoContasPagarService,
+  ],
   exports: [ContasPagarService],
 })
 export class ContaPagarModule {}

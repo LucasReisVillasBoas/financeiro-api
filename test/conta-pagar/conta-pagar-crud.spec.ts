@@ -1,9 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  NotFoundException,
+} from '@nestjs/common';
 import { getRepositoryToken } from '@mikro-orm/nestjs';
 import { EntityManager } from '@mikro-orm/core';
 import { ContasPagarService } from '../../src/conta-pagar/conta-pagar.service';
-import { ContasPagar, StatusContaPagar, TipoContaPagar } from '../../src/entities/conta-pagar/conta-pagar.entity';
+import {
+  ContasPagar,
+  StatusContaPagar,
+  TipoContaPagar,
+} from '../../src/entities/conta-pagar/conta-pagar.entity';
 import { ContasPagarRepository } from '../../src/conta-pagar/conta-pagar.repository';
 import { CancelarContaPagarDto } from '../../src/conta-pagar/dto/cancelar-conta-pagar.dto';
 import { GerarParcelasDto } from '../../src/conta-pagar/dto/gerar-parcelas.dto';
@@ -146,10 +154,14 @@ describe('ContasPagarService - CRUD e Regras de Negócio', () => {
 
       mockRepository.findOne.mockResolvedValue(contaPaga as ContasPagar);
 
-      await expect(service.update('conta-123', { descricao: 'Nova descrição' }))
-        .rejects.toThrow(ForbiddenException);
-      await expect(service.update('conta-123', { descricao: 'Nova descrição' }))
-        .rejects.toThrow('Não é possível editar uma conta que já possui baixa registrada');
+      await expect(
+        service.update('conta-123', { descricao: 'Nova descrição' }),
+      ).rejects.toThrow(ForbiddenException);
+      await expect(
+        service.update('conta-123', { descricao: 'Nova descrição' }),
+      ).rejects.toThrow(
+        'Não é possível editar uma conta que já possui baixa registrada',
+      );
     });
 
     it('deve bloquear edição de conta com status PARCIALMENTE_PAGA', async () => {
@@ -163,8 +175,9 @@ describe('ContasPagarService - CRUD e Regras de Negócio', () => {
 
       mockRepository.findOne.mockResolvedValue(contaParcial as ContasPagar);
 
-      await expect(service.update('conta-123', { valor_principal: 2000 }))
-        .rejects.toThrow(ForbiddenException);
+      await expect(
+        service.update('conta-123', { valor_principal: 2000 }),
+      ).rejects.toThrow(ForbiddenException);
     });
 
     it('deve bloquear edição de conta que possui data_liquidacao', async () => {
@@ -177,8 +190,9 @@ describe('ContasPagarService - CRUD e Regras de Negócio', () => {
 
       mockRepository.findOne.mockResolvedValue(contaComBaixa as ContasPagar);
 
-      await expect(service.update('conta-123', { descricao: 'Nova descrição' }))
-        .rejects.toThrow(ForbiddenException);
+      await expect(
+        service.update('conta-123', { descricao: 'Nova descrição' }),
+      ).rejects.toThrow(ForbiddenException);
     });
 
     it('deve bloquear edição de conta cancelada', async () => {
@@ -191,10 +205,12 @@ describe('ContasPagarService - CRUD e Regras de Negócio', () => {
 
       mockRepository.findOne.mockResolvedValue(contaCancelada as ContasPagar);
 
-      await expect(service.update('conta-123', { descricao: 'Nova descrição' }))
-        .rejects.toThrow(ForbiddenException);
-      await expect(service.update('conta-123', { descricao: 'Nova descrição' }))
-        .rejects.toThrow('Não é possível editar uma conta cancelada');
+      await expect(
+        service.update('conta-123', { descricao: 'Nova descrição' }),
+      ).rejects.toThrow(ForbiddenException);
+      await expect(
+        service.update('conta-123', { descricao: 'Nova descrição' }),
+      ).rejects.toThrow('Não é possível editar uma conta cancelada');
     });
 
     it('deve permitir edição de conta PENDENTE sem baixa', async () => {
@@ -209,11 +225,14 @@ describe('ContasPagarService - CRUD e Regras de Negócio', () => {
       };
 
       mockRepository.findOne.mockResolvedValue(contaPendente as ContasPagar);
-      mockRepository.assign.mockImplementation((entity, data) => Object.assign(entity, data));
+      mockRepository.assign.mockImplementation((entity, data) =>
+        Object.assign(entity, data),
+      );
       mockRepository.flush.mockResolvedValue(undefined);
 
-      await expect(service.update('conta-123', { descricao: 'Nova descrição' }))
-        .resolves.toBeDefined();
+      await expect(
+        service.update('conta-123', { descricao: 'Nova descrição' }),
+      ).resolves.toBeDefined();
     });
   });
 
@@ -325,7 +344,9 @@ describe('ContasPagarService - CRUD e Regras de Negócio', () => {
     };
 
     it('deve gerar parcelas com vencimentos corretos', async () => {
-      mockRepository.create.mockImplementation((data: any) => data as ContasPagar);
+      mockRepository.create.mockImplementation(
+        (data: any) => data as ContasPagar,
+      );
       mockRepository.persistAndFlush.mockResolvedValue(undefined);
 
       const result = await service.gerarParcelas(parcelasDto);
@@ -337,12 +358,18 @@ describe('ContasPagarService - CRUD e Regras de Negócio', () => {
 
       // Verifica vencimentos
       expect(result[0].vencimento).toEqual(new Date('2025-02-01'));
-      expect(result[1].vencimento.getDate()).toBe(new Date('2025-03-03').getDate()); // +30 dias
-      expect(result[2].vencimento.getDate()).toBe(new Date('2025-04-02').getDate()); // +60 dias
+      expect(result[1].vencimento.getDate()).toBe(
+        new Date('2025-03-03').getDate(),
+      ); // +30 dias
+      expect(result[2].vencimento.getDate()).toBe(
+        new Date('2025-04-02').getDate(),
+      ); // +60 dias
     });
 
     it('deve dividir valor total igualmente entre parcelas', async () => {
-      mockRepository.create.mockImplementation((data: any) => data as ContasPagar);
+      mockRepository.create.mockImplementation(
+        (data: any) => data as ContasPagar,
+      );
       mockRepository.persistAndFlush.mockResolvedValue(undefined);
 
       const result = await service.gerarParcelas(parcelasDto);
@@ -359,17 +386,24 @@ describe('ContasPagarService - CRUD e Regras de Negócio', () => {
         numero_parcelas: 3, // 333.33 + 333.33 + 333.34
       };
 
-      mockRepository.create.mockImplementation((data: any) => data as ContasPagar);
+      mockRepository.create.mockImplementation(
+        (data: any) => data as ContasPagar,
+      );
       mockRepository.persistAndFlush.mockResolvedValue(undefined);
 
       const result = await service.gerarParcelas(dtoComArredondamento);
 
-      const totalCalculado = result.reduce((sum, p) => sum + p.valor_principal, 0);
+      const totalCalculado = result.reduce(
+        (sum, p) => sum + p.valor_principal,
+        0,
+      );
       expect(totalCalculado).toBeCloseTo(1000, 1); // Precisão de 1 centavo
     });
 
     it('deve incluir número da parcela na descrição', async () => {
-      mockRepository.create.mockImplementation((data: any) => data as ContasPagar);
+      mockRepository.create.mockImplementation(
+        (data: any) => data as ContasPagar,
+      );
       mockRepository.persistAndFlush.mockResolvedValue(undefined);
 
       const result = await service.gerarParcelas(parcelasDto);
@@ -386,13 +420,16 @@ describe('ContasPagarService - CRUD e Regras de Negócio', () => {
         intervalo_dias: 15,
       };
 
-      mockRepository.create.mockImplementation((data: any) => data as ContasPagar);
+      mockRepository.create.mockImplementation(
+        (data: any) => data as ContasPagar,
+      );
       mockRepository.persistAndFlush.mockResolvedValue(undefined);
 
       const result = await service.gerarParcelas(dtoQuinzenal);
 
       const diferencaDias = Math.floor(
-        (result[1].vencimento.getTime() - result[0].vencimento.getTime()) / (1000 * 60 * 60 * 24),
+        (result[1].vencimento.getTime() - result[0].vencimento.getTime()) /
+          (1000 * 60 * 60 * 24),
       );
       expect(diferencaDias).toBe(15);
     });
@@ -406,7 +443,9 @@ describe('ContasPagarService - CRUD e Regras de Negócio', () => {
         descontos: 90, // 30 por parcela
       };
 
-      mockRepository.create.mockImplementation((data: any) => data as ContasPagar);
+      mockRepository.create.mockImplementation(
+        (data: any) => data as ContasPagar,
+      );
       mockRepository.persistAndFlush.mockResolvedValue(undefined);
 
       const result = await service.gerarParcelas(dtoComAcrescimos);

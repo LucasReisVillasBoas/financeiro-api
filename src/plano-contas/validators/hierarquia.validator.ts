@@ -1,5 +1,8 @@
 import { BadRequestException } from '@nestjs/common';
-import { PlanoContas, TipoPlanoContas } from '../../entities/plano-contas/plano-contas.entity';
+import {
+  PlanoContas,
+  TipoPlanoContas,
+} from '../../entities/plano-contas/plano-contas.entity';
 import { PlanoContasRepository } from '../plano-contas.repository';
 
 /**

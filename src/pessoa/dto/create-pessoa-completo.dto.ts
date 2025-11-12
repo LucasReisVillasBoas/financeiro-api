@@ -1,7 +1,23 @@
-import { IsString, IsOptional, IsUUID, IsBoolean, IsDateString, MaxLength, MinLength, IsEnum, IsArray, IsNumber, Min, ArrayMinSize } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsUUID,
+  IsBoolean,
+  IsDateString,
+  MaxLength,
+  IsEnum,
+  IsArray,
+  ArrayMinSize,
+  IsNumber,
+  Min,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { TipoPessoa as TipoPessoaEnum, TipoContribuinte, SituacaoFinanceira } from '../../entities/pessoa/tipo-pessoa.enum';
-import { IsCpfCnpj, IsIE, IsIM } from '../../common/validators/documento.validator';
+import {
+  TipoPessoa as TipoPessoaEnum,
+  TipoContribuinte,
+  SituacaoFinanceira,
+} from '../../entities/pessoa/tipo-pessoa.enum';
+import { IsIE, IsIM } from '../../common/validators/documento.validator';
 
 export enum TipoPessoa {
   FISICA = 'Física',
@@ -97,7 +113,11 @@ export class CreatePessoaCompletoDto {
   @IsIM()
   im?: string;
 
-  @ApiProperty({ enum: TipoContribuinte, description: 'Tipo de contribuinte (SEFAZ)', required: false })
+  @ApiProperty({
+    enum: TipoContribuinte,
+    description: 'Tipo de contribuinte (SEFAZ)',
+    required: false,
+  })
   @IsOptional()
   @IsEnum(TipoContribuinte)
   tipoContribuinte?: TipoContribuinte;
@@ -114,7 +134,11 @@ export class CreatePessoaCompletoDto {
   @Min(0)
   limiteCredito?: number;
 
-  @ApiProperty({ enum: SituacaoFinanceira, description: 'Situação financeira', required: false })
+  @ApiProperty({
+    enum: SituacaoFinanceira,
+    description: 'Situação financeira',
+    required: false,
+  })
   @IsOptional()
   @IsEnum(SituacaoFinanceira)
   situacaoFinanceira?: SituacaoFinanceira;
@@ -125,7 +149,11 @@ export class CreatePessoaCompletoDto {
   aniversario?: string;
 
   // Tipos de pessoa
-  @ApiProperty({ description: 'Tipos de pessoa', enum: TipoPessoaEnum, isArray: true })
+  @ApiProperty({
+    description: 'Tipos de pessoa',
+    enum: TipoPessoaEnum,
+    isArray: true,
+  })
   @IsArray()
   @ArrayMinSize(1)
   @IsEnum(TipoPessoaEnum, { each: true })

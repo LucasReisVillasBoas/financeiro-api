@@ -42,7 +42,10 @@ export class ExtratoBancarioController {
       throw new BadRequestException('Conta bancária não informada');
     }
 
-    if (!formato || !Object.values(FormatoExtrato).includes(formato as FormatoExtrato)) {
+    if (
+      !formato ||
+      !Object.values(FormatoExtrato).includes(formato as FormatoExtrato)
+    ) {
       throw new BadRequestException('Formato inválido. Use OFX ou CSV');
     }
 

@@ -11,7 +11,10 @@ import {
   MinLength,
   Validate,
 } from 'class-validator';
-import { StatusContaPagar, TipoContaPagar } from '../../entities/conta-pagar/conta-pagar.entity';
+import {
+  StatusContaPagar,
+  TipoContaPagar,
+} from '../../entities/conta-pagar/conta-pagar.entity';
 import { IsDataOrdemValida } from '../validators/data-ordem.validator';
 
 export class CreateContaPagarDto {
@@ -30,7 +33,8 @@ export class CreateContaPagarDto {
   parcela!: number;
 
   @IsEnum(TipoContaPagar, {
-    message: 'Tipo deve ser: Fornecedor, Empréstimo, Imposto, Salário, Aluguel, Serviço ou Outros',
+    message:
+      'Tipo deve ser: Fornecedor, Empréstimo, Imposto, Salário, Aluguel, Serviço ou Outros',
   })
   tipo!: string;
 

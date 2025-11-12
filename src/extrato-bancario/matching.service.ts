@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { MovimentacoesBancarias } from '../entities/movimentacao-bancaria/movimentacao-bancaria.entity';
 import { MovimentacoesBancariasRepository } from '../movimentacao-bancaria/movimentacao-bancaria.repository';
-import type { TransacaoExtrato, SugestaoMatch } from './dto/importar-extrato.dto';
+import type {
+  TransacaoExtrato,
+  SugestaoMatch,
+} from './dto/importar-extrato.dto';
 
 interface CriterioMatch {
   movimentacao: MovimentacoesBancarias;
@@ -108,7 +111,10 @@ export class MatchingService {
     );
 
     // 4. Validar tipo de transação
-    const tipoValido = this.validarTipo(transacao.tipo, movimentacao.tipoMovimento);
+    const tipoValido = this.validarTipo(
+      transacao.tipo,
+      movimentacao.tipoMovimento,
+    );
     if (!tipoValido) {
       return {
         movimentacao,
@@ -121,7 +127,8 @@ export class MatchingService {
     }
 
     // Score total ponderado
-    const scoreTotal = scoreData * 0.3 + scoreValor * 0.4 + scoreDescricao * 0.3;
+    const scoreTotal =
+      scoreData * 0.3 + scoreValor * 0.4 + scoreDescricao * 0.3;
 
     return {
       movimentacao,
@@ -140,7 +147,8 @@ export class MatchingService {
   ): number {
     const diferencaDias = Math.abs(
       Math.floor(
-        (dataTransacao.getTime() - dataMovimentacao.getTime()) / (1000 * 60 * 60 * 24),
+        (dataTransacao.getTime() - dataMovimentacao.getTime()) /
+          (1000 * 60 * 60 * 24),
       ),
     );
 
@@ -249,13 +257,22 @@ export class MatchingService {
       .trim();
   }
 
-  private validarTipo(tipoTransacao: 'debito' | 'credito', tipoMovimentacao: string): boolean {
+  private validarTipo(
+    tipoTransacao: 'debito' | 'credito',
+    tipoMovimentacao: string,
+  ): boolean {
     const tipoMovNormalizado = tipoMovimentacao.toLowerCase();
 
     if (tipoTransacao === 'debito') {
-      return tipoMovNormalizado.includes('debito') || tipoMovNormalizado.includes('saída');
+      return (
+        tipoMovNormalizado.includes('debito') ||
+        tipoMovNormalizado.includes('saída')
+      );
     } else {
-      return tipoMovNormalizado.includes('credito') || tipoMovNormalizado.includes('entrada');
+      return (
+        tipoMovNormalizado.includes('credito') ||
+        tipoMovNormalizado.includes('entrada')
+      );
     }
   }
 }

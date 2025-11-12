@@ -9,11 +9,7 @@ import { EmpresaGuard } from './empresa.guard';
 import { JwtAuthGuard } from './jwt-auth.guard';
 
 @Module({
-  imports: [
-    ConfigModule,
-    PassportModule,
-    UsuarioModule,
-  ],
+  imports: [ConfigModule, PassportModule, UsuarioModule],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy, JwtAuthGuard, EmpresaGuard],
   exports: [JwtAuthGuard, EmpresaGuard],

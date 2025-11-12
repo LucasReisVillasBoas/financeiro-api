@@ -15,7 +15,10 @@ export enum TipoTransacao {
   CREDITO = 'credito',
 }
 
-@Entity({ tableName: 'extratos_bancarios', repository: () => ExtratoBancarioRepository })
+@Entity({
+  tableName: 'extratos_bancarios',
+  repository: () => ExtratoBancarioRepository,
+})
 export class ExtratoBancario {
   @PrimaryKey({ type: 'uuid', defaultRaw: 'gen_random_uuid()' })
   id!: string;

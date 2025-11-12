@@ -1,9 +1,25 @@
-import { Entity, Property, ManyToOne, PrimaryKey, Index, Unique } from '@mikro-orm/core';
+import {
+  Entity,
+  Property,
+  ManyToOne,
+  PrimaryKey,
+  Index,
+  Unique,
+} from '@mikro-orm/core';
 import { Empresa } from '../empresa/empresa.entity';
 import { ContasBancariasRepository } from '../../conta-bancaria/conta-bancaria.repository';
 
 @Entity({ repository: () => ContasBancariasRepository })
-@Unique({ properties: ['cliente_id', 'empresa', 'banco', 'agencia', 'conta', 'conta_digito'] })
+@Unique({
+  properties: [
+    'cliente_id',
+    'empresa',
+    'banco',
+    'agencia',
+    'conta',
+    'conta_digito',
+  ],
+})
 @Index({ properties: ['descricao'] })
 @Index({ properties: ['banco'] })
 @Index({ properties: ['agencia'] })

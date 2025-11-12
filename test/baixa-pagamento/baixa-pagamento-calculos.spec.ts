@@ -2,8 +2,14 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { BaixaPagamentoService } from '../../src/baixa-pagamento/baixa-pagamento.service';
 import { getRepositoryToken } from '@mikro-orm/nestjs';
 import { EntityManager } from '@mikro-orm/core';
-import { BaixaPagamento, TipoBaixa } from '../../src/entities/baixa-pagamento/baixa-pagamento.entity';
-import { ContasPagar, StatusContaPagar } from '../../src/entities/conta-pagar/conta-pagar.entity';
+import {
+  BaixaPagamento,
+  TipoBaixa,
+} from '../../src/entities/baixa-pagamento/baixa-pagamento.entity';
+import {
+  ContasPagar,
+  StatusContaPagar,
+} from '../../src/entities/conta-pagar/conta-pagar.entity';
 import { AuditService } from '../../src/audit/audit.service';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 
@@ -403,9 +409,9 @@ describe('BaixaPagamentoService - Cálculos', () => {
         data: '2025-01-15',
       };
 
-      await expect(service.create(dto, 'user-123', 'user@test.com')).rejects.toThrow(
-        BadRequestException,
-      );
+      await expect(
+        service.create(dto, 'user-123', 'user@test.com'),
+      ).rejects.toThrow(BadRequestException);
     });
 
     it('deve rejeitar baixa em conta já totalmente paga', async () => {
@@ -433,9 +439,9 @@ describe('BaixaPagamentoService - Cálculos', () => {
         data: '2025-01-15',
       };
 
-      await expect(service.create(dto, 'user-123', 'user@test.com')).rejects.toThrow(
-        BadRequestException,
-      );
+      await expect(
+        service.create(dto, 'user-123', 'user@test.com'),
+      ).rejects.toThrow(BadRequestException);
     });
 
     it('deve rejeitar baixa em conta cancelada', async () => {
@@ -463,9 +469,9 @@ describe('BaixaPagamentoService - Cálculos', () => {
         data: '2025-01-15',
       };
 
-      await expect(service.create(dto, 'user-123', 'user@test.com')).rejects.toThrow(
-        BadRequestException,
-      );
+      await expect(
+        service.create(dto, 'user-123', 'user@test.com'),
+      ).rejects.toThrow(BadRequestException);
     });
 
     it('deve rejeitar baixa se saldo bancário insuficiente', async () => {
@@ -495,9 +501,9 @@ describe('BaixaPagamentoService - Cálculos', () => {
         data: '2025-01-15',
       };
 
-      await expect(service.create(dto, 'user-123', 'user@test.com')).rejects.toThrow(
-        BadRequestException,
-      );
+      await expect(
+        service.create(dto, 'user-123', 'user@test.com'),
+      ).rejects.toThrow(BadRequestException);
     });
   });
 

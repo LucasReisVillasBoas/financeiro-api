@@ -56,8 +56,16 @@ Modo produção:
 npm run build
 npm run start:prod
 
-📚 Documentação da API
+📚 Documentação
 
-Acesse o Swagger após subir a aplicação:
+**Documentação Técnica Completa:** Consulte o diretório [docs/](./docs/) para documentação detalhada sobre:
+- API e endpoints
+- Testes e cobertura
+- Arquitetura e implementações
+- Validações e relatórios
+
+**Swagger (API Interativa):** Acesse após subir a aplicação:
 
 👉 http://localhost:3000/api
+
+**Para desenvolvedores Claude Code:** Consulte [CLAUDE.md](./CLAUDE.md) para arquitetura e padrões do projeto.

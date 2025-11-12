@@ -86,7 +86,7 @@ export class EmpresaService {
 
   async findAllByCliente(cliente_id: string): Promise<Empresa[]> {
     const empresa = await this.empresaRepo.find({ cliente_id, ativo: true });
-    return empresa
+    return empresa;
   }
 
   async findByUsuarioId(usuarioId: string): Promise<Empresa[]> {
@@ -130,7 +130,7 @@ export class EmpresaService {
 
   async findOne(id: string): Promise<Empresa> {
     const empresa = await this.empresaRepo.findOne({ id, ativo: true });
-    if (!empresa) return null
+    if (!empresa) return null;
     return empresa;
   }
 

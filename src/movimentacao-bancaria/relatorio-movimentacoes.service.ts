@@ -250,14 +250,10 @@ export class RelatorioMovimentacoesService {
       porDia[dataStr].movimentacoes++;
     });
 
-    return Object.values(porDia).sort((a, b) =>
-      a.data.localeCompare(b.data),
-    );
+    return Object.values(porDia).sort((a, b) => a.data.localeCompare(b.data));
   }
 
-  async exportarCSV(
-    filtros: FiltroRelatorioMovimentacoesDto,
-  ): Promise<string> {
+  async exportarCSV(filtros: FiltroRelatorioMovimentacoesDto): Promise<string> {
     const relatorio = await this.gerarRelatorio(filtros);
 
     let csv = 'Data,Descrição,Categoria,Tipo,Valor,Conciliado,Observação\n';
@@ -355,9 +351,7 @@ export class RelatorioMovimentacoesService {
     return Buffer.from(excelBuffer);
   }
 
-  async exportarPDF(
-    filtros: FiltroRelatorioMovimentacoesDto,
-  ): Promise<Buffer> {
+  async exportarPDF(filtros: FiltroRelatorioMovimentacoesDto): Promise<Buffer> {
     const relatorio = await this.gerarRelatorio(filtros);
 
     return new Promise((resolve, reject) => {
@@ -396,15 +390,11 @@ export class RelatorioMovimentacoesService {
       doc.fontSize(14).text('Resumo', { underline: true });
       doc.moveDown(0.5);
       doc.fontSize(10);
-      doc.text(
-        `Saldo Inicial: R$ ${relatorio.resumo.saldoInicial.toFixed(2)}`,
-      );
+      doc.text(`Saldo Inicial: R$ ${relatorio.resumo.saldoInicial.toFixed(2)}`);
       doc.text(
         `Total Créditos: R$ ${relatorio.resumo.totalCreditos.toFixed(2)}`,
       );
-      doc.text(
-        `Total Débitos: R$ ${relatorio.resumo.totalDebitos.toFixed(2)}`,
-      );
+      doc.text(`Total Débitos: R$ ${relatorio.resumo.totalDebitos.toFixed(2)}`);
       doc.text(`Saldo Final: R$ ${relatorio.resumo.saldoFinal.toFixed(2)}`, {
         underline: true,
       });
@@ -495,10 +485,9 @@ export class RelatorioMovimentacoesService {
       doc.moveDown();
       doc
         .fontSize(8)
-        .text(
-          `Gerado em: ${relatorio.geradoEm.toLocaleString('pt-BR')}`,
-          { align: 'center' },
-        );
+        .text(`Gerado em: ${relatorio.geradoEm.toLocaleString('pt-BR')}`, {
+          align: 'center',
+        });
 
       doc.end();
     });

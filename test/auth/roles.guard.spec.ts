@@ -63,9 +63,8 @@ describe('RolesGuard', () => {
 
     guard = module.get<RolesGuard>(RolesGuard);
     reflector = module.get<Reflector>(Reflector);
-    usuarioPerfilService = module.get<UsuarioPerfilService>(
-      UsuarioPerfilService,
-    );
+    usuarioPerfilService =
+      module.get<UsuarioPerfilService>(UsuarioPerfilService);
     auditService = module.get<AuditService>(AuditService);
   });
 

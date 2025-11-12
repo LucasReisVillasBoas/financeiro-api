@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityManager } from '@mikro-orm/core';
 import { ContasPagarRepository } from './conta-pagar.repository';
-import { ContasPagar, StatusContaPagar } from '../entities/conta-pagar/conta-pagar.entity';
+import {
+  ContasPagar,
+  StatusContaPagar,
+} from '../entities/conta-pagar/conta-pagar.entity';
 import { FiltroRelatorioContasPagarDto } from './dto/filtro-relatorio-contas-pagar.dto';
 import {
   RelatorioContasPagar,
@@ -19,7 +22,9 @@ export class RelatorioContasPagarService {
     private readonly em: EntityManager,
   ) {}
 
-  async gerarRelatorio(filtro: FiltroRelatorioContasPagarDto): Promise<RelatorioContasPagar> {
+  async gerarRelatorio(
+    filtro: FiltroRelatorioContasPagarDto,
+  ): Promise<RelatorioContasPagar> {
     // Busca contas a pagar com filtros aplicados
     const contas = await this.buscarContasComFiltros(filtro);
 
@@ -38,7 +43,8 @@ export class RelatorioContasPagarService {
     return {
       filtros: {
         fornecedor: filtro.fornecedorId
-          ? contas.find((c) => c.pessoa.id === filtro.fornecedorId)?.pessoa.razaoNome
+          ? contas.find((c) => c.pessoa.id === filtro.fornecedorId)?.pessoa
+              .razaoNome
           : undefined,
         dataInicial: filtro.dataInicial,
         dataFinal: filtro.dataFinal,
@@ -92,13 +98,16 @@ export class RelatorioContasPagarService {
     });
   }
 
-  private transformarEmItensRelatorio(contas: ContasPagar[]): ItemRelatorioContasPagar[] {
+  private transformarEmItensRelatorio(
+    contas: ContasPagar[],
+  ): ItemRelatorioContasPagar[] {
     return contas.map((conta) => ({
       id: conta.id,
       documento: conta.documento,
       serie: conta.serie || '',
       parcela: conta.parcela,
-      fornecedor: conta.pessoa.razaoNome || conta.pessoa.fantasiaApelido || 'Sem nome',
+      fornecedor:
+        conta.pessoa.razaoNome || conta.pessoa.fantasiaApelido || 'Sem nome',
       fornecedorId: conta.pessoa.id,
       dataEmissao: conta.data_emissao,
       dataVencimento: conta.vencimento,
@@ -117,12 +126,17 @@ export class RelatorioContasPagarService {
     return {
       quantidade: itens.length,
       valorTotal: itens.reduce((sum, item) => sum + Number(item.valorTotal), 0),
-      valorPago: itens.reduce((sum, item) => sum + (Number(item.valorTotal) - Number(item.saldo)), 0),
+      valorPago: itens.reduce(
+        (sum, item) => sum + (Number(item.valorTotal) - Number(item.saldo)),
+        0,
+      ),
       saldo: itens.reduce((sum, item) => sum + Number(item.saldo), 0),
     };
   }
 
-  private calcularTotaisPorFornecedor(itens: ItemRelatorioContasPagar[]): TotaisPorFornecedor[] {
+  private calcularTotaisPorFornecedor(
+    itens: ItemRelatorioContasPagar[],
+  ): TotaisPorFornecedor[] {
     const porFornecedor = new Map<string, TotaisPorFornecedor>();
 
     itens.forEach((item) => {
@@ -150,7 +164,9 @@ export class RelatorioContasPagarService {
     );
   }
 
-  private calcularTotaisPorPeriodo(itens: ItemRelatorioContasPagar[]): TotaisPorPeriodo[] {
+  private calcularTotaisPorPeriodo(
+    itens: ItemRelatorioContasPagar[],
+  ): TotaisPorPeriodo[] {
     const porPeriodo = new Map<string, TotaisPorPeriodo>();
 
     itens.forEach((item) => {
@@ -172,7 +188,9 @@ export class RelatorioContasPagarService {
       totais.saldo += Number(item.saldo);
     });
 
-    return Array.from(porPeriodo.values()).sort((a, b) => a.periodo.localeCompare(b.periodo));
+    return Array.from(porPeriodo.values()).sort((a, b) =>
+      a.periodo.localeCompare(b.periodo),
+    );
   }
 
   private formatarPeriodo(data: Date): string {

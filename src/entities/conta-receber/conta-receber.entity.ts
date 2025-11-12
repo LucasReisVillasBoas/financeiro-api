@@ -28,7 +28,10 @@ export class ContasReceber {
   @Property({ type: 'uuid', nullable: true })
   empresaId?: string;
 
-  @ManyToOne(() => PlanoContas, { fieldName: 'plano_contas_id', nullable: true })
+  @ManyToOne(() => PlanoContas, {
+    fieldName: 'plano_contas_id',
+    nullable: true,
+  })
   planoContas?: PlanoContas;
 
   @Property({ type: 'timestamp', onCreate: () => new Date() })

@@ -51,20 +51,18 @@ export class CreateCidadeDto {
   @Length(1, 255)
   nome!: string;
 
+  @IsOptional()
   @IsString()
-  @Length(1, 6)
-  @IsValidIBGE({
-    message:
-      'Código IBGE inválido. Deve ter 6 dígitos numéricos com dígito verificador válido',
-  })
-  codigoIbge!: string;
+  @Length(1, 20)
+  codigoIbge?: string;
 
+  @IsOptional()
   @IsString()
   @Length(2, 2)
   @IsIn(UFS, {
     message: 'UF inválida. Deve ser uma sigla de estado brasileiro válida',
   })
-  uf!: string;
+  uf?: string;
 
   @IsOptional()
   @IsString()

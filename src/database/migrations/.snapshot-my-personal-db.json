@@ -1733,12 +1733,12 @@
         },
         "telefone": {
           "name": "telefone",
-          "type": "varchar(14)",
+          "type": "varchar(20)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": true,
-          "length": 14,
+          "length": 20,
           "mappedType": "string"
         },
         "email": {
@@ -3126,12 +3126,12 @@
         },
         "codigo_ibge": {
           "name": "codigo_ibge",
-          "type": "varchar(7)",
+          "type": "varchar(20)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": false,
-          "length": 7,
+          "nullable": true,
+          "length": 20,
           "mappedType": "string"
         },
         "uf": {
@@ -3140,7 +3140,7 @@
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": false,
+          "nullable": true,
           "length": 2,
           "mappedType": "string"
         },

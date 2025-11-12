@@ -229,7 +229,7 @@ export class UsuarioService {
   }
 
   async findAll(empresaId: string[]): Promise<Usuario[]> {
-    let empresas = [];
+    const empresas = [];
     empresaId.map(async (id) => {
       const empresa = await this.empresaService.findOne(id);
       if (empresa) empresas.push(empresa);
