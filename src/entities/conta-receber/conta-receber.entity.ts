@@ -1,8 +1,30 @@
-import { Entity, Property, PrimaryKey, ManyToOne } from '@mikro-orm/core';
+import { Entity, Property, PrimaryKey, ManyToOne, Index, Enum } from '@mikro-orm/core';
 import { ContasReceberRepository } from '../../conta-receber/conta-receber.repository';
 import { PlanoContas } from '../plano-contas/plano-contas.entity';
+import { Pessoa } from '../pessoa/pessoa.entity';
+import { Empresa } from '../empresa/empresa.entity';
 
-@Entity({ repository: () => ContasReceberRepository })
+export enum TipoContaReceber {
+  BOLETO = 'BOLETO',
+  DUPLICATA = 'DUPLICATA',
+  NOTA_PROMISSORIA = 'NOTA_PROMISSORIA',
+  CHEQUE = 'CHEQUE',
+  CARTAO_CREDITO = 'CARTAO_CREDITO',
+  CARTAO_DEBITO = 'CARTAO_DEBITO',
+  PIX = 'PIX',
+  DINHEIRO = 'DINHEIRO',
+  OUTROS = 'OUTROS',
+}
+
+export enum StatusContaReceber {
+  PENDENTE = 'PENDENTE',
+  PARCIAL = 'PARCIAL',
+  LIQUIDADO = 'LIQUIDADO',
+  CANCELADO = 'CANCELADO',
+  VENCIDO = 'VENCIDO',
+}
+
+@Entity({ tableName: 'contas_receber', repository: () => ContasReceberRepository })
 export class ContasReceber {
   @PrimaryKey({ type: 'uuid', defaultRaw: 'gen_random_uuid()' })
   id!: string;
@@ -10,30 +32,79 @@ export class ContasReceber {
   @Property({ type: 'varchar', length: 500 })
   descricao!: string;
 
-  @Property({ type: 'decimal', precision: 15, scale: 2 })
-  valor!: number;
+  // Vínculo obrigatório com Pessoa (cliente)
+  @Index()
+  @ManyToOne(() => Pessoa, {
+    fieldName: 'pessoa_id',
+    nullable: false,
+  })
+  pessoa!: Pessoa;
+
+  // Vínculo obrigatório com Plano de Contas
+  @Index()
+  @ManyToOne(() => PlanoContas, {
+    fieldName: 'plano_contas_id',
+    nullable: false,
+  })
+  planoContas!: PlanoContas;
+
+  // Campos de documento
+  @Property({ type: 'varchar', length: 50 })
+  documento!: string;
+
+  @Property({ type: 'varchar', length: 10, nullable: true })
+  serie?: string;
+
+  @Property({ type: 'int', default: 1 })
+  parcela!: number;
+
+  @Enum(() => TipoContaReceber)
+  @Property({ type: 'varchar', length: 50, default: TipoContaReceber.BOLETO })
+  tipo: TipoContaReceber = TipoContaReceber.BOLETO;
+
+  // Campos de datas
+  @Property({ type: 'date' })
+  dataEmissao!: Date;
+
+  @Property({ type: 'date' })
+  dataLancamento!: Date;
 
   @Property({ type: 'date' })
   vencimento!: Date;
 
-  @Property({ type: 'varchar', length: 50 })
-  status!: string;
-
-  @Property({ type: 'varchar', length: 255 })
-  cliente!: string;
-
   @Property({ type: 'date', nullable: true })
-  dataRecebimento?: Date;
+  dataLiquidacao?: Date;
 
-  @Property({ type: 'uuid', nullable: true })
-  empresaId?: string;
+  // Campos monetários
+  @Property({ type: 'decimal', precision: 15, scale: 2 })
+  valorPrincipal!: number;
 
-  @ManyToOne(() => PlanoContas, {
-    fieldName: 'plano_contas_id',
+  @Property({ type: 'decimal', precision: 15, scale: 2, default: 0 })
+  valorAcrescimos: number = 0;
+
+  @Property({ type: 'decimal', precision: 15, scale: 2, default: 0 })
+  valorDescontos: number = 0;
+
+  @Property({ type: 'decimal', precision: 15, scale: 2 })
+  valorTotal!: number;
+
+  @Property({ type: 'decimal', precision: 15, scale: 2 })
+  saldo!: number;
+
+  // Status
+  @Enum(() => StatusContaReceber)
+  @Property({ type: 'varchar', length: 50, default: StatusContaReceber.PENDENTE })
+  status: StatusContaReceber = StatusContaReceber.PENDENTE;
+
+  // Multi-tenancy
+  @Index()
+  @ManyToOne(() => Empresa, {
+    fieldName: 'empresa_id',
     nullable: true,
   })
-  planoContas?: PlanoContas;
+  empresa?: Empresa;
 
+  // Campos de auditoria
   @Property({ type: 'timestamp', onCreate: () => new Date() })
   criadoEm: Date = new Date();
 
