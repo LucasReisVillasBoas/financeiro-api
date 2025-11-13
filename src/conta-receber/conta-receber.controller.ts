@@ -100,7 +100,10 @@ export class ContasReceberController {
     @Req() req: Request,
   ) {
     const usuarioId = (req as any).user?.id;
-    const parcelas = await this.contaReceberService.createParcelado(dto, usuarioId);
+    const parcelas = await this.contaReceberService.createParcelado(
+      dto,
+      usuarioId,
+    );
     return {
       message: `${parcelas.length} parcelas criadas com sucesso`,
       statusCode: HttpStatus.CREATED,
