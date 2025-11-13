@@ -9,10 +9,14 @@ import {
   Param,
   HttpCode,
   HttpStatus,
+  Req,
 } from '@nestjs/common';
 import { ContasReceberService } from './conta-receber.service';
 import { CreateContaReceberDto } from './dto/create-conta-receber.dto';
 import { UpdateContaReceberDto } from './dto/update-conta-receber.dto';
+import { CreateContaReceberParceladaDto } from './dto/create-conta-receber-parcelada.dto';
+import { CancelarContaReceberDto } from './dto/cancelar-conta-receber.dto';
+import { Request } from 'express';
 
 @Controller('contas-receber')
 export class ContasReceberController {
@@ -69,11 +73,54 @@ export class ContasReceberController {
     };
   }
 
-  @Patch(':id/receber')
-  async marcarComoRecebida(@Param('id') id: string) {
-    const conta = await this.contaReceberService.marcarComoRecebida(id);
+  @Patch(':id/liquidar')
+  async liquidar(
+    @Param('id') id: string,
+    @Body() body: { valorRecebido: number; dataLiquidacao?: string },
+  ) {
+    const dataLiquidacao = body.dataLiquidacao
+      ? new Date(body.dataLiquidacao)
+      : undefined;
+    const conta = await this.contaReceberService.liquidar(
+      id,
+      body.valorRecebido,
+      dataLiquidacao,
+    );
     return {
-      message: 'Conta marcada como recebida com sucesso',
+      message: 'Conta liquidada com sucesso',
+      statusCode: HttpStatus.OK,
+      data: conta,
+    };
+  }
+
+  @Post('parcelado')
+  @HttpCode(HttpStatus.CREATED)
+  async createParcelado(
+    @Body() dto: CreateContaReceberParceladaDto,
+    @Req() req: Request,
+  ) {
+    const usuarioId = (req as any).user?.id;
+    const parcelas = await this.contaReceberService.createParcelado(
+      dto,
+      usuarioId,
+    );
+    return {
+      message: `${parcelas.length} parcelas criadas com sucesso`,
+      statusCode: HttpStatus.CREATED,
+      data: parcelas,
+    };
+  }
+
+  @Patch(':id/cancelar')
+  async cancelar(
+    @Param('id') id: string,
+    @Body() dto: CancelarContaReceberDto,
+    @Req() req: Request,
+  ) {
+    const usuarioId = (req as any).user?.id;
+    const conta = await this.contaReceberService.cancelar(id, dto, usuarioId);
+    return {
+      message: 'Conta cancelada com sucesso',
       statusCode: HttpStatus.OK,
       data: conta,
     };

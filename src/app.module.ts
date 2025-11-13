@@ -25,6 +25,7 @@ import { AuditModule } from './audit/audit.module';
 import { PlanoContasModule } from './plano-contas/plano-contas.module';
 import { DreModule } from './dre/dre.module';
 import { BaixaPagamentoModule } from './baixa-pagamento/baixa-pagamento.module';
+import { BaixaRecebimentoModule } from './baixa-recebimento/baixa-recebimento.module';
 import { PessoaModule } from './pessoa/pessoa.module';
 import { ExtratoBancarioModule } from './extrato-bancario/extrato-bancario.module';
 
@@ -46,6 +47,7 @@ import { ExtratoBancarioModule } from './extrato-bancario/extrato-bancario.modul
     PlanoContasModule,
     DreModule,
     BaixaPagamentoModule,
+    BaixaRecebimentoModule,
     PessoaModule,
     ExtratoBancarioModule,
     JwtModule.register({

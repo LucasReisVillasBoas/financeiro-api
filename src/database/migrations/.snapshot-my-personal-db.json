@@ -811,6 +811,488 @@
           "default": "gen_random_uuid()",
           "mappedType": "uuid"
         },
+        "cliente_id": {
+          "name": "cliente_id",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 255,
+          "mappedType": "string"
+        },
+        "empresa_id": {
+          "name": "empresa_id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "uuid"
+        },
+        "filial_id": {
+          "name": "filial_id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "uuid"
+        },
+        "endereco_id": {
+          "name": "endereco_id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "uuid"
+        },
+        "razao_nome": {
+          "name": "razao_nome",
+          "type": "varchar(60)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 60,
+          "mappedType": "string"
+        },
+        "fantasia_apelido": {
+          "name": "fantasia_apelido",
+          "type": "varchar(60)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 60,
+          "mappedType": "string"
+        },
+        "documento": {
+          "name": "documento",
+          "type": "varchar(14)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 14,
+          "comment": "CNPJ ou CPF (apenas números)",
+          "mappedType": "string"
+        },
+        "ie_rg": {
+          "name": "ie_rg",
+          "type": "varchar(20)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 20,
+          "comment": "Inscrição Estadual ou RG",
+          "mappedType": "string"
+        },
+        "im": {
+          "name": "im",
+          "type": "varchar(30)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 30,
+          "comment": "Inscrição Municipal",
+          "mappedType": "string"
+        },
+        "tipo_contribuinte": {
+          "name": "tipo_contribuinte",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "enumItems": [
+            "1",
+            "2",
+            "9"
+          ],
+          "mappedType": "enum"
+        },
+        "consumidor_final": {
+          "name": "consumidor_final",
+          "type": "boolean",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "true",
+          "comment": "Indica se a pessoa é consumidor final",
+          "mappedType": "boolean"
+        },
+        "aniversario": {
+          "name": "aniversario",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 6,
+          "comment": "Data de aniversário",
+          "mappedType": "datetime"
+        },
+        "limite_credito": {
+          "name": "limite_credito",
+          "type": "numeric(15,2)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "precision": 15,
+          "scale": 2,
+          "default": "0",
+          "comment": "Limite de crédito disponível para a pessoa (em reais)",
+          "mappedType": "decimal"
+        },
+        "situacao_financeira": {
+          "name": "situacao_financeira",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "'ativo'",
+          "enumItems": [
+            "ativo",
+            "inativo",
+            "bloqueado",
+            "suspenso"
+          ],
+          "mappedType": "enum"
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(100)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 100,
+          "mappedType": "string"
+        },
+        "telefone": {
+          "name": "telefone",
+          "type": "varchar(20)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 20,
+          "mappedType": "string"
+        },
+        "situacao": {
+          "name": "situacao",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "'ativo'",
+          "enumItems": [
+            "ativo",
+            "inativo",
+            "bloqueado",
+            "pendente"
+          ],
+          "mappedType": "enum"
+        },
+        "ativo": {
+          "name": "ativo",
+          "type": "boolean",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "true",
+          "mappedType": "boolean"
+        },
+        "deletado_em": {
+          "name": "deletado_em",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 6,
+          "mappedType": "datetime"
+        },
+        "criado_em": {
+          "name": "criado_em",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "mappedType": "datetime"
+        },
+        "atualizado_em": {
+          "name": "atualizado_em",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "mappedType": "datetime"
+        }
+      },
+      "name": "pessoa",
+      "schema": "public",
+      "indexes": [
+        {
+          "columnNames": [
+            "cliente_id"
+          ],
+          "composite": false,
+          "keyName": "pessoa_cliente_id_index",
+          "constraint": false,
+          "primary": false,
+          "unique": false
+        },
+        {
+          "columnNames": [
+            "empresa_id"
+          ],
+          "composite": false,
+          "keyName": "pessoa_empresa_id_index",
+          "constraint": false,
+          "primary": false,
+          "unique": false
+        },
+        {
+          "columnNames": [
+            "filial_id"
+          ],
+          "composite": false,
+          "keyName": "pessoa_filial_id_index",
+          "constraint": false,
+          "primary": false,
+          "unique": false
+        },
+        {
+          "columnNames": [
+            "endereco_id"
+          ],
+          "composite": false,
+          "keyName": "pessoa_endereco_id_index",
+          "constraint": false,
+          "primary": false,
+          "unique": false
+        },
+        {
+          "columnNames": [
+            "tipo_contribuinte"
+          ],
+          "composite": false,
+          "keyName": "pessoa_tipo_contribuinte_index",
+          "constraint": false,
+          "primary": false,
+          "unique": false
+        },
+        {
+          "columnNames": [
+            "situacao_financeira"
+          ],
+          "composite": false,
+          "keyName": "pessoa_situacao_financeira_index",
+          "constraint": false,
+          "primary": false,
+          "unique": false
+        },
+        {
+          "columnNames": [
+            "situacao"
+          ],
+          "composite": false,
+          "keyName": "pessoa_situacao_index",
+          "constraint": false,
+          "primary": false,
+          "unique": false
+        },
+        {
+          "keyName": "pessoa_pkey",
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "constraint": true,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "pessoa_empresa_id_foreign": {
+          "constraintName": "pessoa_empresa_id_foreign",
+          "columnNames": [
+            "empresa_id"
+          ],
+          "localTableName": "public.pessoa",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.empresa",
+          "updateRule": "cascade"
+        },
+        "pessoa_filial_id_foreign": {
+          "constraintName": "pessoa_filial_id_foreign",
+          "columnNames": [
+            "filial_id"
+          ],
+          "localTableName": "public.pessoa",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.empresa",
+          "deleteRule": "set null",
+          "updateRule": "cascade"
+        },
+        "pessoa_endereco_id_foreign": {
+          "constraintName": "pessoa_endereco_id_foreign",
+          "columnNames": [
+            "endereco_id"
+          ],
+          "localTableName": "public.pessoa",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.endereco",
+          "updateRule": "cascade"
+        }
+      },
+      "nativeEnums": {}
+    },
+    {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "gen_random_uuid()",
+          "mappedType": "uuid"
+        },
+        "pessoa_id": {
+          "name": "pessoa_id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "uuid"
+        },
+        "tipo": {
+          "name": "tipo",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "enumItems": [
+            "cliente",
+            "fornecedor",
+            "funcionario",
+            "transportadora",
+            "medico",
+            "convenio",
+            "hospital"
+          ],
+          "mappedType": "enum"
+        },
+        "criado_em": {
+          "name": "criado_em",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "mappedType": "datetime"
+        }
+      },
+      "name": "pessoa_tipo",
+      "schema": "public",
+      "indexes": [
+        {
+          "columnNames": [
+            "pessoa_id"
+          ],
+          "composite": false,
+          "keyName": "pessoa_tipo_pessoa_id_index",
+          "constraint": false,
+          "primary": false,
+          "unique": false
+        },
+        {
+          "columnNames": [
+            "tipo"
+          ],
+          "composite": false,
+          "keyName": "pessoa_tipo_tipo_index",
+          "constraint": false,
+          "primary": false,
+          "unique": false
+        },
+        {
+          "keyName": "pessoa_tipo_pessoa_id_tipo_unique",
+          "columnNames": [
+            "pessoa_id",
+            "tipo"
+          ],
+          "composite": true,
+          "constraint": true,
+          "primary": false,
+          "unique": true
+        },
+        {
+          "keyName": "pessoa_tipo_pkey",
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "constraint": true,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "pessoa_tipo_pessoa_id_foreign": {
+          "constraintName": "pessoa_tipo_pessoa_id_foreign",
+          "columnNames": [
+            "pessoa_id"
+          ],
+          "localTableName": "public.pessoa_tipo",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.pessoa",
+          "updateRule": "cascade"
+        }
+      },
+      "nativeEnums": {}
+    },
+    {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "gen_random_uuid()",
+          "mappedType": "uuid"
+        },
         "empresa_id": {
           "name": "empresa_id",
           "type": "uuid",
@@ -1496,16 +1978,94 @@
           "length": 500,
           "mappedType": "string"
         },
-        "valor": {
-          "name": "valor",
-          "type": "numeric(15,2)",
+        "pessoa_id": {
+          "name": "pessoa_id",
+          "type": "uuid",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "precision": 15,
-          "scale": 2,
-          "mappedType": "decimal"
+          "mappedType": "uuid"
+        },
+        "plano_contas_id": {
+          "name": "plano_contas_id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "uuid"
+        },
+        "documento": {
+          "name": "documento",
+          "type": "varchar(50)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 50,
+          "mappedType": "string"
+        },
+        "serie": {
+          "name": "serie",
+          "type": "varchar(10)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 10,
+          "mappedType": "string"
+        },
+        "parcela": {
+          "name": "parcela",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "1",
+          "mappedType": "integer"
+        },
+        "tipo": {
+          "name": "tipo",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "'BOLETO'",
+          "enumItems": [
+            "BOLETO",
+            "DUPLICATA",
+            "NOTA_PROMISSORIA",
+            "CHEQUE",
+            "CARTAO_CREDITO",
+            "CARTAO_DEBITO",
+            "PIX",
+            "DINHEIRO",
+            "OUTROS"
+          ],
+          "mappedType": "enum"
+        },
+        "data_emissao": {
+          "name": "data_emissao",
+          "type": "date",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 0,
+          "mappedType": "date"
+        },
+        "data_lancamento": {
+          "name": "data_lancamento",
+          "type": "date",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 0,
+          "mappedType": "date"
         },
         "vencimento": {
           "name": "vencimento",
@@ -1517,28 +2077,8 @@
           "length": 0,
           "mappedType": "date"
         },
-        "status": {
-          "name": "status",
-          "type": "varchar(50)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 50,
-          "mappedType": "string"
-        },
-        "cliente": {
-          "name": "cliente",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 255,
-          "mappedType": "string"
-        },
-        "data_recebimento": {
-          "name": "data_recebimento",
+        "data_liquidacao": {
+          "name": "data_liquidacao",
           "type": "date",
           "unsigned": false,
           "autoincrement": false,
@@ -1547,17 +2087,82 @@
           "length": 0,
           "mappedType": "date"
         },
-        "empresa_id": {
-          "name": "empresa_id",
-          "type": "uuid",
+        "valor_principal": {
+          "name": "valor_principal",
+          "type": "numeric(15,2)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": true,
-          "mappedType": "uuid"
+          "nullable": false,
+          "precision": 15,
+          "scale": 2,
+          "mappedType": "decimal"
         },
-        "plano_contas_id": {
-          "name": "plano_contas_id",
+        "valor_acrescimos": {
+          "name": "valor_acrescimos",
+          "type": "numeric(15,2)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "precision": 15,
+          "scale": 2,
+          "default": "0",
+          "mappedType": "decimal"
+        },
+        "valor_descontos": {
+          "name": "valor_descontos",
+          "type": "numeric(15,2)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "precision": 15,
+          "scale": 2,
+          "default": "0",
+          "mappedType": "decimal"
+        },
+        "valor_total": {
+          "name": "valor_total",
+          "type": "numeric(15,2)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "precision": 15,
+          "scale": 2,
+          "mappedType": "decimal"
+        },
+        "saldo": {
+          "name": "saldo",
+          "type": "numeric(15,2)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "precision": 15,
+          "scale": 2,
+          "mappedType": "decimal"
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "'PENDENTE'",
+          "enumItems": [
+            "PENDENTE",
+            "PARCIAL",
+            "LIQUIDADO",
+            "CANCELADO",
+            "VENCIDO"
+          ],
+          "mappedType": "enum"
+        },
+        "empresa_id": {
+          "name": "empresa_id",
           "type": "uuid",
           "unsigned": false,
           "autoincrement": false,
@@ -1600,6 +2205,36 @@
       "schema": "public",
       "indexes": [
         {
+          "columnNames": [
+            "pessoa_id"
+          ],
+          "composite": false,
+          "keyName": "contas_receber_pessoa_id_index",
+          "constraint": false,
+          "primary": false,
+          "unique": false
+        },
+        {
+          "columnNames": [
+            "plano_contas_id"
+          ],
+          "composite": false,
+          "keyName": "contas_receber_plano_contas_id_index",
+          "constraint": false,
+          "primary": false,
+          "unique": false
+        },
+        {
+          "columnNames": [
+            "empresa_id"
+          ],
+          "composite": false,
+          "keyName": "contas_receber_empresa_id_index",
+          "constraint": false,
+          "primary": false,
+          "unique": false
+        },
+        {
           "keyName": "contas_receber_pkey",
           "columnNames": [
             "id"
@@ -1612,6 +2247,18 @@
       ],
       "checks": [],
       "foreignKeys": {
+        "contas_receber_pessoa_id_foreign": {
+          "constraintName": "contas_receber_pessoa_id_foreign",
+          "columnNames": [
+            "pessoa_id"
+          ],
+          "localTableName": "public.contas_receber",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.pessoa",
+          "updateRule": "cascade"
+        },
         "contas_receber_plano_contas_id_foreign": {
           "constraintName": "contas_receber_plano_contas_id_foreign",
           "columnNames": [
@@ -1622,778 +2269,19 @@
             "id"
           ],
           "referencedTableName": "public.plano_contas",
-          "deleteRule": "set null",
           "updateRule": "cascade"
-        }
-      },
-      "nativeEnums": {}
-    },
-    {
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "default": "gen_random_uuid()",
-          "mappedType": "uuid"
         },
-        "nome": {
-          "name": "nome",
-          "type": "varchar(50)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 50,
-          "mappedType": "string"
-        },
-        "corporativo": {
-          "name": "corporativo",
-          "type": "boolean",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "default": "false",
-          "mappedType": "boolean"
-        }
-      },
-      "name": "tipo_contato",
-      "schema": "public",
-      "indexes": [
-        {
-          "keyName": "tipo_contato_pkey",
-          "columnNames": [
-            "id"
-          ],
-          "composite": false,
-          "constraint": true,
-          "primary": true,
-          "unique": true
-        }
-      ],
-      "checks": [],
-      "foreignKeys": {},
-      "nativeEnums": {}
-    },
-    {
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "default": "gen_random_uuid()",
-          "mappedType": "uuid"
-        },
-        "nome": {
-          "name": "nome",
-          "type": "varchar(100)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 100,
-          "mappedType": "string"
-        },
-        "cargo": {
-          "name": "cargo",
-          "type": "varchar(100)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "length": 100,
-          "mappedType": "string"
-        },
-        "login": {
-          "name": "login",
-          "type": "varchar(100)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 100,
-          "mappedType": "string"
-        },
-        "senha": {
-          "name": "senha",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 255,
-          "mappedType": "string"
-        },
-        "telefone": {
-          "name": "telefone",
-          "type": "varchar(20)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "length": 20,
-          "mappedType": "string"
-        },
-        "email": {
-          "name": "email",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "length": 255,
-          "mappedType": "string"
-        },
-        "ativo": {
-          "name": "ativo",
-          "type": "boolean",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "default": "true",
-          "mappedType": "boolean"
-        },
-        "deletado_em": {
-          "name": "deletado_em",
-          "type": "timestamptz",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "length": 6,
-          "mappedType": "datetime"
-        },
-        "cidade_id": {
-          "name": "cidade_id",
-          "type": "uuid",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "mappedType": "uuid"
-        },
-        "criado_em": {
-          "name": "criado_em",
-          "type": "timestamptz",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 6,
-          "mappedType": "datetime"
-        },
-        "atualizado_em": {
-          "name": "atualizado_em",
-          "type": "timestamptz",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 6,
-          "mappedType": "datetime"
-        }
-      },
-      "name": "usuario",
-      "schema": "public",
-      "indexes": [
-        {
-          "columnNames": [
-            "login"
-          ],
-          "composite": false,
-          "keyName": "usuario_login_index",
-          "constraint": false,
-          "primary": false,
-          "unique": false
-        },
-        {
-          "columnNames": [
-            "cidade_id"
-          ],
-          "composite": false,
-          "keyName": "usuario_cidade_id_index",
-          "constraint": false,
-          "primary": false,
-          "unique": false
-        },
-        {
-          "keyName": "usuario_pkey",
-          "columnNames": [
-            "id"
-          ],
-          "composite": false,
-          "constraint": true,
-          "primary": true,
-          "unique": true
-        }
-      ],
-      "checks": [],
-      "foreignKeys": {
-        "usuario_cidade_id_foreign": {
-          "constraintName": "usuario_cidade_id_foreign",
-          "columnNames": [
-            "cidade_id"
-          ],
-          "localTableName": "public.usuario",
-          "referencedColumnNames": [
-            "id"
-          ],
-          "referencedTableName": "public.cidade",
-          "deleteRule": "set null",
-          "updateRule": "cascade"
-        }
-      },
-      "nativeEnums": {}
-    },
-    {
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "default": "gen_random_uuid()",
-          "mappedType": "uuid"
-        },
-        "cliente_id": {
-          "name": "cliente_id",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "length": 255,
-          "mappedType": "string"
-        },
-        "empresa_id": {
-          "name": "empresa_id",
-          "type": "uuid",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "uuid"
-        },
-        "filial_id": {
-          "name": "filial_id",
-          "type": "uuid",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "mappedType": "uuid"
-        },
-        "endereco_id": {
-          "name": "endereco_id",
-          "type": "uuid",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "uuid"
-        },
-        "razao_nome": {
-          "name": "razao_nome",
-          "type": "varchar(60)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "length": 60,
-          "mappedType": "string"
-        },
-        "fantasia_apelido": {
-          "name": "fantasia_apelido",
-          "type": "varchar(60)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "length": 60,
-          "mappedType": "string"
-        },
-        "documento": {
-          "name": "documento",
-          "type": "varchar(14)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "length": 14,
-          "comment": "CNPJ ou CPF (apenas números)",
-          "mappedType": "string"
-        },
-        "ie_rg": {
-          "name": "ie_rg",
-          "type": "varchar(14)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "length": 14,
-          "comment": "Inscrição Estadual ou RG",
-          "mappedType": "string"
-        },
-        "im": {
-          "name": "im",
-          "type": "varchar(20)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "length": 20,
-          "comment": "Inscrição Municipal",
-          "mappedType": "string"
-        },
-        "tipo_contribuinte": {
-          "name": "tipo_contribuinte",
-          "type": "text",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "enumItems": [
-            "1",
-            "2",
-            "9"
-          ],
-          "mappedType": "enum"
-        },
-        "consumidor_final": {
-          "name": "consumidor_final",
-          "type": "boolean",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "default": "true",
-          "comment": "Indica se a pessoa é consumidor final",
-          "mappedType": "boolean"
-        },
-        "aniversario": {
-          "name": "aniversario",
-          "type": "timestamptz",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "length": 6,
-          "comment": "Data de aniversário",
-          "mappedType": "datetime"
-        },
-        "limite_credito": {
-          "name": "limite_credito",
-          "type": "numeric(15,2)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "precision": 15,
-          "scale": 2,
-          "default": "0",
-          "comment": "Limite de crédito disponível para a pessoa (em reais)",
-          "mappedType": "decimal"
-        },
-        "situacao_financeira": {
-          "name": "situacao_financeira",
-          "type": "text",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "default": "'ativo'",
-          "enumItems": [
-            "ativo",
-            "inativo",
-            "bloqueado",
-            "suspenso"
-          ],
-          "mappedType": "enum"
-        },
-        "email": {
-          "name": "email",
-          "type": "varchar(100)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "length": 100,
-          "mappedType": "string"
-        },
-        "telefone": {
-          "name": "telefone",
-          "type": "varchar(20)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "length": 20,
-          "mappedType": "string"
-        },
-        "situacao": {
-          "name": "situacao",
-          "type": "text",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "default": "'ativo'",
-          "enumItems": [
-            "ativo",
-            "inativo",
-            "bloqueado",
-            "pendente"
-          ],
-          "mappedType": "enum"
-        },
-        "ativo": {
-          "name": "ativo",
-          "type": "boolean",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "default": "true",
-          "mappedType": "boolean"
-        },
-        "deletado_em": {
-          "name": "deletado_em",
-          "type": "timestamptz",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "length": 6,
-          "mappedType": "datetime"
-        },
-        "criado_em": {
-          "name": "criado_em",
-          "type": "timestamptz",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 6,
-          "mappedType": "datetime"
-        },
-        "atualizado_em": {
-          "name": "atualizado_em",
-          "type": "timestamptz",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 6,
-          "mappedType": "datetime"
-        },
-        "criado_por_id": {
-          "name": "criado_por_id",
-          "type": "uuid",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "mappedType": "uuid"
-        },
-        "atualizado_por_id": {
-          "name": "atualizado_por_id",
-          "type": "uuid",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "mappedType": "uuid"
-        }
-      },
-      "name": "pessoa",
-      "schema": "public",
-      "indexes": [
-        {
-          "columnNames": [
-            "cliente_id"
-          ],
-          "composite": false,
-          "keyName": "pessoa_cliente_id_index",
-          "constraint": false,
-          "primary": false,
-          "unique": false
-        },
-        {
+        "contas_receber_empresa_id_foreign": {
+          "constraintName": "contas_receber_empresa_id_foreign",
           "columnNames": [
             "empresa_id"
           ],
-          "composite": false,
-          "keyName": "pessoa_empresa_id_index",
-          "constraint": false,
-          "primary": false,
-          "unique": false
-        },
-        {
-          "columnNames": [
-            "filial_id"
-          ],
-          "composite": false,
-          "keyName": "pessoa_filial_id_index",
-          "constraint": false,
-          "primary": false,
-          "unique": false
-        },
-        {
-          "columnNames": [
-            "endereco_id"
-          ],
-          "composite": false,
-          "keyName": "pessoa_endereco_id_index",
-          "constraint": false,
-          "primary": false,
-          "unique": false
-        },
-        {
-          "columnNames": [
-            "tipo_contribuinte"
-          ],
-          "composite": false,
-          "keyName": "pessoa_tipo_contribuinte_index",
-          "constraint": false,
-          "primary": false,
-          "unique": false
-        },
-        {
-          "columnNames": [
-            "situacao_financeira"
-          ],
-          "composite": false,
-          "keyName": "pessoa_situacao_financeira_index",
-          "constraint": false,
-          "primary": false,
-          "unique": false
-        },
-        {
-          "columnNames": [
-            "situacao"
-          ],
-          "composite": false,
-          "keyName": "pessoa_situacao_index",
-          "constraint": false,
-          "primary": false,
-          "unique": false
-        },
-        {
-          "columnNames": [
-            "criado_por_id"
-          ],
-          "composite": false,
-          "keyName": "pessoa_criado_por_id_index",
-          "constraint": false,
-          "primary": false,
-          "unique": false
-        },
-        {
-          "columnNames": [
-            "atualizado_por_id"
-          ],
-          "composite": false,
-          "keyName": "pessoa_atualizado_por_id_index",
-          "constraint": false,
-          "primary": false,
-          "unique": false
-        },
-        {
-          "keyName": "pessoa_pkey",
-          "columnNames": [
-            "id"
-          ],
-          "composite": false,
-          "constraint": true,
-          "primary": true,
-          "unique": true
-        }
-      ],
-      "checks": [],
-      "foreignKeys": {
-        "pessoa_empresa_id_foreign": {
-          "constraintName": "pessoa_empresa_id_foreign",
-          "columnNames": [
-            "empresa_id"
-          ],
-          "localTableName": "public.pessoa",
-          "referencedColumnNames": [
-            "id"
-          ],
-          "referencedTableName": "public.empresa",
-          "updateRule": "cascade"
-        },
-        "pessoa_filial_id_foreign": {
-          "constraintName": "pessoa_filial_id_foreign",
-          "columnNames": [
-            "filial_id"
-          ],
-          "localTableName": "public.pessoa",
+          "localTableName": "public.contas_receber",
           "referencedColumnNames": [
             "id"
           ],
           "referencedTableName": "public.empresa",
           "deleteRule": "set null",
-          "updateRule": "cascade"
-        },
-        "pessoa_endereco_id_foreign": {
-          "constraintName": "pessoa_endereco_id_foreign",
-          "columnNames": [
-            "endereco_id"
-          ],
-          "localTableName": "public.pessoa",
-          "referencedColumnNames": [
-            "id"
-          ],
-          "referencedTableName": "public.endereco",
-          "updateRule": "cascade"
-        },
-        "pessoa_criado_por_id_foreign": {
-          "constraintName": "pessoa_criado_por_id_foreign",
-          "columnNames": [
-            "criado_por_id"
-          ],
-          "localTableName": "public.pessoa",
-          "referencedColumnNames": [
-            "id"
-          ],
-          "referencedTableName": "public.usuario",
-          "deleteRule": "set null",
-          "updateRule": "cascade"
-        },
-        "pessoa_atualizado_por_id_foreign": {
-          "constraintName": "pessoa_atualizado_por_id_foreign",
-          "columnNames": [
-            "atualizado_por_id"
-          ],
-          "localTableName": "public.pessoa",
-          "referencedColumnNames": [
-            "id"
-          ],
-          "referencedTableName": "public.usuario",
-          "deleteRule": "set null",
-          "updateRule": "cascade"
-        }
-      },
-      "nativeEnums": {}
-    },
-    {
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "default": "gen_random_uuid()",
-          "mappedType": "uuid"
-        },
-        "pessoa_id": {
-          "name": "pessoa_id",
-          "type": "uuid",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "uuid"
-        },
-        "tipo": {
-          "name": "tipo",
-          "type": "text",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "enumItems": [
-            "cliente",
-            "fornecedor",
-            "funcionario",
-            "transportadora",
-            "medico",
-            "convenio",
-            "hospital"
-          ],
-          "mappedType": "enum"
-        },
-        "criado_em": {
-          "name": "criado_em",
-          "type": "timestamptz",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 6,
-          "mappedType": "datetime"
-        }
-      },
-      "name": "pessoa_tipo",
-      "schema": "public",
-      "indexes": [
-        {
-          "columnNames": [
-            "pessoa_id"
-          ],
-          "composite": false,
-          "keyName": "pessoa_tipo_pessoa_id_index",
-          "constraint": false,
-          "primary": false,
-          "unique": false
-        },
-        {
-          "columnNames": [
-            "tipo"
-          ],
-          "composite": false,
-          "keyName": "pessoa_tipo_tipo_index",
-          "constraint": false,
-          "primary": false,
-          "unique": false
-        },
-        {
-          "keyName": "pessoa_tipo_pessoa_id_tipo_unique",
-          "columnNames": [
-            "pessoa_id",
-            "tipo"
-          ],
-          "composite": true,
-          "constraint": true,
-          "primary": false,
-          "unique": true
-        },
-        {
-          "keyName": "pessoa_tipo_pkey",
-          "columnNames": [
-            "id"
-          ],
-          "composite": false,
-          "constraint": true,
-          "primary": true,
-          "unique": true
-        }
-      ],
-      "checks": [],
-      "foreignKeys": {
-        "pessoa_tipo_pessoa_id_foreign": {
-          "constraintName": "pessoa_tipo_pessoa_id_foreign",
-          "columnNames": [
-            "pessoa_id"
-          ],
-          "localTableName": "public.pessoa_tipo",
-          "referencedColumnNames": [
-            "id"
-          ],
-          "referencedTableName": "public.pessoa",
           "updateRule": "cascade"
         }
       },
@@ -2923,6 +2811,231 @@
             "id"
           ],
           "referencedTableName": "public.contas_bancarias",
+          "updateRule": "cascade"
+        }
+      },
+      "nativeEnums": {}
+    },
+    {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "gen_random_uuid()",
+          "mappedType": "uuid"
+        },
+        "nome": {
+          "name": "nome",
+          "type": "varchar(50)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 50,
+          "mappedType": "string"
+        },
+        "corporativo": {
+          "name": "corporativo",
+          "type": "boolean",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "false",
+          "mappedType": "boolean"
+        }
+      },
+      "name": "tipo_contato",
+      "schema": "public",
+      "indexes": [
+        {
+          "keyName": "tipo_contato_pkey",
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "constraint": true,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {},
+      "nativeEnums": {}
+    },
+    {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "gen_random_uuid()",
+          "mappedType": "uuid"
+        },
+        "nome": {
+          "name": "nome",
+          "type": "varchar(100)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 100,
+          "mappedType": "string"
+        },
+        "cargo": {
+          "name": "cargo",
+          "type": "varchar(100)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 100,
+          "mappedType": "string"
+        },
+        "login": {
+          "name": "login",
+          "type": "varchar(100)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 100,
+          "mappedType": "string"
+        },
+        "senha": {
+          "name": "senha",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 255,
+          "mappedType": "string"
+        },
+        "telefone": {
+          "name": "telefone",
+          "type": "varchar(20)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 20,
+          "mappedType": "string"
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 255,
+          "mappedType": "string"
+        },
+        "ativo": {
+          "name": "ativo",
+          "type": "boolean",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "true",
+          "mappedType": "boolean"
+        },
+        "deletado_em": {
+          "name": "deletado_em",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 6,
+          "mappedType": "datetime"
+        },
+        "cidade_id": {
+          "name": "cidade_id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "uuid"
+        },
+        "criado_em": {
+          "name": "criado_em",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "mappedType": "datetime"
+        },
+        "atualizado_em": {
+          "name": "atualizado_em",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "mappedType": "datetime"
+        }
+      },
+      "name": "usuario",
+      "schema": "public",
+      "indexes": [
+        {
+          "columnNames": [
+            "login"
+          ],
+          "composite": false,
+          "keyName": "usuario_login_index",
+          "constraint": false,
+          "primary": false,
+          "unique": false
+        },
+        {
+          "columnNames": [
+            "cidade_id"
+          ],
+          "composite": false,
+          "keyName": "usuario_cidade_id_index",
+          "constraint": false,
+          "primary": false,
+          "unique": false
+        },
+        {
+          "keyName": "usuario_pkey",
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "constraint": true,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "usuario_cidade_id_foreign": {
+          "constraintName": "usuario_cidade_id_foreign",
+          "columnNames": [
+            "cidade_id"
+          ],
+          "localTableName": "public.usuario",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.cidade",
+          "deleteRule": "set null",
           "updateRule": "cascade"
         }
       },

@@ -16,6 +16,7 @@ import { ContasReceber } from '../entities/conta-receber/conta-receber.entity';
 import { Auditoria } from '../entities/auditoria/auditoria.entity';
 import { PlanoContas } from '../entities/plano-contas/plano-contas.entity';
 import { BaixaPagamento } from '../entities/baixa-pagamento/baixa-pagamento.entity';
+import { BaixaRecebimento } from '../entities/baixa-recebimento/baixa-recebimento.entity';
 import { ExtratoBancario } from '../entities/extrato-bancario/extrato-bancario.entity';
 
 export default defineConfig({
@@ -39,6 +40,7 @@ export default defineConfig({
     Auditoria,
     PlanoContas,
     BaixaPagamento,
+    BaixaRecebimento,
     ExtratoBancario,
   ],
   migrations: {
