@@ -102,7 +102,12 @@ export class ContasPagarService {
   }
 
   async findAll(): Promise<ContasPagar[]> {
-    return await this.contaPagarRepository.find({ deletadoEm: null });
+    return await this.contaPagarRepository.find(
+      { deletadoEm: null },
+      {
+        populate: ['pessoa', 'planoContas', 'empresa'],
+      },
+    );
   }
 
   async findByEmpresa(empresaId: string): Promise<ContasPagar[]> {
