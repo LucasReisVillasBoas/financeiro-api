@@ -28,6 +28,7 @@ import { BaixaPagamentoModule } from './baixa-pagamento/baixa-pagamento.module';
 import { BaixaRecebimentoModule } from './baixa-recebimento/baixa-recebimento.module';
 import { PessoaModule } from './pessoa/pessoa.module';
 import { ExtratoBancarioModule } from './extrato-bancario/extrato-bancario.module';
+import { RelatorioFluxoCaixaModule } from './relatorio-fluxo-caixa/relatorio-fluxo-caixa.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { ExtratoBancarioModule } from './extrato-bancario/extrato-bancario.modul
     BaixaRecebimentoModule,
     PessoaModule,
     ExtratoBancarioModule,
+    RelatorioFluxoCaixaModule,
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET || 'your-secret-key',
