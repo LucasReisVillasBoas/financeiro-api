@@ -10,6 +10,7 @@ import {
 import { ContasReceber } from '../conta-receber/conta-receber.entity';
 import { ContasBancarias } from '../conta-bancaria/conta-bancaria.entity';
 import { BaixaRecebimentoRepository } from '../../baixa-recebimento/baixa-recebimento.repository';
+import { EncryptedDecimalType } from '../../common/encryption';
 
 export enum TipoBaixaRecebimento {
   PARCIAL = 'PARCIAL',
@@ -35,16 +36,16 @@ export class BaixaRecebimento {
   @Property({ type: 'date' })
   data!: Date;
 
-  @Property({ type: 'decimal', precision: 15, scale: 2 })
+  @Property({ type: EncryptedDecimalType })
   valor!: number;
 
-  @Property({ type: 'decimal', precision: 15, scale: 2, default: 0 })
+  @Property({ type: EncryptedDecimalType, default: 0 })
   acrescimos: number = 0;
 
-  @Property({ type: 'decimal', precision: 15, scale: 2, default: 0 })
+  @Property({ type: EncryptedDecimalType, default: 0 })
   descontos: number = 0;
 
-  @Property({ type: 'decimal', precision: 15, scale: 2 })
+  @Property({ type: EncryptedDecimalType })
   total!: number;
 
   @Property({ type: 'varchar', length: 20 })
@@ -58,10 +59,10 @@ export class BaixaRecebimento {
   movimentacaoBancariaId?: string;
 
   // Saldos para controle e auditoria
-  @Property({ type: 'decimal', precision: 15, scale: 2 })
+  @Property({ type: EncryptedDecimalType })
   saldoAnterior!: number;
 
-  @Property({ type: 'decimal', precision: 15, scale: 2 })
+  @Property({ type: EncryptedDecimalType })
   saldoPosterior!: number;
 
   // Campos de auditoria

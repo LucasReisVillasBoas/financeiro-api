@@ -3,6 +3,7 @@ import { ContasReceberRepository } from '../../conta-receber/conta-receber.repos
 import { PlanoContas } from '../plano-contas/plano-contas.entity';
 import { Pessoa } from '../pessoa/pessoa.entity';
 import { Empresa } from '../empresa/empresa.entity';
+import { EncryptedDecimalType } from '../../common/encryption';
 
 export enum TipoContaReceber {
   BOLETO = 'BOLETO',
@@ -76,19 +77,19 @@ export class ContasReceber {
   dataLiquidacao?: Date;
 
   // Campos monetários
-  @Property({ type: 'decimal', precision: 15, scale: 2 })
+  @Property({ type: EncryptedDecimalType })
   valorPrincipal!: number;
 
-  @Property({ type: 'decimal', precision: 15, scale: 2, default: 0 })
+  @Property({ type: EncryptedDecimalType, default: 0 })
   valorAcrescimos: number = 0;
 
-  @Property({ type: 'decimal', precision: 15, scale: 2, default: 0 })
+  @Property({ type: EncryptedDecimalType, default: 0 })
   valorDescontos: number = 0;
 
-  @Property({ type: 'decimal', precision: 15, scale: 2 })
+  @Property({ type: EncryptedDecimalType })
   valorTotal!: number;
 
-  @Property({ type: 'decimal', precision: 15, scale: 2 })
+  @Property({ type: EncryptedDecimalType })
   saldo!: number;
 
   // Status

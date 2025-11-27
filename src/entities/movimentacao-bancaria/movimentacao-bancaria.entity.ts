@@ -2,6 +2,7 @@ import { Entity, Property, ManyToOne, PrimaryKey } from '@mikro-orm/core';
 import { ContasBancarias } from '../conta-bancaria/conta-bancaria.entity';
 import { PlanoContas } from '../plano-contas/plano-contas.entity';
 import { MovimentacoesBancariasRepository } from '../../movimentacao-bancaria/movimentacao-bancaria.repository';
+import { EncryptedDecimalType } from '../../common/encryption';
 
 export enum TipoMovimento {
   CREDITO = 'Crédito',
@@ -34,7 +35,7 @@ export class MovimentacoesBancarias {
   @Property({ type: 'varchar', length: 255 })
   categoria!: string;
 
-  @Property({ type: 'decimal', precision: 15, scale: 2 })
+  @Property({ type: EncryptedDecimalType })
   valor!: number;
 
   @Property({ type: 'varchar', length: 20, fieldName: 'tipo_movimento' })

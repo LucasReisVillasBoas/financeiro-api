@@ -10,6 +10,7 @@ import { ContasPagarRepository } from '../../conta-pagar/conta-pagar.repository'
 import { PlanoContas } from '../plano-contas/plano-contas.entity';
 import { Pessoa } from '../pessoa/pessoa.entity';
 import { Empresa } from '../empresa/empresa.entity';
+import { EncryptedDecimalType } from '../../common/encryption';
 
 export enum StatusContaPagar {
   PENDENTE = 'Pendente',
@@ -63,19 +64,19 @@ export class ContasPagar {
   data_liquidacao?: Date;
 
   // Valores
-  @Property({ type: 'decimal', precision: 15, scale: 2 })
+  @Property({ type: EncryptedDecimalType })
   valor_principal!: number;
 
-  @Property({ type: 'decimal', precision: 15, scale: 2, default: 0 })
+  @Property({ type: EncryptedDecimalType, default: 0 })
   acrescimos: number = 0;
 
-  @Property({ type: 'decimal', precision: 15, scale: 2, default: 0 })
+  @Property({ type: EncryptedDecimalType, default: 0 })
   descontos: number = 0;
 
-  @Property({ type: 'decimal', precision: 15, scale: 2 })
+  @Property({ type: EncryptedDecimalType })
   valor_total!: number;
 
-  @Property({ type: 'decimal', precision: 15, scale: 2 })
+  @Property({ type: EncryptedDecimalType })
   saldo!: number;
 
   @Property({ type: 'varchar', length: 50 })
