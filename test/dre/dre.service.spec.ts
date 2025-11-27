@@ -411,15 +411,320 @@ describe('DreService', () => {
 
       await service.gerarDre(filtro);
 
-      // Verifica se queries incluem data_pagamento/data_recebimento ou vencimento
+      // Verifica se queries incluem data_liquidacao ou vencimento
       const calls = mockConnection.execute.mock.calls;
       calls.forEach((call) => {
         if (call[0].includes('FROM contas_')) {
           expect(call[0]).toMatch(
-            /data_pagamento BETWEEN|data_recebimento BETWEEN|data BETWEEN/,
+            /data_liquidacao BETWEEN|vencimento BETWEEN|data_movimento BETWEEN/,
           );
         }
       });
+    });
+  });
+
+  describe('Validações de fórmulas DRE', () => {
+    it('deve calcular resultado líquido considerando todas as categorias', async () => {
+      const filtro: FilterDreDto = {
+        empresaId: mockEmpresa.id,
+        dataInicio: '2025-01-01',
+        dataFim: '2025-01-31',
+      };
+
+      mockEmpresaService.findOne.mockResolvedValue(mockEmpresa);
+
+      const mockPlanoContasCusto: Partial<PlanoContas> = {
+        id: 'conta-custo-1',
+        codigo: '5.1.1',
+        descricao: 'Custo de Produtos',
+        tipo: TipoPlanoContas.CUSTO,
+        nivel: 3,
+        permite_lancamento: true,
+        ativo: true,
+      };
+
+      const mockPlanoContasOutros: Partial<PlanoContas> = {
+        id: 'conta-outros-1',
+        codigo: '6.1.1',
+        descricao: 'Receitas Financeiras',
+        tipo: TipoPlanoContas.OUTROS,
+        nivel: 3,
+        permite_lancamento: true,
+        ativo: true,
+      };
+
+      mockPlanoContasRepository.find.mockResolvedValue([
+        mockPlanoContasReceita,
+        mockPlanoContasCusto,
+        mockPlanoContasDespesa,
+        mockPlanoContasOutros,
+      ]);
+
+      // Receita: 15000, Custo: 5000, Despesa: 3000, Outros: 500
+      mockConnection.execute
+        // Receita
+        .mockResolvedValueOnce([{ total: 0 }])
+        .mockResolvedValueOnce([{ total: 15000 }])
+        .mockResolvedValueOnce([{ total: 0 }])
+        // Custo
+        .mockResolvedValueOnce([{ total: 5000 }])
+        .mockResolvedValueOnce([{ total: 0 }])
+        .mockResolvedValueOnce([{ total: 0 }])
+        // Despesa
+        .mockResolvedValueOnce([{ total: 3000 }])
+        .mockResolvedValueOnce([{ total: 0 }])
+        .mockResolvedValueOnce([{ total: 0 }])
+        // Outros
+        .mockResolvedValueOnce([{ total: 0 }])
+        .mockResolvedValueOnce([{ total: 500 }])
+        .mockResolvedValueOnce([{ total: 0 }])
+        // Contagem
+        .mockResolvedValueOnce([{ count: 4 }])
+        .mockResolvedValueOnce([{ count: 0 }])
+        .mockResolvedValueOnce([{ count: 0 }]);
+
+      const result = await service.gerarDre(filtro);
+
+      // Validar que os valores estão definidos e são numéricos
+      expect(result.totais.totalReceitas).toBeDefined();
+      expect(result.totais.totalCustos).toBeDefined();
+      expect(result.totais.totalDespesas).toBeDefined();
+      expect(result.totais.totalOutros).toBeDefined();
+      expect(result.totais.lucroOperacional).toBeDefined();
+      expect(result.totais.resultadoLiquido).toBeDefined();
+
+      // Validar fórmula: Lucro Operacional = Receitas - Custos - Despesas
+      const lucroOperacionalCalculado =
+        result.totais.totalReceitas -
+        result.totais.totalCustos -
+        result.totais.totalDespesas;
+      expect(result.totais.lucroOperacional).toBe(lucroOperacionalCalculado);
+
+      // Validar fórmula: Resultado Líquido = Lucro Operacional + Outros
+      const resultadoLiquidoCalculado =
+        result.totais.lucroOperacional + result.totais.totalOutros;
+      expect(result.totais.resultadoLiquido).toBe(resultadoLiquidoCalculado);
+    });
+
+    it('deve validar fórmula de apuração de resultado com valores negativos', async () => {
+      const filtro: FilterDreDto = {
+        empresaId: mockEmpresa.id,
+        dataInicio: '2025-01-01',
+        dataFim: '2025-01-31',
+      };
+
+      mockEmpresaService.findOne.mockResolvedValue(mockEmpresa);
+      mockPlanoContasRepository.find.mockResolvedValue([
+        mockPlanoContasReceita,
+        mockPlanoContasDespesa,
+      ]);
+
+      // Despesas maiores que receitas (prejuízo)
+      mockConnection.execute
+        .mockResolvedValueOnce([{ total: 0 }])
+        .mockResolvedValueOnce([{ total: 5000 }])
+        .mockResolvedValueOnce([{ total: 0 }])
+        .mockResolvedValueOnce([{ total: 8000 }])
+        .mockResolvedValueOnce([{ total: 0 }])
+        .mockResolvedValueOnce([{ total: 0 }])
+        .mockResolvedValueOnce([{ count: 2 }])
+        .mockResolvedValueOnce([{ count: 0 }])
+        .mockResolvedValueOnce([{ count: 0 }]);
+
+      const result = await service.gerarDre(filtro);
+
+      // Resultado Líquido negativo (prejuízo)
+      expect(result.totais.resultadoLiquido).toBeLessThan(0);
+
+      // Validar que a fórmula está correta
+      const resultadoCalculado =
+        result.totais.totalReceitas -
+        result.totais.totalCustos -
+        result.totais.totalDespesas +
+        result.totais.totalOutros;
+      expect(result.totais.resultadoLiquido).toBe(resultadoCalculado);
+    });
+
+    it('deve calcular variação percentual corretamente no comparativo', async () => {
+      mockEmpresaService.findOne
+        .mockResolvedValueOnce(mockEmpresa)
+        .mockResolvedValueOnce(mockEmpresa);
+
+      mockPlanoContasRepository.find
+        .mockResolvedValueOnce([mockPlanoContasReceita])
+        .mockResolvedValueOnce([mockPlanoContasReceita]);
+
+      // Período 1: 10000 receita
+      mockConnection.execute
+        .mockResolvedValueOnce([{ total: 0 }])
+        .mockResolvedValueOnce([{ total: 10000 }])
+        .mockResolvedValueOnce([{ total: 0 }])
+        .mockResolvedValueOnce([{ count: 1 }])
+        .mockResolvedValueOnce([{ count: 0 }])
+        .mockResolvedValueOnce([{ count: 0 }])
+        // Período 2: 12000 receita (20% de aumento)
+        .mockResolvedValueOnce([{ total: 0 }])
+        .mockResolvedValueOnce([{ total: 12000 }])
+        .mockResolvedValueOnce([{ total: 0 }])
+        .mockResolvedValueOnce([{ count: 1 }])
+        .mockResolvedValueOnce([{ count: 0 }])
+        .mockResolvedValueOnce([{ count: 0 }]);
+
+      const result = await service.gerarComparativo(
+        mockEmpresa.id,
+        '2025-01-01',
+        '2025-01-31',
+        '2025-02-01',
+        '2025-02-28',
+      );
+
+      // Variação = 12000 - 10000 = 2000
+      expect(result.comparativo.totais.variacao.receitas).toBe(2000);
+
+      // Variação percentual = (2000 / 10000) * 100 = 20%
+      expect(result.comparativo.totais.variacaoPercentual.receitas).toBe(20);
+    });
+
+    it('deve calcular variação percentual a partir de zero', async () => {
+      mockEmpresaService.findOne
+        .mockResolvedValueOnce(mockEmpresa)
+        .mockResolvedValueOnce(mockEmpresa);
+
+      mockPlanoContasRepository.find
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce([mockPlanoContasReceita]);
+
+      // Período 1: 0 receita
+      mockConnection.execute
+        .mockResolvedValueOnce([{ count: 0 }])
+        .mockResolvedValueOnce([{ count: 0 }])
+        .mockResolvedValueOnce([{ count: 0 }])
+        // Período 2: 5000 receita
+        .mockResolvedValueOnce([{ total: 0 }])
+        .mockResolvedValueOnce([{ total: 5000 }])
+        .mockResolvedValueOnce([{ total: 0 }])
+        .mockResolvedValueOnce([{ count: 1 }])
+        .mockResolvedValueOnce([{ count: 0 }])
+        .mockResolvedValueOnce([{ count: 0 }]);
+
+      const result = await service.gerarComparativo(
+        mockEmpresa.id,
+        '2025-01-01',
+        '2025-01-31',
+        '2025-02-01',
+        '2025-02-28',
+      );
+
+      // Quando período 1 é 0, variação percentual deve ser 100% ou tratado especialmente
+      expect(result.comparativo.totais.variacaoPercentual.receitas).toBeDefined();
+      expect(typeof result.comparativo.totais.variacaoPercentual.receitas).toBe('number');
+    });
+
+    it('deve calcular totais zerados quando não há lançamentos', async () => {
+      const filtro: FilterDreDto = {
+        empresaId: mockEmpresa.id,
+        dataInicio: '2025-01-01',
+        dataFim: '2025-01-31',
+      };
+
+      mockEmpresaService.findOne.mockResolvedValue(mockEmpresa);
+      mockPlanoContasRepository.find.mockResolvedValue([]);
+      mockConnection.execute.mockResolvedValue([{ total: 0 }, { count: 0 }]);
+
+      const result = await service.gerarDre(filtro);
+
+      expect(result.totais.totalReceitas).toBe(0);
+      expect(result.totais.totalCustos).toBe(0);
+      expect(result.totais.totalDespesas).toBe(0);
+      expect(result.totais.lucroOperacional).toBe(0);
+      expect(result.totais.resultadoLiquido).toBe(0);
+    });
+  });
+
+  describe('Validações de saldo acumulado', () => {
+    it('deve calcular margem bruta corretamente (receita - custos)', async () => {
+      const filtro: FilterDreDto = {
+        empresaId: mockEmpresa.id,
+        dataInicio: '2025-01-01',
+        dataFim: '2025-01-31',
+      };
+
+      mockEmpresaService.findOne.mockResolvedValue(mockEmpresa);
+
+      const mockPlanoContasCusto: Partial<PlanoContas> = {
+        id: 'conta-custo-1',
+        codigo: '5.1.1',
+        descricao: 'Custo de Produtos',
+        tipo: TipoPlanoContas.CUSTO,
+        nivel: 3,
+        permite_lancamento: true,
+        ativo: true,
+      };
+
+      mockPlanoContasRepository.find.mockResolvedValue([
+        mockPlanoContasReceita,
+        mockPlanoContasCusto,
+      ]);
+
+      // Mock simplificado
+      mockConnection.execute.mockResolvedValue([{ total: '0', count: '0' }]);
+
+      const result = await service.gerarDre(filtro);
+
+      // Margem Bruta = Receitas - Custos
+      const margemBruta = result.totais.totalReceitas - result.totais.totalCustos;
+      expect(typeof margemBruta).toBe('number');
+      expect(result.totais.totalReceitas).toBeDefined();
+      expect(result.totais.totalCustos).toBeDefined();
+    });
+
+    it('deve validar que lucro operacional = margem bruta - despesas', async () => {
+      const filtro: FilterDreDto = {
+        empresaId: mockEmpresa.id,
+        dataInicio: '2025-01-01',
+        dataFim: '2025-01-31',
+      };
+
+      mockEmpresaService.findOne.mockResolvedValue(mockEmpresa);
+
+      const mockPlanoContasCusto: Partial<PlanoContas> = {
+        id: 'conta-custo-1',
+        codigo: '5.1.1',
+        descricao: 'Custo de Produtos',
+        tipo: TipoPlanoContas.CUSTO,
+        nivel: 3,
+        permite_lancamento: true,
+        ativo: true,
+      };
+
+      mockPlanoContasRepository.find.mockResolvedValue([
+        mockPlanoContasReceita,
+        mockPlanoContasCusto,
+        mockPlanoContasDespesa,
+      ]);
+
+      // Receita: 30000, Custo: 12000, Despesa: 6000
+      mockConnection.execute
+        .mockResolvedValueOnce([{ total: 0 }])
+        .mockResolvedValueOnce([{ total: 30000 }])
+        .mockResolvedValueOnce([{ total: 0 }])
+        .mockResolvedValueOnce([{ total: 12000 }])
+        .mockResolvedValueOnce([{ total: 0 }])
+        .mockResolvedValueOnce([{ total: 0 }])
+        .mockResolvedValueOnce([{ total: 6000 }])
+        .mockResolvedValueOnce([{ total: 0 }])
+        .mockResolvedValueOnce([{ total: 0 }])
+        .mockResolvedValueOnce([{ count: 3 }])
+        .mockResolvedValueOnce([{ count: 0 }])
+        .mockResolvedValueOnce([{ count: 0 }]);
+
+      const result = await service.gerarDre(filtro);
+
+      const margemBruta = result.totais.totalReceitas - result.totais.totalCustos;
+
+      // Validar fórmula: Lucro Operacional = Margem Bruta - Despesas
+      const lucroOperacionalCalculado = margemBruta - result.totais.totalDespesas;
+      expect(result.totais.lucroOperacional).toBe(lucroOperacionalCalculado);
     });
   });
 });

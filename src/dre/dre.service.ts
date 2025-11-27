@@ -17,6 +17,13 @@ import {
   DreLinhaComparativoDto,
   DreTotaisComparativoDto,
 } from './dto/dre-response.dto';
+import {
+  RelatorioDreFiltrosDto,
+  RelatorioDreResponse,
+  DreItemLinha,
+  DreTotalizadores,
+} from './dto/relatorio-dre.dto';
+import { Empresa } from '../entities/empresa/empresa.entity';
 
 @Injectable()
 export class DreService {
@@ -111,23 +118,23 @@ export class DreService {
 
     // Contas a Pagar (despesas/custos - valores negativos)
     const resultPagar = await connection.execute(
-      `SELECT COALESCE(SUM(valor), 0) as total
+      `SELECT COALESCE(SUM(valor_total), 0) as total
        FROM contas_pagar
        WHERE plano_contas_id = ?
          AND deletado_em IS NULL
-         AND (data_pagamento BETWEEN ? AND ?
-              OR (data_pagamento IS NULL AND vencimento BETWEEN ? AND ?))`,
+         AND (data_liquidacao BETWEEN ? AND ?
+              OR (data_liquidacao IS NULL AND vencimento BETWEEN ? AND ?))`,
       [conta.id, dataInicio, dataFim, dataInicio, dataFim],
     );
 
     // Contas a Receber (receitas - valores positivos)
     const resultReceber = await connection.execute(
-      `SELECT COALESCE(SUM(valor), 0) as total
+      `SELECT COALESCE(SUM(valor_total), 0) as total
        FROM contas_receber
        WHERE plano_contas_id = ?
          AND deletado_em IS NULL
-         AND (data_recebimento BETWEEN ? AND ?
-              OR (data_recebimento IS NULL AND vencimento BETWEEN ? AND ?))`,
+         AND (data_liquidacao BETWEEN ? AND ?
+              OR (data_liquidacao IS NULL AND vencimento BETWEEN ? AND ?))`,
       [conta.id, dataInicio, dataFim, dataInicio, dataFim],
     );
 
@@ -135,11 +142,11 @@ export class DreService {
     // Entrada = positivo, Saída = negativo
     const resultMovimentacoes = await connection.execute(
       `SELECT
-         COALESCE(SUM(CASE WHEN tipo = 'Entrada' THEN valor ELSE -valor END), 0) as total
+         COALESCE(SUM(CASE WHEN tipo_movimento = 'Entrada' THEN valor ELSE -valor END), 0) as total
        FROM movimentacoes_bancarias
        WHERE plano_contas_id = ?
          AND deletado_em IS NULL
-         AND data BETWEEN ? AND ?`,
+         AND data_movimento BETWEEN ? AND ?`,
       [conta.id, dataInicio, dataFim],
     );
 
@@ -221,8 +228,8 @@ export class DreService {
        FROM contas_pagar
        WHERE empresa_id = ?
          AND deletado_em IS NULL
-         AND (data_pagamento BETWEEN ? AND ?
-              OR (data_pagamento IS NULL AND vencimento BETWEEN ? AND ?))`,
+         AND (data_liquidacao BETWEEN ? AND ?
+              OR (data_liquidacao IS NULL AND vencimento BETWEEN ? AND ?))`,
       [empresaId, dataInicio, dataFim, dataInicio, dataFim],
     );
 
@@ -231,8 +238,8 @@ export class DreService {
        FROM contas_receber
        WHERE empresa_id = ?
          AND deletado_em IS NULL
-         AND (data_recebimento BETWEEN ? AND ?
-              OR (data_recebimento IS NULL AND vencimento BETWEEN ? AND ?))`,
+         AND (data_liquidacao BETWEEN ? AND ?
+              OR (data_liquidacao IS NULL AND vencimento BETWEEN ? AND ?))`,
       [empresaId, dataInicio, dataFim, dataInicio, dataFim],
     );
 
@@ -241,7 +248,7 @@ export class DreService {
        FROM movimentacoes_bancarias
        WHERE empresa_id = ?
          AND deletado_em IS NULL
-         AND data BETWEEN ? AND ?`,
+         AND data_movimento BETWEEN ? AND ?`,
       [empresaId, dataInicio, dataFim],
     );
 
@@ -485,5 +492,152 @@ export class DreService {
       variacao,
       variacaoPercentual,
     };
+  }
+
+  /**
+   * Gera relatório DRE no formato esperado pelo frontend
+   * Estrutura hierárquica com itens e totalizadores
+   */
+  async gerarRelatorioDre(
+    filtros: RelatorioDreFiltrosDto,
+  ): Promise<RelatorioDreResponse> {
+    // Buscar empresa
+    const empresa = await this.empresaService.findOne(filtros.empresaId);
+    if (!empresa) {
+      throw new NotFoundException('Empresa não encontrada');
+    }
+
+    // Buscar todas as contas analíticas da empresa
+    const contasAnaliticas = await this.planoContasRepository.find(
+      {
+        empresa: filtros.empresaId,
+        permite_lancamento: true,
+        deletado_em: null,
+      },
+      {
+        populate: ['parent'],
+      },
+    );
+
+    // Calcular valores de cada conta no período
+    const linhasCalculadas = await Promise.all(
+      contasAnaliticas.map((conta) =>
+        this.calcularValorConta(
+          conta,
+          filtros.dataInicio,
+          filtros.dataFim,
+        ),
+      ),
+    );
+
+    // Filtrar contas com movimento
+    const linhasComMovimento = linhasCalculadas.filter((l) => l.valor !== 0);
+
+    // Converter para formato do frontend
+    const itens: DreItemLinha[] = linhasComMovimento.map((linha) => ({
+      id: linha.contaId,
+      codigo: linha.codigo,
+      descricao: linha.descricao,
+      tipo: this.mapTipoParaFrontend(linha.tipo),
+      nivel: linha.nivel,
+      parentId: linha.parentCodigo,
+      valor: Math.abs(linha.valor),
+      percentual: 0, // Será calculado depois
+    }));
+
+    // Agrupar por tipo para calcular totais
+    const receitas = linhasComMovimento.filter(
+      (l) => l.tipo === TipoPlanoContas.RECEITA,
+    );
+    const custos = linhasComMovimento.filter(
+      (l) => l.tipo === TipoPlanoContas.CUSTO,
+    );
+    const despesas = linhasComMovimento.filter(
+      (l) => l.tipo === TipoPlanoContas.DESPESA,
+    );
+    const outros = linhasComMovimento.filter(
+      (l) => l.tipo === TipoPlanoContas.OUTROS,
+    );
+
+    // Calcular totalizadores
+    const receitaBruta = receitas.reduce((sum, l) => sum + l.valor, 0);
+    const totalCustos = custos.reduce((sum, l) => sum + l.valor, 0);
+    const totalDespesas = despesas.reduce((sum, l) => sum + l.valor, 0);
+    const totalOutros = outros.reduce((sum, l) => sum + l.valor, 0);
+
+    const deducoes = 0; // Implementar lógica de deduções se necessário
+    const receitaLiquida = receitaBruta - deducoes;
+    const margemBruta = receitaLiquida - totalCustos;
+    const resultadoOperacional = margemBruta - totalDespesas;
+    const resultadoAntesImpostos = resultadoOperacional + totalOutros;
+    const impostos = 0; // Implementar lógica de impostos se necessário
+    const resultadoLiquido = resultadoAntesImpostos - impostos;
+
+    const totalizadores: DreTotalizadores = {
+      receitaBruta,
+      deducoes,
+      receitaLiquida,
+      custos: totalCustos,
+      margemBruta,
+      despesasOperacionais: totalDespesas,
+      resultadoOperacional,
+      outrasReceitasDespesas: totalOutros,
+      resultadoAntesImpostos,
+      impostos,
+      resultadoLiquido,
+    };
+
+    // Calcular percentuais em relação à receita bruta
+    if (receitaBruta > 0) {
+      itens.forEach((item) => {
+        item.percentual = (item.valor / receitaBruta) * 100;
+      });
+    }
+
+    // Montar resposta
+    const response: RelatorioDreResponse = {
+      itens,
+      totalizadores,
+      periodo: {
+        dataInicio: filtros.dataInicio,
+        dataFim: filtros.dataFim,
+      },
+      empresa: {
+        id: empresa.id,
+        razao_social: empresa.razao_social,
+        nome_fantasia: empresa.nome_fantasia,
+      },
+    };
+
+    // Se centroCustoId foi fornecido, incluir na resposta
+    if (filtros.centroCustoId) {
+      // Buscar centro de custo (implementar se necessário)
+      response.centroCusto = {
+        id: filtros.centroCustoId,
+        descricao: 'Centro de Custo', // Buscar do banco se houver entidade
+      };
+    }
+
+    return response;
+  }
+
+  /**
+   * Mapeia tipo do backend para tipo do frontend
+   */
+  private mapTipoParaFrontend(
+    tipo: TipoPlanoContas,
+  ): 'RECEITA' | 'CUSTO' | 'DESPESA' | 'RESULTADO' {
+    switch (tipo) {
+      case TipoPlanoContas.RECEITA:
+        return 'RECEITA';
+      case TipoPlanoContas.CUSTO:
+        return 'CUSTO';
+      case TipoPlanoContas.DESPESA:
+        return 'DESPESA';
+      case TipoPlanoContas.OUTROS:
+        return 'RESULTADO';
+      default:
+        return 'RESULTADO';
+    }
   }
 }
