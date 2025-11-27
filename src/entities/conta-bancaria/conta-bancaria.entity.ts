@@ -8,6 +8,10 @@ import {
 } from '@mikro-orm/core';
 import { Empresa } from '../empresa/empresa.entity';
 import { ContasBancariasRepository } from '../../conta-bancaria/conta-bancaria.repository';
+import {
+  EncryptedStringType,
+  EncryptedDecimalType,
+} from '../../common/encryption';
 
 @Entity({ repository: () => ContasBancariasRepository })
 @Unique({
@@ -35,21 +39,21 @@ export class ContasBancarias {
   @Index()
   empresa!: Empresa;
 
-  @Property({ type: 'varchar', length: 255 })
+  @Property({ type: EncryptedStringType })
   @Index()
   banco!: string;
 
-  @Property({ type: 'varchar', length: 50 })
+  @Property({ type: EncryptedStringType })
   @Index()
   agencia!: string;
 
-  @Property({ type: 'varchar', length: 5, nullable: true })
+  @Property({ type: EncryptedStringType, nullable: true })
   agencia_digito?: string;
 
-  @Property({ type: 'varchar', length: 50 })
+  @Property({ type: EncryptedStringType })
   conta!: string;
 
-  @Property({ type: 'varchar', length: 5, nullable: true })
+  @Property({ type: EncryptedStringType, nullable: true })
   conta_digito?: string;
 
   @Property({ type: 'varchar', length: 255 })
@@ -59,10 +63,10 @@ export class ContasBancarias {
   @Property({ type: 'varchar', length: 50 })
   tipo!: string;
 
-  @Property({ type: 'decimal', precision: 15, scale: 2 })
+  @Property({ type: EncryptedDecimalType })
   saldo_inicial!: number;
 
-  @Property({ type: 'decimal', precision: 15, scale: 2 })
+  @Property({ type: EncryptedDecimalType })
   saldo_atual!: number;
 
   @Property({ type: 'date' })

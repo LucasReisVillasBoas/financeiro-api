@@ -42,6 +42,13 @@ lerna-debug.log*
 .env.production.local
 .env.local
 
+# SSL certificates (development only - never commit)
+ssl/
+*.key
+*.cert
+*.pem
+*.crt
+
 # temp directory
 .temp
 .tmp

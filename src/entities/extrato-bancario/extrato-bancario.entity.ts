@@ -2,6 +2,7 @@ import { Entity, Property, ManyToOne, PrimaryKey } from '@mikro-orm/core';
 import { ContasBancarias } from '../conta-bancaria/conta-bancaria.entity';
 import { MovimentacoesBancarias } from '../movimentacao-bancaria/movimentacao-bancaria.entity';
 import { ExtratoBancarioRepository } from '../../extrato-bancario/extrato-bancario.repository';
+import { EncryptedDecimalType } from '../../common/encryption';
 
 export enum StatusExtratoItem {
   PENDENTE = 'pendente',
@@ -35,7 +36,7 @@ export class ExtratoBancario {
   @Property({ type: 'varchar', length: 255, nullable: true })
   documento?: string;
 
-  @Property({ type: 'decimal', precision: 15, scale: 2 })
+  @Property({ type: EncryptedDecimalType })
   valor!: number;
 
   @Property({ type: 'varchar', length: 20, fieldName: 'tipo_transacao' })

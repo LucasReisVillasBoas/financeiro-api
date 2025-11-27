@@ -10,6 +10,7 @@ import { ContasPagar } from '../conta-pagar/conta-pagar.entity';
 import { ContasBancarias } from '../conta-bancaria/conta-bancaria.entity';
 import { MovimentacoesBancarias } from '../movimentacao-bancaria/movimentacao-bancaria.entity';
 import { BaixaPagamentoRepository } from '../../baixa-pagamento/baixa-pagamento.repository';
+import { EncryptedDecimalType } from '../../common/encryption';
 
 export enum TipoBaixa {
   PARCIAL = 'Parcial',
@@ -33,16 +34,16 @@ export class BaixaPagamento {
   @Property({ type: 'date' })
   data!: Date;
 
-  @Property({ type: 'decimal', precision: 15, scale: 2 })
+  @Property({ type: EncryptedDecimalType })
   valor!: number;
 
-  @Property({ type: 'decimal', precision: 15, scale: 2, default: 0 })
+  @Property({ type: EncryptedDecimalType, default: 0 })
   acrescimos: number = 0;
 
-  @Property({ type: 'decimal', precision: 15, scale: 2, default: 0 })
+  @Property({ type: EncryptedDecimalType, default: 0 })
   descontos: number = 0;
 
-  @Property({ type: 'decimal', precision: 15, scale: 2 })
+  @Property({ type: EncryptedDecimalType })
   total!: number;
 
   @Property({ type: 'varchar', length: 10 })
@@ -54,10 +55,10 @@ export class BaixaPagamento {
   @Property({ type: 'uuid', nullable: true })
   movimentacaoBancariaId?: string;
 
-  @Property({ type: 'decimal', precision: 15, scale: 2 })
+  @Property({ type: EncryptedDecimalType })
   saldo_anterior!: number;
 
-  @Property({ type: 'decimal', precision: 15, scale: 2 })
+  @Property({ type: EncryptedDecimalType })
   saldo_posterior!: number;
 
   @Property({ type: 'timestamp', onCreate: () => new Date() })

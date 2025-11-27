@@ -4,6 +4,7 @@ import {
   NestModule,
   RequestMethod,
 } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
@@ -28,11 +29,24 @@ import { BaixaPagamentoModule } from './baixa-pagamento/baixa-pagamento.module';
 import { BaixaRecebimentoModule } from './baixa-recebimento/baixa-recebimento.module';
 import { PessoaModule } from './pessoa/pessoa.module';
 import { ExtratoBancarioModule } from './extrato-bancario/extrato-bancario.module';
+import { EncryptionModule } from './common/encryption/encryption.module';
+import configuration from './config/configuration';
+import { validateEnv } from './config/env.validation';
 import { RelatorioFluxoCaixaModule } from './relatorio-fluxo-caixa/relatorio-fluxo-caixa.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [configuration],
+      validate: validateEnv,
+      validationOptions: {
+        allowUnknown: true,
+        abortEarly: false,
+      },
+    }),
     MikroOrmModule.forRoot(mikroOrmConfig),
+    EncryptionModule,
     AuditModule,
     EmpresaModule,
     UsuarioModule,

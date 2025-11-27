@@ -59,9 +59,12 @@ export class RelatorioFluxoCaixaService {
       contasPagarWhere.empresa_id = filtros.empresaId;
     }
 
-    const contasPagar = await this.contasPagarRepository.find(contasPagarWhere, {
-      populate: ['pessoa', 'empresa'],
-    });
+    const contasPagar = await this.contasPagarRepository.find(
+      contasPagarWhere,
+      {
+        populate: ['pessoa', 'empresa'],
+      },
+    );
 
     // Buscar contas a receber
     const contasReceberWhere: any = {
@@ -69,7 +72,7 @@ export class RelatorioFluxoCaixaService {
     };
 
     if (filtros.empresaId && !filtros.consolidado) {
-      contasReceberWhere.empresaId = filtros.empresaId;
+      contasReceberWhere.empresa = filtros.empresaId;
     }
 
     const contasReceber = await this.contasReceberRepository.find(
@@ -210,7 +213,8 @@ export class RelatorioFluxoCaixaService {
       // Saldo diário = entradas - saídas
       linha.saldoDiarioRealizado =
         linha.entradasRealizadas - linha.saidasRealizadas;
-      linha.saldoDiarioPrevisto = linha.entradasPrevistas - linha.saidasPrevistas;
+      linha.saldoDiarioPrevisto =
+        linha.entradasPrevistas - linha.saidasPrevistas;
 
       // Saldo acumulado
       saldoAcumuladoRealizado += linha.saldoDiarioRealizado;
@@ -234,7 +238,10 @@ export class RelatorioFluxoCaixaService {
         (acc, l) => acc + l.saidasRealizadas,
         0,
       ),
-      totalSaidasPrevistas: linhas.reduce((acc, l) => acc + l.saidasPrevistas, 0),
+      totalSaidasPrevistas: linhas.reduce(
+        (acc, l) => acc + l.saidasPrevistas,
+        0,
+      ),
       saldoFinalRealizado: saldoAcumuladoRealizado,
       saldoFinalPrevisto: saldoAcumuladoPrevisto,
     };

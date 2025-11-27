@@ -372,7 +372,9 @@ describe('RelatorioFluxoCaixaService', () => {
       const linha = result.linhas.find((l) => l.data === '2025-01-01');
 
       // Sem movimentações, saldo acumulado = saldo inicial
-      expect(linha.saldoAcumuladoRealizado).toBe(mockContaBancaria.saldo_inicial);
+      expect(linha.saldoAcumuladoRealizado).toBe(
+        mockContaBancaria.saldo_inicial,
+      );
     });
 
     it('deve calcular saldo acumulado previsto separadamente do realizado', async () => {
@@ -515,7 +517,7 @@ describe('RelatorioFluxoCaixaService', () => {
 
       expect(contasReceberRepository.find).toHaveBeenCalledWith(
         expect.objectContaining({
-          empresaId: mockEmpresa.id,
+          empresa: mockEmpresa.id,
         }),
         expect.any(Object),
       );
