@@ -11,6 +11,7 @@ import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { CurrentUser } from '../decorators/current-user.decorator';
+import { SkipCsrfCheck } from '../common/guards/csrf.guard';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -23,6 +24,7 @@ export class AuthController {
     description: 'User login',
   })
   @ApiOperation({ summary: 'Login de usuário' })
+  @SkipCsrfCheck() // Login não precisa de verificação CSRF
   @Post('login')
   async login(@Req() req: Request, @Body() loginDto: LoginDto) {
     const result = await this.authService.login(loginDto, req);

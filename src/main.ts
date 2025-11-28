@@ -5,6 +5,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as fs from 'fs';
 import * as path from 'path';
+import helmet from 'helmet';
 
 async function bootstrap() {
   // Configuração HTTPS (opcional) - antes de criar a aplicação
@@ -34,6 +35,30 @@ async function bootstrap() {
   const app = httpsOptions
     ? await NestFactory.create(AppModule, { httpsOptions })
     : await NestFactory.create(AppModule);
+
+  // Configurar Helmet para headers de segurança
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          styleSrc: ["'self'", "'unsafe-inline'"],
+          scriptSrc: ["'self'"],
+          imgSrc: ["'self'", 'data:', 'https:'],
+        },
+      },
+      hsts: {
+        maxAge: 31536000, // 1 ano em segundos
+        includeSubDomains: true,
+        preload: true,
+      },
+      frameguard: {
+        action: 'deny', // Previne clickjacking
+      },
+      noSniff: true, // Previne MIME sniffing
+      xssFilter: true, // XSS Protection header
+    }),
+  );
 
   // Obter ConfigService da aplicação (após ser criada)
   const configService = app.get(ConfigService);
@@ -69,7 +94,11 @@ async function bootstrap() {
     )
     .build();
 
+  // Pipes globais de validação e sanitização
+  const { SanitizePipe } = await import('./common/pipes/sanitize.pipe');
+
   app.useGlobalPipes(
+    new SanitizePipe(), // Sanitização XSS - executado primeiro
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,

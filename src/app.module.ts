@@ -33,6 +33,8 @@ import { EncryptionModule } from './common/encryption/encryption.module';
 import configuration from './config/configuration';
 import { validateEnv } from './config/env.validation';
 import { RelatorioFluxoCaixaModule } from './relatorio-fluxo-caixa/relatorio-fluxo-caixa.module';
+import { APP_GUARD } from '@nestjs/core';
+import { CsrfGuard } from './common/guards/csrf.guard';
 
 @Module({
   imports: [
@@ -73,7 +75,13 @@ import { RelatorioFluxoCaixaModule } from './relatorio-fluxo-caixa/relatorio-flu
     }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: CsrfGuard,
+    },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
