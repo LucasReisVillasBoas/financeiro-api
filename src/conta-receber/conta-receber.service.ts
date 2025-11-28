@@ -52,7 +52,11 @@ export class ContasReceberService {
     return valorPrincipal + valorAcrescimos - valorDescontos;
   }
 
-  async create(dto: CreateContaReceberDto): Promise<ContasReceber> {
+  async create(
+    dto: CreateContaReceberDto,
+    userId?: string,
+    userEmail?: string,
+  ): Promise<ContasReceber> {
     const dataEmissao = new Date(dto.dataEmissao);
     const vencimento = new Date(dto.vencimento);
     const dataLiquidacao = dto.dataLiquidacao
@@ -115,6 +119,36 @@ export class ContasReceberService {
     const conta = this.contasReceberRepository.create(contaData);
 
     await this.contasReceberRepository.persistAndFlush(conta);
+
+    // Auditoria de criação
+    await this.auditService.log({
+      timestamp: new Date(),
+      eventType: AuditEventType.CONTA_RECEBER_CREATED,
+      severity: AuditSeverity.INFO,
+      resource: 'contas_receber',
+      action: 'CRIAR',
+      success: true,
+      userId,
+      userEmail,
+      empresaId: dto.empresaId,
+      details: {
+        message: `Conta a receber ${conta.documento} (ID: ${conta.id}) criada`,
+        contaId: conta.id,
+        documento: conta.documento,
+        serie: conta.serie,
+        parcela: conta.parcela,
+        tipo: conta.tipo,
+        descricao: conta.descricao,
+        valorPrincipal: conta.valorPrincipal,
+        valorAcrescimos: conta.valorAcrescimos,
+        valorDescontos: conta.valorDescontos,
+        valorTotal: conta.valorTotal,
+        vencimento: conta.vencimento,
+        pessoaId: dto.pessoaId,
+        planoContasId: dto.planoContasId,
+      },
+    });
+
     return conta;
   }
 
@@ -151,7 +185,12 @@ export class ContasReceberService {
     return conta;
   }
 
-  async update(id: string, dto: UpdateContaReceberDto): Promise<ContasReceber> {
+  async update(
+    id: string,
+    dto: UpdateContaReceberDto,
+    userId?: string,
+    userEmail?: string,
+  ): Promise<ContasReceber> {
     const conta = await this.findOne(id);
 
     // BLOQUEIO: Não permite editar título com baixa registrada
@@ -160,6 +199,26 @@ export class ContasReceberService {
         'Não é permitido alterar título que já possui baixa registrada. Status atual: ' + conta.status,
       );
     }
+
+    // Captura valores anteriores para auditoria
+    const valoresAnteriores = {
+      documento: conta.documento,
+      serie: conta.serie,
+      parcela: conta.parcela,
+      tipo: conta.tipo,
+      descricao: conta.descricao,
+      dataEmissao: conta.dataEmissao,
+      vencimento: conta.vencimento,
+      dataLancamento: conta.dataLancamento,
+      valorPrincipal: conta.valorPrincipal,
+      valorAcrescimos: conta.valorAcrescimos,
+      valorDescontos: conta.valorDescontos,
+      valorTotal: conta.valorTotal,
+      saldo: conta.saldo,
+      status: conta.status,
+      pessoaId: conta.pessoa?.id,
+      planoContasId: conta.planoContas?.id,
+    };
 
     // Valida as datas se foram fornecidas
     const dataEmissao = dto.dataEmissao ? new Date(dto.dataEmissao) : conta.dataEmissao;
@@ -207,10 +266,69 @@ export class ContasReceberService {
     if (dto.status) conta.status = dto.status;
 
     await this.contasReceberRepository.flush();
+
+    // Captura valores posteriores e identifica mudanças
+    const valoresPosteriores = {
+      documento: conta.documento,
+      serie: conta.serie,
+      parcela: conta.parcela,
+      tipo: conta.tipo,
+      descricao: conta.descricao,
+      dataEmissao: conta.dataEmissao,
+      vencimento: conta.vencimento,
+      dataLancamento: conta.dataLancamento,
+      valorPrincipal: conta.valorPrincipal,
+      valorAcrescimos: conta.valorAcrescimos,
+      valorDescontos: conta.valorDescontos,
+      valorTotal: conta.valorTotal,
+      saldo: conta.saldo,
+      status: conta.status,
+      pessoaId: conta.pessoa?.id,
+      planoContasId: conta.planoContas?.id,
+    };
+
+    // Identifica campos alterados
+    const camposAlterados: Record<string, { de: any; para: any }> = {};
+    for (const campo of Object.keys(valoresAnteriores)) {
+      const valorAnterior = valoresAnteriores[campo];
+      const valorPosterior = valoresPosteriores[campo];
+      if (JSON.stringify(valorAnterior) !== JSON.stringify(valorPosterior)) {
+        camposAlterados[campo] = { de: valorAnterior, para: valorPosterior };
+      }
+    }
+
+    // Auditoria de edição com valores antes/depois
+    if (Object.keys(camposAlterados).length > 0) {
+      await this.auditService.log({
+        timestamp: new Date(),
+        eventType: AuditEventType.CONTA_RECEBER_UPDATED,
+        severity: AuditSeverity.INFO,
+        resource: 'contas_receber',
+        action: 'EDITAR',
+        success: true,
+        userId,
+        userEmail,
+        empresaId: conta.empresa?.id,
+        details: {
+          message: `Conta a receber ${conta.documento} (ID: ${conta.id}) editada`,
+          contaId: conta.id,
+          camposAlterados,
+          valoresAnteriores,
+          valoresPosteriores,
+        },
+      });
+    }
+
     return conta;
   }
 
-  async liquidar(id: string, valorRecebido: number, dataLiquidacao?: Date): Promise<ContasReceber> {
+  async liquidar(
+    id: string,
+    valorRecebido: number,
+    dataLiquidacao?: Date,
+    userId?: string,
+    userEmail?: string,
+  ): Promise<ContasReceber> {
     const conta = await this.findOne(id);
 
     if (conta.status === StatusContaReceber.LIQUIDADO) {
@@ -227,6 +345,10 @@ export class ContasReceberService {
       throw new BadRequestException('Valor recebido maior que o saldo da conta');
     }
 
+    // Captura valores anteriores para auditoria
+    const saldoAnterior = conta.saldo;
+    const statusAnterior = conta.status;
+
     conta.saldo = novoSaldo;
     conta.dataLiquidacao = dataLiquidacao || new Date();
 
@@ -237,6 +359,32 @@ export class ContasReceberService {
     }
 
     await this.contasReceberRepository.persistAndFlush(conta);
+
+    // Auditoria de liquidação (baixa)
+    await this.auditService.log({
+      timestamp: new Date(),
+      eventType: AuditEventType.CONTA_RECEBER_UPDATED,
+      severity: AuditSeverity.INFO,
+      resource: 'contas_receber',
+      action: 'LIQUIDAR',
+      success: true,
+      userId,
+      userEmail,
+      empresaId: conta.empresa?.id,
+      details: {
+        message: `Conta a receber ${conta.documento} (ID: ${conta.id}) liquidada`,
+        contaId: conta.id,
+        documento: conta.documento,
+        parcela: conta.parcela,
+        valorRecebido,
+        saldoAnterior,
+        saldoPosterior: novoSaldo,
+        statusAnterior,
+        statusPosterior: conta.status,
+        dataLiquidacao: conta.dataLiquidacao,
+      },
+    });
+
     return conta;
   }
 

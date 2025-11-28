@@ -51,7 +51,11 @@ export class ContasPagarService {
     private readonly usuarioService: UsuarioService,
   ) {}
 
-  async create(dto: CreateContaPagarDto): Promise<ContasPagar> {
+  async create(
+    dto: CreateContaPagarDto,
+    userId?: string,
+    userEmail?: string,
+  ): Promise<ContasPagar> {
     this.validarOrdemDatas(
       new Date(dto.data_emissao),
       new Date(dto.vencimento),
@@ -80,6 +84,36 @@ export class ContasPagarService {
 
     const conta = this.contaPagarRepository.create(contaData);
     await this.contaPagarRepository.persistAndFlush(conta);
+
+    // Auditoria de criação
+    await this.auditService.log({
+      timestamp: new Date(),
+      eventType: AuditEventType.CONTA_PAGAR_CREATED,
+      severity: AuditSeverity.INFO,
+      resource: 'contas_pagar',
+      action: 'CRIAR',
+      success: true,
+      userId,
+      userEmail,
+      empresaId: dto.empresaId,
+      details: {
+        message: `Conta a pagar ${conta.documento} (ID: ${conta.id}) criada`,
+        contaId: conta.id,
+        documento: conta.documento,
+        serie: conta.serie,
+        parcela: conta.parcela,
+        tipo: conta.tipo,
+        descricao: conta.descricao,
+        valorPrincipal: conta.valor_principal,
+        acrescimos: conta.acrescimos,
+        descontos: conta.descontos,
+        valorTotal: conta.valor_total,
+        vencimento: conta.vencimento,
+        pessoaId: dto.pessoaId,
+        planoContasId: dto.planoContasId,
+      },
+    });
+
     return conta;
   }
 
@@ -130,7 +164,12 @@ export class ContasPagarService {
     return conta;
   }
 
-  async update(id: string, dto: UpdateContaPagarDto): Promise<ContasPagar> {
+  async update(
+    id: string,
+    dto: UpdateContaPagarDto,
+    userId?: string,
+    userEmail?: string,
+  ): Promise<ContasPagar> {
     const conta = await this.findOne(id);
 
     if (conta.canceladoEm) {
@@ -146,6 +185,24 @@ export class ContasPagarService {
         'Não é possível editar uma conta que já possui baixa registrada',
       );
     }
+
+    // Captura valores anteriores para auditoria
+    const valoresAnteriores = {
+      documento: conta.documento,
+      serie: conta.serie,
+      parcela: conta.parcela,
+      tipo: conta.tipo,
+      descricao: conta.descricao,
+      data_emissao: conta.data_emissao,
+      vencimento: conta.vencimento,
+      data_lancamento: conta.data_lancamento,
+      valor_principal: conta.valor_principal,
+      acrescimos: conta.acrescimos,
+      descontos: conta.descontos,
+      valor_total: conta.valor_total,
+      pessoaId: conta.pessoa?.id,
+      planoContasId: conta.planoContas?.id,
+    };
 
     const updateData: any = {};
 
@@ -192,6 +249,57 @@ export class ContasPagarService {
 
     this.contaPagarRepository.assign(conta, updateData);
     await this.contaPagarRepository.flush();
+
+    // Captura valores posteriores e identifica mudanças
+    const valoresPosteriores = {
+      documento: conta.documento,
+      serie: conta.serie,
+      parcela: conta.parcela,
+      tipo: conta.tipo,
+      descricao: conta.descricao,
+      data_emissao: conta.data_emissao,
+      vencimento: conta.vencimento,
+      data_lancamento: conta.data_lancamento,
+      valor_principal: conta.valor_principal,
+      acrescimos: conta.acrescimos,
+      descontos: conta.descontos,
+      valor_total: conta.valor_total,
+      pessoaId: conta.pessoa?.id,
+      planoContasId: conta.planoContas?.id,
+    };
+
+    // Identifica campos alterados
+    const camposAlterados: Record<string, { de: any; para: any }> = {};
+    for (const campo of Object.keys(valoresAnteriores)) {
+      const valorAnterior = valoresAnteriores[campo];
+      const valorPosterior = valoresPosteriores[campo];
+      if (JSON.stringify(valorAnterior) !== JSON.stringify(valorPosterior)) {
+        camposAlterados[campo] = { de: valorAnterior, para: valorPosterior };
+      }
+    }
+
+    // Auditoria de edição com valores antes/depois
+    if (Object.keys(camposAlterados).length > 0) {
+      await this.auditService.log({
+        timestamp: new Date(),
+        eventType: AuditEventType.CONTA_PAGAR_UPDATED,
+        severity: AuditSeverity.INFO,
+        resource: 'contas_pagar',
+        action: 'EDITAR',
+        success: true,
+        userId,
+        userEmail,
+        empresaId: conta.empresa?.id,
+        details: {
+          message: `Conta a pagar ${conta.documento} (ID: ${conta.id}) editada`,
+          contaId: conta.id,
+          camposAlterados,
+          valoresAnteriores,
+          valoresPosteriores,
+        },
+      });
+    }
+
     return conta;
   }
 

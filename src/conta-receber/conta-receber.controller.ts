@@ -24,8 +24,11 @@ export class ContasReceberController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() dto: CreateContaReceberDto) {
-    const conta = await this.contaReceberService.create(dto);
+  async create(@Body() dto: CreateContaReceberDto, @Req() req: Request) {
+    const userId = (req as any).user?.id || (req as any).user?.sub;
+    const userEmail = (req as any).user?.email || 'desconhecido@system.com';
+
+    const conta = await this.contaReceberService.create(dto, userId, userEmail);
     return {
       message: 'Conta a receber criada com sucesso',
       statusCode: HttpStatus.CREATED,
@@ -64,8 +67,15 @@ export class ContasReceberController {
   }
 
   @Put(':id')
-  async update(@Param('id') id: string, @Body() dto: UpdateContaReceberDto) {
-    const conta = await this.contaReceberService.update(id, dto);
+  async update(
+    @Param('id') id: string,
+    @Body() dto: UpdateContaReceberDto,
+    @Req() req: Request,
+  ) {
+    const userId = (req as any).user?.id || (req as any).user?.sub;
+    const userEmail = (req as any).user?.email || 'desconhecido@system.com';
+
+    const conta = await this.contaReceberService.update(id, dto, userId, userEmail);
     return {
       message: 'Conta a receber atualizada com sucesso',
       statusCode: HttpStatus.OK,
@@ -77,7 +87,11 @@ export class ContasReceberController {
   async liquidar(
     @Param('id') id: string,
     @Body() body: { valorRecebido: number; dataLiquidacao?: string },
+    @Req() req: Request,
   ) {
+    const userId = (req as any).user?.id || (req as any).user?.sub;
+    const userEmail = (req as any).user?.email || 'desconhecido@system.com';
+
     const dataLiquidacao = body.dataLiquidacao
       ? new Date(body.dataLiquidacao)
       : undefined;
@@ -85,6 +99,8 @@ export class ContasReceberController {
       id,
       body.valorRecebido,
       dataLiquidacao,
+      userId,
+      userEmail,
     );
     return {
       message: 'Conta liquidada com sucesso',

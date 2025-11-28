@@ -25,8 +25,11 @@ export class ContasPagarController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() dto: CreateContaPagarDto) {
-    const conta = await this.contaPagarService.create(dto);
+  async create(@Body() dto: CreateContaPagarDto, @Req() req: any) {
+    const userId = req.user?.sub;
+    const userEmail = req.user?.email || 'desconhecido@system.com';
+
+    const conta = await this.contaPagarService.create(dto, userId, userEmail);
     return {
       message: 'Conta a pagar criada com sucesso',
       statusCode: HttpStatus.CREATED,
@@ -65,8 +68,15 @@ export class ContasPagarController {
   }
 
   @Put(':id')
-  async update(@Param('id') id: string, @Body() dto: UpdateContaPagarDto) {
-    const conta = await this.contaPagarService.update(id, dto);
+  async update(
+    @Param('id') id: string,
+    @Body() dto: UpdateContaPagarDto,
+    @Req() req: any,
+  ) {
+    const userId = req.user?.sub;
+    const userEmail = req.user?.email || 'desconhecido@system.com';
+
+    const conta = await this.contaPagarService.update(id, dto, userId, userEmail);
     return {
       message: 'Conta a pagar atualizada com sucesso',
       statusCode: HttpStatus.OK,
