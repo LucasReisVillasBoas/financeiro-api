@@ -33,6 +33,7 @@ import { EncryptionModule } from './common/encryption/encryption.module';
 import configuration from './config/configuration';
 import { validateEnv } from './config/env.validation';
 import { RelatorioFluxoCaixaModule } from './relatorio-fluxo-caixa/relatorio-fluxo-caixa.module';
+import { BackupModule } from './backup/backup.module';
 import { APP_GUARD } from '@nestjs/core';
 import { CsrfGuard } from './common/guards/csrf.guard';
 
@@ -68,6 +69,7 @@ import { CsrfGuard } from './common/guards/csrf.guard';
     PessoaModule,
     ExtratoBancarioModule,
     RelatorioFluxoCaixaModule,
+    BackupModule,
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET || 'your-secret-key',

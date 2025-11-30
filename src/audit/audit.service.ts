@@ -66,6 +66,14 @@ export enum AuditEventType {
   PESSOA_CREATED = 'PESSOA_CREATED',
   PESSOA_UPDATED = 'PESSOA_UPDATED',
   PESSOA_DELETED = 'PESSOA_DELETED',
+
+  // Backup e Restauração
+  BACKUP_CREATED = 'BACKUP_CREATED',
+  BACKUP_FAILED = 'BACKUP_FAILED',
+  BACKUP_RESTORED = 'BACKUP_RESTORED',
+  BACKUP_RESTORE_FAILED = 'BACKUP_RESTORE_FAILED',
+  BACKUP_DELETED = 'BACKUP_DELETED',
+  BACKUP_RETENTION_APPLIED = 'BACKUP_RETENTION_APPLIED',
 }
 
 export enum AuditSeverity {
@@ -230,6 +238,14 @@ const EVENT_TYPE_MAPPING: Record<
   [AuditEventType.PESSOA_CREATED]: { acao: 'CREATE', modulo: 'PESSOA' },
   [AuditEventType.PESSOA_UPDATED]: { acao: 'UPDATE', modulo: 'PESSOA' },
   [AuditEventType.PESSOA_DELETED]: { acao: 'DELETE', modulo: 'PESSOA' },
+
+  // Backup
+  [AuditEventType.BACKUP_CREATED]: { acao: 'CREATE', modulo: 'BACKUP' },
+  [AuditEventType.BACKUP_FAILED]: { acao: 'CREATE_FAILED', modulo: 'BACKUP' },
+  [AuditEventType.BACKUP_RESTORED]: { acao: 'RESTORE', modulo: 'BACKUP' },
+  [AuditEventType.BACKUP_RESTORE_FAILED]: { acao: 'RESTORE_FAILED', modulo: 'BACKUP' },
+  [AuditEventType.BACKUP_DELETED]: { acao: 'DELETE', modulo: 'BACKUP' },
+  [AuditEventType.BACKUP_RETENTION_APPLIED]: { acao: 'RETENTION', modulo: 'BACKUP' },
 };
 
 /**
