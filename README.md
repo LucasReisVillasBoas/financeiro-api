@@ -11,11 +11,11 @@ Node.js 24.5.0
 npm 11.5.1
 
 PostgreSQL
- (pode usar o DBeaver
- para gerenciar o banco)
+(pode usar o DBeaver
+para gerenciar o banco)
 
 VS Code
- (IDE recomendada)
+(IDE recomendada)
 
 ⚙️ Configuração do Git
 
@@ -36,7 +36,6 @@ DATABASE_NAME='my-personal-db'
 DATABASE_USER='postgres'
 DATABASE_PASSWORD='postgres123'
 
-
 Crie o banco local no PostgreSQL (via DBeaver ou terminal):
 
 CREATE DATABASE "my-personal-db";
@@ -50,7 +49,6 @@ Modo desenvolvimento:
 
 npm run start:dev
 
-
 Modo produção:
 
 npm run build
@@ -59,6 +57,7 @@ npm run start:prod
 📚 Documentação
 
 **Documentação Técnica Completa:** Consulte o diretório [docs/](./docs/) para documentação detalhada sobre:
+
 - API e endpoints
 - Testes e cobertura
 - Arquitetura e implementações
@@ -66,6 +65,6 @@ npm run start:prod
 
 **Swagger (API Interativa):** Acesse após subir a aplicação:
 
-👉 http://localhost:3000/api
+👉 http://localhost:3002/api
 
 **Para desenvolvedores Claude Code:** Consulte [CLAUDE.md](./CLAUDE.md) para arquitetura e padrões do projeto.

@@ -65,8 +65,9 @@ async function bootstrap() {
 
   // Obter configurações via ConfigService
   const corsOrigin =
-    configService.get<string>('cors.origin') || 'http://localhost:3001';
-  const corsCredentials = configService.get<boolean>('cors.credentials') ?? true;
+    configService.get<string>('cors.origin') || 'http://localhost:3003';
+  const corsCredentials =
+    configService.get<boolean>('cors.credentials') ?? true;
   const port = configService.get<number>('port') || 3000;
 
   // Configurar CORS
@@ -115,7 +116,9 @@ async function bootstrap() {
   const protocol = httpsEnabled ? 'https' : 'http';
   console.log(`\n🚀 Aplicação rodando em ${protocol}://localhost:${port}`);
   console.log(`📚 Documentação Swagger: ${protocol}://localhost:${port}/api`);
-  console.log(`🔒 HTTPS: ${httpsEnabled ? 'Habilitado ✅' : 'Desabilitado ⚠️'}`);
+  console.log(
+    `🔒 HTTPS: ${httpsEnabled ? 'Habilitado ✅' : 'Desabilitado ⚠️'}`,
+  );
   console.log(`🌐 CORS Origin: ${corsOrigin}\n`);
 }
 
