@@ -1,8 +1,20 @@
 # Documentação do Sistema Financeiro API
 
+**Versão:** 1.0.0 | **Última Atualização:** 2024-11-30
+
 Este diretório contém toda a documentação técnica, arquitetural e de validação do sistema.
 
 ## 📚 Índice da Documentação
+
+### Documentação Principal
+
+| Documento | Descrição |
+|-----------|-----------|
+| **[DATABASE.md](./DATABASE.md)** | Modelo de dados completo com diagrama ER (Mermaid) |
+| **[API.md](./API.md)** | Documentação completa dos endpoints da API |
+| **[DEVOPS.md](./DEVOPS.md)** | Manual DevOps - Deploy, Docker, Monitoramento |
+| **[SUPPORT.md](./SUPPORT.md)** | Manual de Suporte Técnico - Troubleshooting |
+| **[../CHANGELOG.md](../CHANGELOG.md)** | Histórico de versões e mudanças |
 
 ### Documentação de Referência
 
@@ -10,7 +22,9 @@ Este diretório contém toda a documentação técnica, arquitetural e de valida
   - Autenticação e autorização
   - Endpoints de todas as funcionalidades
   - Exemplos de requisições e respostas
-  - Swagger disponível em `http://localhost:3000/api`
+  - Swagger disponível em `http://localhost:3002/api`
+  - OpenAPI JSON em `http://localhost:3002/api-json`
+  - OpenAPI YAML em `http://localhost:3002/api-yaml`
 
 - **[DOCUMENTACAO_TESTES.md](./DOCUMENTACAO_TESTES.md)** - Documentação completa dos testes
   - Status atual: 299 testes passando
@@ -74,7 +88,9 @@ Para começar a desenvolver:
 
 ## 🔗 Links Úteis
 
-- Swagger UI: `http://localhost:3000/api` (após iniciar a aplicação)
+- Swagger UI: `http://localhost:3002/api` (após iniciar a aplicação)
+- OpenAPI JSON: `http://localhost:3002/api-json`
+- OpenAPI YAML: `http://localhost:3002/api-yaml`
 - Repositório: [GitHub](https://github.com/LucasReisVillasBoas/financeiro-api)
 
 ## 📝 Convenções de Documentação
