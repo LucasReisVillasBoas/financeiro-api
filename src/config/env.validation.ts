@@ -48,7 +48,8 @@ export const envValidationSchema = Joi.object({
     'string.empty': 'ENCRYPTION_KEY não pode estar vazia',
     'string.length':
       'ENCRYPTION_KEY deve ter exatamente 64 caracteres hexadecimais (32 bytes)',
-    'string.hex': 'ENCRYPTION_KEY deve conter apenas caracteres hexadecimais (0-9, a-f)',
+    'string.hex':
+      'ENCRYPTION_KEY deve conter apenas caracteres hexadecimais (0-9, a-f)',
   }),
 
   // HTTPS/SSL Configuration
@@ -56,22 +57,20 @@ export const envValidationSchema = Joi.object({
   SSL_CERT_PATH: Joi.string().when('ENABLE_HTTPS', {
     is: true,
     then: Joi.required().messages({
-      'any.required':
-        'SSL_CERT_PATH é obrigatório quando ENABLE_HTTPS=true',
+      'any.required': 'SSL_CERT_PATH é obrigatório quando ENABLE_HTTPS=true',
     }),
     otherwise: Joi.optional(),
   }),
   SSL_KEY_PATH: Joi.string().when('ENABLE_HTTPS', {
     is: true,
     then: Joi.required().messages({
-      'any.required':
-        'SSL_KEY_PATH é obrigatório quando ENABLE_HTTPS=true',
+      'any.required': 'SSL_KEY_PATH é obrigatório quando ENABLE_HTTPS=true',
     }),
     otherwise: Joi.optional(),
   }),
 
   // CORS Configuration
-  CORS_ORIGIN: Joi.string().default('http://localhost:3001'),
+  CORS_ORIGIN: Joi.string().default('http://localhost:3003'),
   CORS_CREDENTIALS: Joi.boolean().default(true),
 
   // Secrets Management (opcional para integração com serviços externos)

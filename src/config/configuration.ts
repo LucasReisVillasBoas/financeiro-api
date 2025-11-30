@@ -5,7 +5,7 @@
  * de forma tipada e validada.
  */
 export default () => ({
-  port: parseInt(process.env.PORT_NUMBER, 10) || 3000,
+  port: parseInt(process.env.PORT_NUMBER, 10) || 3002,
   nodeEnv: process.env.NODE_ENV || 'development',
 
   database: {
@@ -29,7 +29,7 @@ export default () => ({
   },
 
   cors: {
-    origin: process.env.CORS_ORIGIN || 'http://localhost:3001',
+    origin: process.env.CORS_ORIGIN || 'http://localhost:3003',
     credentials: process.env.CORS_CREDENTIALS !== 'false',
   },
 
