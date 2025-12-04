@@ -17,12 +17,14 @@ import { CreateContaBancariaDto } from './dto/create-conta-bancaria.dto';
 import { UpdateContaBancariaDto } from './dto/update-conta-bancaria.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
+import { EmpresaGuard } from '../auth/empresa.guard';
 import { Roles } from '../decorators/roles.decorator';
+import { CurrentEmpresaIds } from '../auth/decorators/current-empresa.decorator';
 
 @ApiTags('Contas Bancárias')
 @ApiBearerAuth()
 @Controller('contas-bancarias')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard, EmpresaGuard)
 export class ContaBancariaController {
   constructor(
     private readonly contasBancariasService: ContasBancariasService,
@@ -50,10 +52,10 @@ export class ContaBancariaController {
   @ApiOperation({
     summary: 'Listar todas as contas bancárias',
     description:
-      'Lista todas as contas bancárias. Requer perfil Administrador, Financeiro ou Visualizador.',
+      'Lista todas as contas bancárias do usuário. Requer perfil Administrador, Financeiro ou Visualizador.',
   })
-  async findAll() {
-    const contas = await this.contasBancariasService.findAll();
+  async findAll(@CurrentEmpresaIds() empresaIds: string[]) {
+    const contas = await this.contasBancariasService.findAll(empresaIds);
     return {
       message: 'Contas bancárias encontradas',
       statusCode: HttpStatus.OK,

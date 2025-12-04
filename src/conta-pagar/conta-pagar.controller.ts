@@ -10,6 +10,7 @@ import {
   HttpCode,
   HttpStatus,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { ContasPagarService } from './conta-pagar.service';
 import { CreateContaPagarDto } from './dto/create-conta-pagar.dto';
@@ -18,8 +19,13 @@ import { CancelarContaPagarDto } from './dto/cancelar-conta-pagar.dto';
 import { GerarParcelasDto } from './dto/gerar-parcelas.dto';
 import { RegistrarBaixaDto } from './dto/registrar-baixa.dto';
 import { CurrentCliente } from '../auth/decorators/current-cliente.decorator';
+import { CurrentEmpresaIds } from '../auth/decorators/current-empresa.decorator';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from '../auth/roles.guard';
+import { EmpresaGuard } from '../auth/empresa.guard';
 
 @Controller('contas-pagar')
+@UseGuards(JwtAuthGuard, RolesGuard, EmpresaGuard)
 export class ContasPagarController {
   constructor(private readonly contaPagarService: ContasPagarService) {}
 
@@ -38,8 +44,8 @@ export class ContasPagarController {
   }
 
   @Get()
-  async findAll() {
-    const contas = await this.contaPagarService.findAll();
+  async findAll(@CurrentEmpresaIds() empresaIds: string[]) {
+    const contas = await this.contaPagarService.findAll(empresaIds);
     return {
       message: 'Contas a pagar encontradas',
       statusCode: HttpStatus.OK,

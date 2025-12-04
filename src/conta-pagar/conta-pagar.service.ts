@@ -135,13 +135,18 @@ export class ContasPagarService {
     }
   }
 
-  async findAll(): Promise<ContasPagar[]> {
-    return await this.contaPagarRepository.find(
-      { deletadoEm: null },
-      {
-        populate: ['pessoa', 'planoContas', 'empresa'],
-      },
-    );
+  async findAll(empresaIds?: string[]): Promise<ContasPagar[]> {
+    const where: any = {
+      deletadoEm: null,
+    };
+
+    if (empresaIds && empresaIds.length > 0) {
+      where.empresa = { $in: empresaIds };
+    }
+
+    return await this.contaPagarRepository.find(where, {
+      populate: ['pessoa', 'planoContas', 'empresa'],
+    });
   }
 
   async findByEmpresa(empresaId: string): Promise<ContasPagar[]> {

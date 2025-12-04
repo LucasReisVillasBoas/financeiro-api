@@ -81,10 +81,16 @@ export class ContasBancariasService {
     return conta;
   }
 
-  async findAll(): Promise<ContasBancarias[]> {
-    return await this.contasBancariasRepository.find({
+  async findAll(empresaIds?: string[]): Promise<ContasBancarias[]> {
+    const where: any = {
       deletadoEm: null,
-    });
+    };
+
+    if (empresaIds && empresaIds.length > 0) {
+      where.empresa = { $in: empresaIds };
+    }
+
+    return await this.contasBancariasRepository.find(where);
   }
 
   async findByEmpresa(empresaId: string): Promise<ContasBancarias[]> {

@@ -10,6 +10,7 @@ import {
   HttpCode,
   HttpStatus,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { ContasReceberService } from './conta-receber.service';
 import { CreateContaReceberDto } from './dto/create-conta-receber.dto';
@@ -17,8 +18,13 @@ import { UpdateContaReceberDto } from './dto/update-conta-receber.dto';
 import { CreateContaReceberParceladaDto } from './dto/create-conta-receber-parcelada.dto';
 import { CancelarContaReceberDto } from './dto/cancelar-conta-receber.dto';
 import { Request } from 'express';
+import { CurrentEmpresaIds } from '../auth/decorators/current-empresa.decorator';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from '../auth/roles.guard';
+import { EmpresaGuard } from '../auth/empresa.guard';
 
 @Controller('contas-receber')
+@UseGuards(JwtAuthGuard, RolesGuard, EmpresaGuard)
 export class ContasReceberController {
   constructor(private readonly contaReceberService: ContasReceberService) {}
 
@@ -37,8 +43,8 @@ export class ContasReceberController {
   }
 
   @Get()
-  async findAll() {
-    const contas = await this.contaReceberService.findAll();
+  async findAll(@CurrentEmpresaIds() empresaIds: string[]) {
+    const contas = await this.contaReceberService.findAll(empresaIds);
     return {
       message: 'Contas a receber encontradas',
       statusCode: HttpStatus.OK,

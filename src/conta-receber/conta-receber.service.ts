@@ -152,11 +152,18 @@ export class ContasReceberService {
     return conta;
   }
 
-  async findAll(): Promise<ContasReceber[]> {
-    return await this.contasReceberRepository.find(
-      { deletadoEm: null },
-      { populate: ['pessoa', 'planoContas'] },
-    );
+  async findAll(empresaIds?: string[]): Promise<ContasReceber[]> {
+    const where: any = {
+      deletadoEm: null,
+    };
+
+    if (empresaIds && empresaIds.length > 0) {
+      where.empresa = { $in: empresaIds };
+    }
+
+    return await this.contasReceberRepository.find(where, {
+      populate: ['pessoa', 'planoContas'],
+    });
   }
 
   async findByEmpresa(empresaId: string): Promise<ContasReceber[]> {

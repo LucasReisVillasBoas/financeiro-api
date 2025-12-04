@@ -111,11 +111,18 @@ export class MovimentacoesBancariasService {
     return movimentacao;
   }
 
-  async findAll(): Promise<MovimentacoesBancarias[]> {
-    return await this.movimentacaoRepository.find(
-      { deletadoEm: null },
-      { populate: ['contaBancaria'] },
-    );
+  async findAll(empresaIds?: string[]): Promise<MovimentacoesBancarias[]> {
+    const where: any = {
+      deletadoEm: null,
+    };
+
+    if (empresaIds && empresaIds.length > 0) {
+      where.contaBancaria = { empresa: { $in: empresaIds } };
+    }
+
+    return await this.movimentacaoRepository.find(where, {
+      populate: ['contaBancaria'],
+    });
   }
 
   async findByPeriodo(

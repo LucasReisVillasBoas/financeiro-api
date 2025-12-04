@@ -21,6 +21,7 @@ import { RolesGuard } from '../auth/roles.guard';
 import { EmpresaGuard } from '../auth/empresa.guard';
 import { Roles } from '../decorators/roles.decorator';
 import { CurrentUser } from '../decorators/current-user.decorator';
+import { CurrentEmpresaIds } from '../auth/decorators/current-empresa.decorator';
 
 @Controller('movimentacoes-bancarias')
 @UseGuards(JwtAuthGuard, RolesGuard, EmpresaGuard)
@@ -49,8 +50,8 @@ export class MovimentacoesBancariasController {
   }
 
   @Get()
-  async findAll() {
-    const movimentacoes = await this.movimentacaoService.findAll();
+  async findAll(@CurrentEmpresaIds() empresaIds: string[]) {
+    const movimentacoes = await this.movimentacaoService.findAll(empresaIds);
 
     // Calcular totais
     let totalEntradas = 0;
