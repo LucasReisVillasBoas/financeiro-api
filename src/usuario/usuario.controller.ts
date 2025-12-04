@@ -152,6 +152,28 @@ export class UsuarioController {
   @ApiResponse({
     status: HttpStatus.OK,
     type: BaseResponse<UsuarioEmpresaFilial>,
+    description: 'Associar usuario a empresa durante onboarding (sem verificação de roles)',
+  })
+  @Post(':id/onboarding/empresas')
+  async associarEmpresaOnboarding(
+    @Param('id') usuarioId: string,
+    @Body() dto: AssociarEmpresaFilialRequestDto,
+  ): Promise<BaseResponse<UsuarioEmpresaFilial>> {
+    const result = await this.usuarioService.associarEmpresaOuFilial(
+      usuarioId,
+      dto,
+      usuarioId,
+    );
+    return new BaseResponse<UsuarioEmpresaFilial>(
+      'Associação feita com sucesso!',
+      HttpStatus.OK,
+      result,
+    );
+  }
+
+  @ApiResponse({
+    status: HttpStatus.OK,
+    type: BaseResponse<UsuarioEmpresaFilial>,
     description: 'Listar usuarios associados a empresa',
   })
   @Get(':id/empresas')

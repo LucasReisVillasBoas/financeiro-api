@@ -1,10 +1,16 @@
-import { ApiProperty, PartialType } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import { PartialType } from '@nestjs/mapped-types';
+import { IsString, IsObject, IsOptional } from 'class-validator';
 import { CreatePerfilDto } from './create-perfil.dto';
 
 export class UpdatePerfilDto extends PartialType(CreatePerfilDto) {
-  @ApiProperty({ required: false, description: 'Novo nome do perfil' })
+  @ApiPropertyOptional({ description: 'Novo nome do perfil' })
+  @IsString()
+  @IsOptional()
   nome?: string;
 
-  @ApiProperty({ required: false, description: 'Novas permissões do perfil' })
+  @ApiPropertyOptional({ description: 'Novas permissões do perfil' })
+  @IsObject()
+  @IsOptional()
   permissoes?: Record<string, string[]>;
 }
