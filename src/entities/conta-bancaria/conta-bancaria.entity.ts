@@ -8,10 +8,7 @@ import {
 } from '@mikro-orm/core';
 import { Empresa } from '../empresa/empresa.entity';
 import { ContasBancariasRepository } from '../../conta-bancaria/conta-bancaria.repository';
-import {
-  EncryptedStringType,
-  EncryptedDecimalType,
-} from '../../common/encryption';
+import { EncryptedStringType } from '../../common/encryption';
 
 @Entity({ repository: () => ContasBancariasRepository })
 @Unique({
@@ -63,10 +60,10 @@ export class ContasBancarias {
   @Property({ type: 'varchar', length: 50 })
   tipo!: string;
 
-  @Property({ type: EncryptedDecimalType })
+  @Property({ type: 'decimal', precision: 15, scale: 2 })
   saldo_inicial!: number;
 
-  @Property({ type: EncryptedDecimalType })
+  @Property({ type: 'decimal', precision: 15, scale: 2 })
   saldo_atual!: number;
 
   @Property({ type: 'date' })

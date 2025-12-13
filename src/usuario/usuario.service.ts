@@ -278,15 +278,23 @@ export class UsuarioService {
     if (!empresa) throw new NotFoundException('Empresa não encontrada');
 
     let cidade = await this.cidadeService.findByCliente(usuario.id);
+    let cidadeOwnerId = usuario.id;
     if (!cidade) {
       cidade = await this.cidadeService.findByCliente(admin);
+      cidadeOwnerId = admin;
       if (!cidade) {
         throw new NotFoundException('Cidade não encontrada para associação');
       }
     }
 
     const contato = await this.contatoService.findByCliente(usuario.id);
-    if (!contato) throw new NotFoundException('Contato não encontrado');
+    let contatoOwnerId = usuario.id;
+    if (!contato) {
+      const contatoAdmin = await this.contatoService.findByCliente(admin);
+      if (!contatoAdmin) {
+        throw new NotFoundException('Contato não encontrado');
+      }
+    }
 
     const isFilial = !!empresa.sede;
     const jaExiste = await this.usuarioEmpresaFilialRepository.findOne({
@@ -307,18 +315,22 @@ export class UsuarioService {
 
     await this.cidadeService.update(
       cidade.id,
-      usuario.id,
+      cidadeOwnerId,
       { filialId: empresa.id },
       admin,
     );
-    await this.contatoService.update(
-      contato.id,
-      usuario.id,
-      {
-        filialId: empresa.id,
-      },
-      admin,
-    );
+
+    // Atualiza contato apenas se pertencer ao usuário
+    if (contato) {
+      await this.contatoService.update(
+        contato.id,
+        contatoOwnerId,
+        {
+          filialId: empresa.id,
+        },
+        admin,
+      );
+    }
 
     await this.usuarioEmpresaFilialRepository.persistAndFlush(associacao);
     return associacao;

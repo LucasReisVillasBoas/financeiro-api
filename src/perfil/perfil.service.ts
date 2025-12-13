@@ -38,11 +38,21 @@ export class PerfilService {
     const perfil = this.perfilRepository.create(dto);
     await this.perfilRepository.flush();
 
-    const empresaList = await this.empresaService.findAllByCliente(
-      dto.clienteId,
-    );
+    // Busca empresas associadas ao usuário (via UsuarioEmpresaFilial)
+    let empresaList = await this.empresaService.findByUsuarioId(dto.clienteId);
+
+    // Se não encontrar associações, tenta buscar empresas onde o usuário é proprietário
+    if (!empresaList.length) {
+      empresaList = await this.empresaService.findAllByCliente(dto.clienteId);
+    }
 
     const empresa = empresaList.at(0);
+
+    if (!empresa) {
+      throw new BadRequestException(
+        'Nenhuma empresa encontrada para o usuário. É necessário associar o usuário a uma empresa antes de criar um perfil.',
+      );
+    }
 
     const jaExiste = await this.usuarioPerfilRepository.findOne({
       usuario,

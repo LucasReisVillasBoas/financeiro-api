@@ -72,12 +72,13 @@ export class EmpresaGuard implements CanActivate {
       return true;
     }
 
-    const empresaIdParam = request.params.empresaId || request.params.id;
+    // Só considera empresaId explícito em params, não params.id genérico
+    // pois params.id pode ser ID de qualquer entidade (contato, cidade, etc.)
+    const empresaIdParam = request.params.empresaId;
     const empresaIdBody = request.body?.empresa_id;
     const clienteIdBody = request.body?.cliente_id;
 
-    const empresaIdToCheck =
-      empresaIdParam || empresaIdBody || request.userEmpresas[0]?.empresaId;
+    const empresaIdToCheck = empresaIdParam || empresaIdBody;
 
     if (empresaIdToCheck) {
       const hasAccess = request.userEmpresas.some(

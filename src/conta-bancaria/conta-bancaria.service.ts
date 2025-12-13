@@ -103,10 +103,13 @@ export class ContasBancariasService {
   }
 
   async findOne(id: string): Promise<ContasBancarias> {
-    const conta = await this.contasBancariasRepository.findOne({
-      id,
-      deletadoEm: null,
-    });
+    const conta = await this.contasBancariasRepository.findOne(
+      {
+        id,
+        deletadoEm: null,
+      },
+      { populate: ['empresa'] },
+    );
 
     if (!conta) {
       throw new NotFoundException('Conta bancária não encontrada');
@@ -120,12 +123,14 @@ export class ContasBancariasService {
     dto: UpdateContaBancariaDto,
   ): Promise<ContasBancarias> {
     const conta = await this.findOne(id);
-    const usuario = await this.usuarioService.getById(dto.cliente_id);
 
+    // Auditoria de alteração de saldo inicial (se houver cliente_id e saldo mudou)
     if (
+      dto.cliente_id &&
       dto.saldo_inicial !== undefined &&
       dto.saldo_inicial !== conta.saldo_inicial
     ) {
+      const usuario = await this.usuarioService.getById(dto.cliente_id);
       const saldoAnterior = conta.saldo_inicial;
 
       await this.auditService.logSaldoInicialUpdated(

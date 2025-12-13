@@ -94,11 +94,11 @@ export class ContaBancariaController {
   }
 
   @Put(':id')
-  @Roles('Administrador', 'Financeiro')
+  @Roles('Administrador', 'Financeiro', 'Editor')
   @ApiOperation({
     summary: 'Atualizar conta bancária',
     description:
-      'Atualiza os dados de uma conta bancária. Requer perfil Administrador ou Financeiro.',
+      'Atualiza os dados de uma conta bancária. Requer perfil Administrador, Financeiro ou Editor.',
   })
   async update(@Param('id') id: string, @Body() dto: UpdateContaBancariaDto) {
     const conta = await this.contasBancariasService.update(id, dto);
@@ -110,11 +110,11 @@ export class ContaBancariaController {
   }
 
   @Patch(':id/toggle-status')
-  @Roles('Administrador', 'Financeiro')
+  @Roles('Administrador', 'Financeiro', 'Editor')
   @ApiOperation({
     summary: 'Ativar/Inativar conta bancária',
     description:
-      'Altera o status ativo/inativo de uma conta bancária. Requer perfil Administrador ou Financeiro. Operação auditada.',
+      'Altera o status ativo/inativo de uma conta bancária. Requer perfil Administrador, Financeiro ou Editor. Operação auditada.',
   })
   async toggleStatus(@Param('id') id: string) {
     const conta = await this.contasBancariasService.toggleStatus(id);
