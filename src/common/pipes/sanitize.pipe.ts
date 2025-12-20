@@ -12,7 +12,7 @@ export class SanitizePipe implements PipeTransform {
     }
 
     if (typeof value === 'object' && value !== null) {
-      return this.sanitizeObject(value);
+      return this.sanitizeObject(value, new WeakSet());
     }
 
     return value;
@@ -43,23 +43,37 @@ export class SanitizePipe implements PipeTransform {
   }
 
   /**
-   * Sanitiza um objeto recursivamente
+   * Sanitiza um objeto recursivamente (com proteção contra referências circulares)
    */
-  private sanitizeObject(obj: any): any {
+  private sanitizeObject(obj: any, seen: WeakSet<any>): any {
+    // Proteção contra referências circulares
+    if (seen.has(obj)) {
+      return undefined;
+    }
+
     if (Array.isArray(obj)) {
-      return obj.map((item) => this.sanitizeObject(item));
+      seen.add(obj);
+      return obj.map((item) =>
+        typeof item === 'object' && item !== null
+          ? this.sanitizeObject(item, seen)
+          : typeof item === 'string'
+            ? this.sanitizeString(item)
+            : item,
+      );
     }
 
     if (typeof obj === 'object' && obj !== null) {
+      seen.add(obj);
       const sanitized: any = {};
       for (const key in obj) {
         if (obj.hasOwnProperty(key)) {
-          if (typeof obj[key] === 'string') {
-            sanitized[key] = this.sanitizeString(obj[key]);
-          } else if (typeof obj[key] === 'object') {
-            sanitized[key] = this.sanitizeObject(obj[key]);
+          const value = obj[key];
+          if (typeof value === 'string') {
+            sanitized[key] = this.sanitizeString(value);
+          } else if (typeof value === 'object' && value !== null) {
+            sanitized[key] = this.sanitizeObject(value, seen);
           } else {
-            sanitized[key] = obj[key];
+            sanitized[key] = value;
           }
         }
       }

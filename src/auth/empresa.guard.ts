@@ -7,6 +7,7 @@ import {
 import { Reflector } from '@nestjs/core';
 import { EntityManager } from '@mikro-orm/postgresql';
 import { UsuarioEmpresaFilial } from '../entities/usuario-empresa-filial/usuario-empresa-filial.entity';
+import { Empresa } from '../entities/empresa/empresa.entity';
 import { AuditService } from '../audit/audit.service';
 
 @Injectable()
@@ -72,7 +73,10 @@ export class EmpresaGuard implements CanActivate {
       return true;
     }
 
-    const empresaIdParam = request.params.empresaId || request.params.id;
+    const empresaIdParam =
+      request.params.empresaId ||
+      request.params.id ||
+      request.params.filialId;
     const empresaIdBody = request.body?.empresa_id;
     const clienteIdBody = request.body?.cliente_id;
 
@@ -80,12 +84,26 @@ export class EmpresaGuard implements CanActivate {
       empresaIdParam || empresaIdBody || request.userEmpresas[0]?.empresaId;
 
     if (empresaIdToCheck) {
-      const hasAccess = request.userEmpresas.some(
+      // Verifica acesso direto
+      let hasAccess = request.userEmpresas.some(
         (emp) =>
           emp.empresaId === empresaIdToCheck ||
-          emp.sedeId === empresaIdToCheck ||
-          emp.filialId === empresaIdToCheck,
+          emp.sedeId === empresaIdToCheck,
       );
+
+      // Se não tem acesso direto, verifica se é uma filial de uma sede que o usuário tem acesso
+      if (!hasAccess) {
+        const empresaAlvo = await this.em.findOne(Empresa, {
+          id: empresaIdToCheck,
+        });
+
+        if (empresaAlvo?.sede) {
+          // É uma filial - verifica se usuário tem acesso à sede
+          hasAccess = request.userEmpresas.some(
+            (emp) => emp.empresaId === empresaAlvo.sede.id,
+          );
+        }
+      }
 
       if (!hasAccess) {
         // Registrar tentativa de acesso a empresa não autorizada

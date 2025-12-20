@@ -119,15 +119,22 @@ export class EmpresaController {
 
   @Post(':id/filiais')
   @SetMetadata('roles', ['Administrador'])
-  @ApiOperation({ summary: 'Criar filial para empresa' })
+  @ApiOperation({ summary: 'Criar filial para empresa (com contato opcional)' })
   @ApiResponse({ status: 201, description: 'Filial criada' })
-  async createFilial(@Param('id') id: string, @Body() dto: CreateFilialDto) {
+  async createFilial(
+    @Param('id') id: string,
+    @Body() dto: CreateFilialDto,
+    @CurrentUser() user: any,
+  ) {
     if (dto.empresa_id !== id) dto.empresa_id = id;
-    const data = await this.service.createFilial(dto);
+    const result = await this.service.createFilial(dto, user.sub || user.id);
     return {
       message: 'Filial criada',
       statusCode: HttpStatus.CREATED,
-      data: sanitizeEmpresaResponse(data),
+      data: {
+        filial: sanitizeEmpresaResponse(result.filial),
+        contato: result.contato || null,
+      },
     };
   }
 

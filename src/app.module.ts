@@ -35,6 +35,7 @@ import { validateEnv } from './config/env.validation';
 import { RelatorioFluxoCaixaModule } from './relatorio-fluxo-caixa/relatorio-fluxo-caixa.module';
 import { BackupModule } from './backup/backup.module';
 import { OnboardingModule } from './onboarding/onboarding.module';
+import { CepModule } from './cep/cep.module';
 import { APP_GUARD } from '@nestjs/core';
 import { CsrfGuard } from './common/guards/csrf.guard';
 
@@ -72,6 +73,7 @@ import { CsrfGuard } from './common/guards/csrf.guard';
     RelatorioFluxoCaixaModule,
     BackupModule,
     OnboardingModule,
+    CepModule,
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET || 'your-secret-key',
@@ -95,6 +97,7 @@ export class AppModule implements NestModule {
         { path: 'auth/login', method: RequestMethod.ALL },
         { path: 'usuario/cadastro', method: RequestMethod.POST },
         { path: 'empresas', method: RequestMethod.POST },
+        { path: 'cep/(.*)', method: RequestMethod.GET },
       )
       .forRoutes('*');
   }

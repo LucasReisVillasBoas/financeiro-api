@@ -4,10 +4,13 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
+import { EntityManager } from '@mikro-orm/postgresql';
 import { EmpresaRepository } from './empresa.repository';
 import { CreateEmpresaDto } from './dto/create-empresa.dto';
 import { UpdateEmpresaDto } from './dto/update-empresa.dto';
 import { Empresa } from '../entities/empresa/empresa.entity';
+import { Contato } from '../entities/contato/contato.entity';
+import { Usuario } from '../entities/usuario/usuario.entity';
 import { isValidCnpjCpf, normalizeCnpjCpf } from '../utils/empresa.util';
 import { CreateFilialDto } from './dto/create-filial.dto';
 import { UpdateFilialDto } from './dto/update-filial.dto';
@@ -15,9 +18,15 @@ import { UsuarioEmpresaFilial } from '../entities/usuario-empresa-filial/usuario
 import { UsuarioEmpresaFilialRepository } from '../usuario/usuario-empresa-filial.repository';
 import { AuditService } from '../audit/audit.service';
 
+export interface CreateFilialResult {
+  filial: Empresa;
+  contato?: Contato;
+}
+
 @Injectable()
 export class EmpresaService {
   constructor(
+    private readonly em: EntityManager,
     private readonly empresaRepo: EmpresaRepository,
     @InjectRepository(UsuarioEmpresaFilial)
     private readonly usuarioEmpresaFilialRepository: UsuarioEmpresaFilialRepository,
@@ -28,13 +37,17 @@ export class EmpresaService {
     if (!isValidCnpjCpf(dto.cnpj_cpf)) {
       throw new BadRequestException('CNPJ/CPF em formato inválido.');
     }
-    const cnpjNorm = normalizeCnpjCpf(dto.cnpj_cpf);
 
-    const exists = await this.empresaRepo.findOne({
+    // Busca por duplicidade usando valor normalizado (sem máscara)
+    const cnpjNorm = normalizeCnpjCpf(dto.cnpj_cpf);
+    const empresas = await this.empresaRepo.find({
       cliente_id: dto.cliente_id,
-      cnpj_cpf: cnpjNorm,
       ativo: true,
     });
+
+    const exists = empresas.find(
+      (e) => normalizeCnpjCpf(e.cnpj_cpf) === cnpjNorm,
+    );
 
     if (exists) {
       throw new BadRequestException(
@@ -42,16 +55,19 @@ export class EmpresaService {
       );
     }
 
-    const entity = this.empresaRepo.create({ ...dto, cnpj_cpf: cnpjNorm });
+    // Salva COM a máscara original
+    const entity = this.empresaRepo.create(dto);
     await this.empresaRepo.persistAndFlush(entity);
     return entity;
   }
 
-  async createFilial(dto: CreateFilialDto): Promise<Empresa> {
+  async createFilial(
+    dto: CreateFilialDto,
+    usuarioId?: string,
+  ): Promise<CreateFilialResult> {
     if (!isValidCnpjCpf(dto.cnpj_cpf)) {
       throw new BadRequestException('CNPJ/CPF em formato inválido.');
     }
-    const cnpjNorm = normalizeCnpjCpf(dto.cnpj_cpf);
 
     const sede = await this.empresaRepo.findOne({
       id: dto.empresa_id,
@@ -59,29 +75,59 @@ export class EmpresaService {
     });
     if (!sede) throw new NotFoundException('Sede não encontrada.');
 
-    if (sede.cnpj_cpf === cnpjNorm) {
+    // Compara usando valor normalizado (sem máscara)
+    const cnpjNorm = normalizeCnpjCpf(dto.cnpj_cpf);
+    const sedeCnpjNorm = normalizeCnpjCpf(sede.cnpj_cpf);
+
+    if (sedeCnpjNorm === cnpjNorm) {
       throw new BadRequestException(
         'Filial não pode ter o mesmo CNPJ/CPF da sede.',
       );
     }
 
-    const exists = await this.empresaRepo.findOne({
-      cnpj_cpf: cnpjNorm,
-      ativo: true,
-    });
+    // Busca todas empresas ativas e compara normalizado
+    const empresas = await this.empresaRepo.find({ ativo: true });
+    const exists = empresas.find(
+      (e) => normalizeCnpjCpf(e.cnpj_cpf) === cnpjNorm,
+    );
+
     if (exists) {
       throw new BadRequestException(
         'Já existe empresa/filial com esse CNPJ/CPF.',
       );
     }
 
-    const entity = this.empresaRepo.create({
-      ...dto,
-      cnpj_cpf: cnpjNorm,
-      sede,
+    // Extrai contato do DTO (se existir)
+    const { contato: contatoDto, ...filialData } = dto;
+
+    // Executa em transação
+    return await this.em.transactional(async (em) => {
+      // 1. Cria a filial
+      const filial = em.create(Empresa, {
+        ...filialData,
+        sede,
+      });
+      em.persist(filial);
+
+      // 2. Cria o contato (se fornecido)
+      let contato: Contato | undefined;
+      if (contatoDto) {
+        contato = em.create(Contato, {
+          nome: contatoDto.nome,
+          email: contatoDto.email,
+          telefone: contatoDto.telefone || '',
+          celular: contatoDto.celular || '',
+          funcao: contatoDto.funcao || '',
+          filial,
+          cliente: usuarioId ? em.getReference(Usuario, usuarioId) : undefined,
+        });
+        em.persist(contato);
+      }
+
+      await em.flush();
+
+      return { filial, contato };
     });
-    await this.empresaRepo.persistAndFlush(entity);
-    return entity;
   }
 
   async findAllByCliente(cliente_id: string): Promise<Empresa[]> {
@@ -135,10 +181,12 @@ export class EmpresaService {
   }
 
   async findByDocument(cnpj: string): Promise<Empresa> {
-    const empresa = await this.empresaRepo.findOne({
-      cnpj_cpf: cnpj,
-      ativo: true,
-    });
+    // Busca normalizando para encontrar independente da formatação
+    const cnpjNorm = normalizeCnpjCpf(cnpj);
+    const empresas = await this.empresaRepo.find({ ativo: true });
+    const empresa = empresas.find(
+      (e) => normalizeCnpjCpf(e.cnpj_cpf) === cnpjNorm,
+    );
     if (!empresa) throw new NotFoundException('Empresa não encontrada.');
     return empresa;
   }
@@ -172,19 +220,26 @@ export class EmpresaService {
       if (!isValidCnpjCpf(dto.cnpj_cpf)) {
         throw new BadRequestException('CNPJ/CPF em formato inválido.');
       }
-      dto.cnpj_cpf = normalizeCnpjCpf(dto.cnpj_cpf);
 
-      const exists = await this.empresaRepo.findOne({
-        cliente_id: dto.cliente_id ?? empresa.cliente_id,
-        cnpj_cpf: dto.cnpj_cpf,
+      // Verifica duplicidade usando valor normalizado
+      const cnpjNorm = normalizeCnpjCpf(dto.cnpj_cpf);
+      const clienteId = dto.cliente_id ?? empresa.cliente_id;
+      const empresas = await this.empresaRepo.find({
+        cliente_id: clienteId,
         id: { $ne: id },
         ativo: true,
       });
+
+      const exists = empresas.find(
+        (e) => normalizeCnpjCpf(e.cnpj_cpf) === cnpjNorm,
+      );
+
       if (exists) {
         throw new BadRequestException(
           'Outro registro com esse CNPJ/CPF já existe.',
         );
       }
+      // Mantém a máscara original no dto (não normaliza)
     }
 
     this.empresaRepo.assign(empresa, dto);
@@ -195,29 +250,10 @@ export class EmpresaService {
   async softDelete(id: string, user: any): Promise<void> {
     const empresa = await this.findOne(id);
 
-    const filiais = await this.empresaRepo.find({ sede: id, ativo: true });
-
-    if (filiais.length > 0) {
-      const deletadoEm = new Date();
-      for (const filial of filiais) {
-        filial.ativo = false;
-        filial.deletadoEm = deletadoEm;
-
-        await this.auditService.logEntityDeleted(
-          'EMPRESA',
-          filial.id,
-          user.sub || user.id,
-          user.username || user.email,
-          filial.id,
-          {
-            razao_social: filial.razao_social,
-            cnpj_cpf: filial.cnpj_cpf,
-            cliente_id: filial.cliente_id,
-            tipo: 'filial',
-            motivo: 'Exclusão em cascata junto com a sede',
-          },
-        );
-      }
+    if (!empresa.sede) {
+      throw new BadRequestException(
+        'Não é possível excluir uma empresa sede. Apenas filiais podem ser excluídas.',
+      );
     }
 
     empresa.ativo = false;
@@ -234,8 +270,7 @@ export class EmpresaService {
         razao_social: empresa.razao_social,
         cnpj_cpf: empresa.cnpj_cpf,
         cliente_id: empresa.cliente_id,
-        tipo: empresa.sede ? 'filial' : 'sede',
-        filiaisExcluidas: filiais.length,
+        tipo: 'filial',
       },
     );
   }
