@@ -34,6 +34,7 @@ import configuration from './config/configuration';
 import { validateEnv } from './config/env.validation';
 import { RelatorioFluxoCaixaModule } from './relatorio-fluxo-caixa/relatorio-fluxo-caixa.module';
 import { BackupModule } from './backup/backup.module';
+import { OnboardingModule } from './onboarding/onboarding.module';
 import { APP_GUARD } from '@nestjs/core';
 import { CsrfGuard } from './common/guards/csrf.guard';
 
@@ -70,6 +71,7 @@ import { CsrfGuard } from './common/guards/csrf.guard';
     ExtratoBancarioModule,
     RelatorioFluxoCaixaModule,
     BackupModule,
+    OnboardingModule,
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET || 'your-secret-key',
