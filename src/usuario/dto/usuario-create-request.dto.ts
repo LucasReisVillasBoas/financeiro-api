@@ -27,11 +27,15 @@ export class UsuarioCreateRequestDto {
   @MaxLength(100, { message: 'Login deve ter no máximo 100 caracteres' })
   login: string;
 
-  @ApiProperty({ example: '123' })
+  @ApiProperty({ example: 'Senha@123' })
   @IsNotEmpty({ message: 'Senha é obrigatória' })
   @IsString({ message: 'Senha deve ser uma string' })
-  @MinLength(6, { message: 'Senha deve ter no mínimo 6 caracteres' })
+  @MinLength(8, { message: 'Senha deve ter no mínimo 8 caracteres' })
   @MaxLength(100, { message: 'Senha deve ter no máximo 100 caracteres' })
+  @Matches(/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])/, {
+    message:
+      'Senha deve conter pelo menos 1 letra maiúscula, 1 número e 1 caractere especial',
+  })
   senha: string;
 
   @ApiProperty({ example: 'Joao Silva' })

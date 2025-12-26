@@ -53,7 +53,7 @@ export class RolesGuard implements CanActivate {
 
   async getUserRoles(userId: string): Promise<string[]> {
     try {
-      const userRoles = await this.usuarioPerfilService.findByCliente(userId);
+      const userRoles = await this.usuarioPerfilService.findByUsuario(userId);
       return userRoles
         .map((usuarioPerfil) => usuarioPerfil.perfil?.nome)
         .filter(Boolean);

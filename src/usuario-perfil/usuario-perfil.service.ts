@@ -11,14 +11,10 @@ export class UsuarioPerfilService {
     private readonly usuarioPerfilRepository: UsuarioPerfilRepository,
   ) {}
 
-  async findAll(): Promise<UsuarioPerfil[]> {
-    return this.usuarioPerfilRepository.findAll();
-  }
-
-  async findByCliente(clienteId: string): Promise<UsuarioPerfil[]> {
+  async findByUsuario(usuarioId: string): Promise<UsuarioPerfil[]> {
     return this.usuarioPerfilRepository.find(
-      { usuario: { id: clienteId } },
-      { populate: ['perfil'] },
+      { usuario: { id: usuarioId }, ativo: true },
+      { populate: ['perfil', 'empresa'] },
     );
   }
 
