@@ -35,14 +35,35 @@ export class PerfilService {
       throw new NotFoundException('Usuário não encontrado');
     }
 
-    const perfil = this.perfilRepository.create(dto);
-    await this.perfilRepository.flush();
+    let empresa = null;
 
-    const empresaList = await this.empresaService.findAllByCliente(
-      dto.clienteId,
-    );
+    // Se empresaId foi fornecido, usa diretamente
+    if (dto.empresaId) {
+      empresa = await this.empresaService.findOne(dto.empresaId);
+      if (!empresa) {
+        throw new NotFoundException(
+          `Empresa com ID ${dto.empresaId} não encontrada`,
+        );
+      }
+    } else {
+      // Fallback: busca empresas do cliente
+      const empresaList = await this.empresaService.findAllByCliente(
+        dto.clienteId,
+      );
+      empresa = empresaList.at(0);
 
-    const empresa = empresaList.at(0);
+      if (!empresa) {
+        throw new BadRequestException(
+          'Nenhuma empresa encontrada. Forneça o empresaId ou cadastre uma empresa antes de criar o perfil.',
+        );
+      }
+    }
+
+    const perfil = this.perfilRepository.create({
+      clienteId: dto.clienteId,
+      nome: dto.nome,
+      permissoes: dto.permissoes,
+    });
 
     const jaExiste = await this.usuarioPerfilRepository.findOne({
       usuario,
@@ -61,6 +82,7 @@ export class PerfilService {
       ativo: true,
     });
 
+    this.perfilRepository.persist(perfil);
     await this.usuarioPerfilRepository.persistAndFlush(associacao);
 
     return perfil;

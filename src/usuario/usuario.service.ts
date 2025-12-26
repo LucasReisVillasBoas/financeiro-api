@@ -47,18 +47,25 @@ export class UsuarioService {
       ativo: dto.ativo,
     });
     usuario.senha = await this.hashPassword(dto.senha);
-    const usuarioNovo = await this.usuarioRepository.findOne({
-      email: dto.email,
-    });
+
+    // Primeiro persiste o usuário para ter o ID
+    await this.usuarioRepository.persistAndFlush(usuario);
 
     if (dto.cidade) {
-      const cidade = await this.cidadeService.findByCodigoIbge(
-        dto.cidade.codigoIbge,
-        usuarioNovo.id,
-      );
+      let cidade = null;
+
+      // Tenta encontrar por codigoIbge se fornecido
+      if (dto.cidade.codigoIbge) {
+        cidade = await this.cidadeService.findByCodigoIbge(
+          dto.cidade.codigoIbge,
+          usuario.id,
+        );
+      }
+
       if (!cidade) {
+        // Cria a cidade se não existir
         const novaCidade = await this.cidadeService.create({
-          clienteId: usuarioNovo.id,
+          clienteId: usuario.id,
           nome: dto.cidade.nome,
           uf: dto.cidade.uf,
           codigoBacen: dto.cidade.codigoBacen,
@@ -68,9 +75,9 @@ export class UsuarioService {
       } else {
         usuario.cidade = cidade;
       }
-    }
 
-    await this.usuarioRepository.persistAndFlush(usuario);
+      await this.usuarioRepository.flush();
+    }
 
     if (dto.contatos && dto.contatos.length > 0) {
       await this.associarContatos(usuario.id, dto.contatos);
@@ -85,24 +92,70 @@ export class UsuarioService {
       throw new NotFoundException('Usuário não encontrado');
     }
 
-    const { cidadeId, contatoIds, senha, ...dadosBasicos } = dto;
+    const { cidadeId, cidade, contatoIds, senha, ...dadosBasicos } = dto;
     Object.assign(usuario, dadosBasicos);
 
     if (senha) {
       usuario.senha = await this.hashPassword(senha);
     }
 
-    if (cidadeId !== undefined) {
+    // Tratamento de cidade
+    if (cidadeId !== undefined || cidade !== undefined) {
       if (cidadeId === null) {
+        // Remove a cidade do usuário
         usuario.cidade = undefined;
-      } else {
-        const cidade = await this.cidadeService.findOne(cidadeId, usuario.id);
-        if (!cidade) {
+      } else if (cidadeId) {
+        // Tenta encontrar a cidade pelo ID
+        let cidadeEncontrada = null;
+        try {
+          cidadeEncontrada = await this.cidadeService.findOne(
+            cidadeId,
+            usuario.id,
+          );
+        } catch (error) {
+          // Cidade não encontrada - será criada se houver dados
+        }
+
+        if (cidadeEncontrada) {
+          usuario.cidade = cidadeEncontrada;
+        } else if (cidade) {
+          // Cidade não existe, mas temos dados para criar
+          const novaCidade = await this.cidadeService.create({
+            clienteId: usuario.id,
+            nome: cidade.nome,
+            uf: cidade.uf,
+            codigoBacen: cidade.codigoBacen,
+            codigoIbge: cidade.codigoIbge,
+          });
+          usuario.cidade = novaCidade;
+        } else {
           throw new NotFoundException(
-            `Cidade com ID ${cidadeId} não encontrada`,
+            `Cidade com ID ${cidadeId} não encontrada. Forneça os dados da cidade para criá-la.`,
           );
         }
-        usuario.cidade = cidade;
+      } else if (cidade) {
+        // Apenas dados da cidade fornecidos (sem ID) - tenta encontrar por codigoIbge ou cria nova
+        let cidadeEncontrada = null;
+
+        if (cidade.codigoIbge) {
+          cidadeEncontrada = await this.cidadeService.findByCodigoIbge(
+            cidade.codigoIbge,
+            usuario.id,
+          );
+        }
+
+        if (cidadeEncontrada) {
+          usuario.cidade = cidadeEncontrada;
+        } else {
+          const novaCidade = await this.cidadeService.create({
+            clienteId: usuario.id,
+            nome: cidade.nome,
+            uf: cidade.uf,
+            codigoBacen: cidade.codigoBacen,
+            codigoIbge: cidade.codigoIbge,
+          });
+          usuario.cidade = novaCidade;
+        }
       }
     }
 
