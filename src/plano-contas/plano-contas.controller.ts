@@ -26,12 +26,12 @@ import { FilterPlanoContasDto } from './dto/filter-plano-contas.dto';
 import { ToggleStatusDto } from './dto/toggle-status.dto';
 import { ImportPlanoContasDto } from './dto/import-plano-contas.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { RolesGuard } from '../auth/roles.guard';
-import { Roles } from '../decorators/roles.decorator';
+import { PermissionsGuard } from '../auth/permissions.guard';
+import { Permissions } from '../decorators/permissions.decorator';
 import { CurrentUser } from '../decorators/current-user.decorator';
 
 @Controller('plano-contas')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 export class PlanoContasController {
   constructor(
     private readonly planoContasService: PlanoContasService,
@@ -40,7 +40,7 @@ export class PlanoContasController {
   ) {}
 
   @Post()
-  @Roles('Administrador', 'Financeiro', 'Contador')
+  @Permissions({ module: 'financeiro', action: 'criar' })
   async create(
     @Body() createPlanoContasDto: CreatePlanoContasDto,
     @CurrentUser() user: any,
@@ -60,7 +60,7 @@ export class PlanoContasController {
   }
 
   @Get()
-  @Roles('Administrador', 'Financeiro', 'Contador', 'Visualizador')
+  @Permissions({ module: 'financeiro', action: 'listar' }, { module: 'financeiro', action: 'visualizar' })
   async findAll() {
     const contas = await this.planoContasService.findAll();
     return {
@@ -71,7 +71,7 @@ export class PlanoContasController {
   }
 
   @Get('empresa/:empresaId')
-  @Roles('Administrador', 'Financeiro', 'Contador', 'Visualizador')
+  @Permissions({ module: 'financeiro', action: 'listar' }, { module: 'financeiro', action: 'visualizar' })
   async findByEmpresa(@Param('empresaId') empresaId: string) {
     const contas = await this.planoContasService.findByEmpresa(empresaId);
     return {
@@ -82,7 +82,7 @@ export class PlanoContasController {
   }
 
   @Get('empresa/:empresaId/tipo/:tipo')
-  @Roles('Administrador', 'Financeiro', 'Contador', 'Visualizador')
+  @Permissions({ module: 'financeiro', action: 'listar' }, { module: 'financeiro', action: 'visualizar' })
   async findByTipo(
     @Param('empresaId') empresaId: string,
     @Param('tipo') tipo: string,
@@ -96,7 +96,7 @@ export class PlanoContasController {
   }
 
   @Get('empresa/:empresaId/analiticas')
-  @Roles('Administrador', 'Financeiro', 'Contador', 'Visualizador')
+  @Permissions({ module: 'financeiro', action: 'listar' }, { module: 'financeiro', action: 'visualizar' })
   async findAnaliticas(@Param('empresaId') empresaId: string) {
     const contas = await this.planoContasService.findAnaliticas(empresaId);
     return {
@@ -107,7 +107,7 @@ export class PlanoContasController {
   }
 
   @Get('empresa/:empresaId/analiticas-ativas')
-  @Roles('Administrador', 'Financeiro', 'Contador', 'Visualizador')
+  @Permissions({ module: 'financeiro', action: 'listar' }, { module: 'financeiro', action: 'visualizar' })
   async findAnaliticasAtivas(@Param('empresaId') empresaId: string) {
     const contas =
       await this.planoContasService.findAnaliticasAtivas(empresaId);
@@ -119,7 +119,7 @@ export class PlanoContasController {
   }
 
   @Get('empresa/:empresaId/tree')
-  @Roles('Administrador', 'Financeiro', 'Contador', 'Visualizador')
+  @Permissions({ module: 'financeiro', action: 'listar' }, { module: 'financeiro', action: 'visualizar' })
   async findTree(@Param('empresaId') empresaId: string) {
     const tree = await this.planoContasService.findTree(empresaId);
     return {
@@ -130,7 +130,7 @@ export class PlanoContasController {
   }
 
   @Get('empresa/:empresaId/search')
-  @Roles('Administrador', 'Financeiro', 'Contador', 'Visualizador')
+  @Permissions({ module: 'financeiro', action: 'listar' }, { module: 'financeiro', action: 'visualizar' })
   async search(
     @Param('empresaId') empresaId: string,
     @Query('term') term: string,
@@ -144,7 +144,7 @@ export class PlanoContasController {
   }
 
   @Get('empresa/:empresaId/export/csv')
-  @Roles('Administrador', 'Financeiro', 'Contador')
+  @Permissions({ module: 'financeiro', action: 'editar' })
   @Header('Content-Type', 'text/csv')
   @Header('Content-Disposition', 'attachment; filename="plano-contas.csv"')
   async exportCSV(@Param('empresaId') empresaId: string, @Res() res: Response) {
@@ -154,7 +154,7 @@ export class PlanoContasController {
   }
 
   @Get('empresa/:empresaId/export/excel')
-  @Roles('Administrador', 'Financeiro', 'Contador')
+  @Permissions({ module: 'financeiro', action: 'editar' })
   async exportExcel(@Param('empresaId') empresaId: string) {
     const contas = await this.planoContasService.findByEmpresa(empresaId);
     const data = this.exportService.generateExcelData(contas);
@@ -166,7 +166,7 @@ export class PlanoContasController {
   }
 
   @Post('empresa/:empresaId/import/csv')
-  @Roles('Administrador', 'Financeiro', 'Contador')
+  @Permissions({ module: 'financeiro', action: 'editar' })
   @UseInterceptors(FileInterceptor('file'))
   async importCSV(
     @Param('empresaId') empresaId: string,
@@ -203,7 +203,7 @@ export class PlanoContasController {
   }
 
   @Post('empresa/:empresaId/import/validate')
-  @Roles('Administrador', 'Financeiro', 'Contador')
+  @Permissions({ module: 'financeiro', action: 'editar' })
   async validateImport(
     @Param('empresaId') empresaId: string,
     @Body() dto: ImportPlanoContasDto,
@@ -223,7 +223,7 @@ export class PlanoContasController {
   }
 
   @Post('empresa/:empresaId/import')
-  @Roles('Administrador', 'Financeiro', 'Contador')
+  @Permissions({ module: 'financeiro', action: 'editar' })
   async importData(
     @Param('empresaId') empresaId: string,
     @Body() dto: ImportPlanoContasDto,
@@ -241,7 +241,7 @@ export class PlanoContasController {
   }
 
   @Get(':id/filhos')
-  @Roles('Administrador', 'Financeiro', 'Contador', 'Visualizador')
+  @Permissions({ module: 'financeiro', action: 'listar' }, { module: 'financeiro', action: 'visualizar' })
   async findChildren(@Param('id') id: string) {
     const children = await this.planoContasService.findChildren(id);
     return {
@@ -252,7 +252,7 @@ export class PlanoContasController {
   }
 
   @Get(':id/breadcrumb')
-  @Roles('Administrador', 'Financeiro', 'Contador', 'Visualizador')
+  @Permissions({ module: 'financeiro', action: 'listar' }, { module: 'financeiro', action: 'visualizar' })
   async getBreadcrumb(@Param('id') id: string) {
     const breadcrumb = await this.planoContasService.getBreadcrumb(id);
     return {
@@ -263,7 +263,7 @@ export class PlanoContasController {
   }
 
   @Get(':id')
-  @Roles('Administrador', 'Financeiro', 'Contador', 'Visualizador')
+  @Permissions({ module: 'financeiro', action: 'listar' }, { module: 'financeiro', action: 'visualizar' })
   async findOne(@Param('id') id: string) {
     const conta = await this.planoContasService.findOne(id);
     return {
@@ -274,7 +274,7 @@ export class PlanoContasController {
   }
 
   @Patch(':id')
-  @Roles('Administrador', 'Financeiro', 'Contador')
+  @Permissions({ module: 'financeiro', action: 'editar' })
   async update(
     @Param('id') id: string,
     @Body() updatePlanoContasDto: UpdatePlanoContasDto,
@@ -296,7 +296,7 @@ export class PlanoContasController {
   }
 
   @Patch(':id/toggle-status')
-  @Roles('Administrador', 'Financeiro', 'Contador')
+  @Permissions({ module: 'financeiro', action: 'editar' })
   async toggleStatus(
     @Param('id') id: string,
     @Body() dto: ToggleStatusDto,
@@ -318,7 +318,7 @@ export class PlanoContasController {
   }
 
   @Get(':id/uso')
-  @Roles('Administrador', 'Financeiro', 'Contador')
+  @Permissions({ module: 'financeiro', action: 'editar' })
   async verificarUso(@Param('id') id: string) {
     const uso = await this.planoContasService.verificarContaEmUso(id);
     return {
@@ -329,7 +329,7 @@ export class PlanoContasController {
   }
 
   @Post(':id/substituir')
-  @Roles('Administrador', 'Financeiro', 'Contador')
+  @Permissions({ module: 'financeiro', action: 'editar' })
   async substituirConta(
     @Param('id') contaOrigemId: string,
     @Body('contaDestinoId') contaDestinoId: string,
@@ -354,7 +354,7 @@ export class PlanoContasController {
   }
 
   @Delete(':id')
-  @Roles('Administrador')
+  @Permissions({ module: 'financeiro', action: 'excluir' })
   async remove(
     @Param('id') id: string,
     @CurrentUser() user: any,

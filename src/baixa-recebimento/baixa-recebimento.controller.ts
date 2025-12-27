@@ -8,12 +8,17 @@ import {
   HttpCode,
   HttpStatus,
   Req,
+  UseGuards,
 } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { PermissionsGuard } from '../auth/permissions.guard';
+import { Permissions } from '../decorators/permissions.decorator';
 import { BaixaRecebimentoService } from './baixa-recebimento.service';
 import { CreateBaixaRecebimentoDto } from './dto/create-baixa-recebimento.dto';
 import { Request } from 'express';
 
 @Controller('baixas-recebimento')
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 export class BaixaRecebimentoController {
   constructor(
     private readonly baixaRecebimentoService: BaixaRecebimentoService,
@@ -21,6 +26,7 @@ export class BaixaRecebimentoController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
+  @Permissions({ module: 'financeiro', action: 'criar' })
   async create(
     @Body() dto: CreateBaixaRecebimentoDto,
     @Req() req: Request,
@@ -43,6 +49,7 @@ export class BaixaRecebimentoController {
   }
 
   @Get()
+  @Permissions({ module: 'financeiro', action: 'listar' }, { module: 'financeiro', action: 'visualizar' })
   async findAll() {
     const baixas = await this.baixaRecebimentoService.findAll();
     return {
@@ -53,6 +60,7 @@ export class BaixaRecebimentoController {
   }
 
   @Get('conta-receber/:contaReceberId')
+  @Permissions({ module: 'financeiro', action: 'listar' }, { module: 'financeiro', action: 'visualizar' })
   async findByContaReceber(@Param('contaReceberId') contaReceberId: string) {
     const baixas = await this.baixaRecebimentoService.findByContaReceber(
       contaReceberId,
@@ -65,6 +73,7 @@ export class BaixaRecebimentoController {
   }
 
   @Get(':id')
+  @Permissions({ module: 'financeiro', action: 'visualizar' })
   async findOne(@Param('id') id: string) {
     const baixa = await this.baixaRecebimentoService.findOne(id);
     return {
@@ -75,6 +84,7 @@ export class BaixaRecebimentoController {
   }
 
   @Get(':id/movimentacao')
+  @Permissions({ module: 'financeiro', action: 'visualizar' })
   async findMovimentacao(@Param('id') id: string) {
     const movimentacao = await this.baixaRecebimentoService.findMovimentacaoBancaria(id);
     return {
@@ -88,6 +98,7 @@ export class BaixaRecebimentoController {
 
   @Delete(':id/estornar')
   @HttpCode(HttpStatus.OK)
+  @Permissions({ module: 'financeiro', action: 'editar' })
   async estornar(@Param('id') id: string, @Req() req: Request) {
     const user = (req as any).user;
     const userId = user?.id || 'system';

@@ -27,7 +27,8 @@ export class AuthMiddleware implements NestMiddleware {
       try {
         const payload = await this.jwtService.verifyAsync(token);
 
-        const user = await this.usuarioService.getById(payload.sub);
+        // Usa findById para evitar exception quando usuario nao existe
+        const user = await this.usuarioService.findById(payload.sub);
 
         if (!user) {
           return res.status(401).json({ message: 'Unauthorized' });

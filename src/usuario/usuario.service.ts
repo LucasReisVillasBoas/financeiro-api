@@ -267,6 +267,14 @@ export class UsuarioService {
     return usuario;
   }
 
+  /**
+   * Busca usuario por ID sem lancar excecao
+   * Retorna null se nao encontrar
+   */
+  async findById(id: string): Promise<Usuario | null> {
+    return this.usuarioRepository.findOne({ id, ativo: true });
+  }
+
   async exists(email: string): Promise<boolean> {
     const usuario = await this.usuarioRepository.findOne({
       email,

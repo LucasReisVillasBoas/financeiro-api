@@ -9,10 +9,11 @@ import {
 import { RelatorioFluxoCaixaService } from './relatorio-fluxo-caixa.service';
 import { FluxoCaixaFiltrosDto } from './dto/fluxo-caixa.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { RolesGuard } from '../auth/roles.guard';
+import { PermissionsGuard } from '../auth/permissions.guard';
+import { Permissions } from '../decorators/permissions.decorator';
 
 @Controller('relatorios/fluxo-caixa')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 export class RelatorioFluxoCaixaController {
   constructor(
     private readonly relatorioFluxoCaixaService: RelatorioFluxoCaixaService,
@@ -24,6 +25,7 @@ export class RelatorioFluxoCaixaController {
    */
   @Get()
   @HttpCode(HttpStatus.OK)
+  @Permissions({ module: 'relatorios', action: 'visualizar' })
   async gerarRelatorio(@Query() filtros: FluxoCaixaFiltrosDto) {
     const resultado =
       await this.relatorioFluxoCaixaService.gerarRelatorio(filtros);

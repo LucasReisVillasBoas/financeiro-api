@@ -1,10 +1,14 @@
-import { Controller, Get, Query, Res, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Query, Res, HttpStatus, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { PermissionsGuard } from '../auth/permissions.guard';
+import { Permissions } from '../decorators/permissions.decorator';
 import { RelatorioContasPagarService } from './relatorio-contas-pagar.service';
 import { ExportacaoContasPagarService } from './exportacao-contas-pagar.service';
 import { FiltroRelatorioContasPagarDto } from './dto/filtro-relatorio-contas-pagar.dto';
 
 @Controller('relatorios/contas-pagar')
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 export class RelatorioContasPagarController {
   constructor(
     private readonly relatorioService: RelatorioContasPagarService,
@@ -12,6 +16,7 @@ export class RelatorioContasPagarController {
   ) {}
 
   @Get()
+  @Permissions({ module: 'relatorios', action: 'visualizar' })
   async gerarRelatorio(@Query() filtro: FiltroRelatorioContasPagarDto) {
     const relatorio = await this.relatorioService.gerarRelatorio(filtro);
 
@@ -23,6 +28,7 @@ export class RelatorioContasPagarController {
   }
 
   @Get('exportar/csv')
+  @Permissions({ module: 'relatorios', action: 'exportar' })
   async exportarCSV(
     @Query() filtro: FiltroRelatorioContasPagarDto,
     @Res() res: Response,
@@ -43,6 +49,7 @@ export class RelatorioContasPagarController {
   }
 
   @Get('exportar/excel')
+  @Permissions({ module: 'relatorios', action: 'exportar' })
   async exportarExcel(
     @Query() filtro: FiltroRelatorioContasPagarDto,
     @Res() res: Response,
@@ -66,6 +73,7 @@ export class RelatorioContasPagarController {
   }
 
   @Get('exportar/pdf')
+  @Permissions({ module: 'relatorios', action: 'exportar' })
   async exportarPDF(
     @Query() filtro: FiltroRelatorioContasPagarDto,
     @Res() res: Response,

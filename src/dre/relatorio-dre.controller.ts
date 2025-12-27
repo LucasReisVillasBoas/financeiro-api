@@ -9,10 +9,11 @@ import {
 import { DreService } from './dre.service';
 import { RelatorioDreFiltrosDto } from './dto/relatorio-dre.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { RolesGuard } from '../auth/roles.guard';
+import { PermissionsGuard } from '../auth/permissions.guard';
+import { Permissions } from '../decorators/permissions.decorator';
 
 @Controller('relatorios/dre')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 export class RelatorioDreController {
   constructor(private readonly dreService: DreService) {}
 
@@ -22,6 +23,7 @@ export class RelatorioDreController {
    */
   @Get()
   @HttpCode(HttpStatus.OK)
+  @Permissions({ module: 'relatorios', action: 'visualizar' })
   async gerarRelatorio(@Query() filtros: RelatorioDreFiltrosDto) {
     const resultado = await this.dreService.gerarRelatorioDre(filtros);
     return {

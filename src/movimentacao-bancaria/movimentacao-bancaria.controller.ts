@@ -17,20 +17,20 @@ import { CreateMovimentacoesBancariasDto } from './dto/create-movimentacao-banca
 import { UpdateMovimentacoesBancariasDto } from './dto/update-movimentacao-bancaria.dto';
 import { ConciliarMovimentacoesDto } from './dto/conciliar-movimentacoes.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { RolesGuard } from '../auth/roles.guard';
+import { PermissionsGuard } from '../auth/permissions.guard';
+import { Permissions } from '../decorators/permissions.decorator';
 import { EmpresaGuard } from '../auth/empresa.guard';
-import { Roles } from '../decorators/roles.decorator';
 import { CurrentUser } from '../decorators/current-user.decorator';
 
 @Controller('movimentacoes-bancarias')
-@UseGuards(JwtAuthGuard, RolesGuard, EmpresaGuard)
+@UseGuards(JwtAuthGuard, PermissionsGuard, EmpresaGuard)
 export class MovimentacoesBancariasController {
   constructor(
     private readonly movimentacaoService: MovimentacoesBancariasService,
   ) {}
 
   @Post()
-  @Roles('Administrador', 'Financeiro')
+  @Permissions({ module: 'financeiro', action: 'criar' })
   @HttpCode(HttpStatus.CREATED)
   async create(
     @Body() dto: CreateMovimentacoesBancariasDto,
@@ -49,6 +49,7 @@ export class MovimentacoesBancariasController {
   }
 
   @Get()
+  @Permissions({ module: 'financeiro', action: 'listar' }, { module: 'financeiro', action: 'visualizar' })
   async findAll() {
     const movimentacoes = await this.movimentacaoService.findAll();
 
@@ -102,6 +103,7 @@ export class MovimentacoesBancariasController {
   }
 
   @Get('periodo')
+  @Permissions({ module: 'financeiro', action: 'listar' }, { module: 'financeiro', action: 'visualizar' })
   async findByPeriodo(
     @Query('dataInicio') dataInicio: string,
     @Query('dataFim') dataFim: string,
@@ -161,6 +163,7 @@ export class MovimentacoesBancariasController {
   }
 
   @Get('conta/:contaId')
+  @Permissions({ module: 'financeiro', action: 'listar' }, { module: 'financeiro', action: 'visualizar' })
   async findByConta(@Param('contaId') contaId: string) {
     const movimentacoes = await this.movimentacaoService.findByConta(contaId);
 
@@ -214,6 +217,7 @@ export class MovimentacoesBancariasController {
   }
 
   @Get(':id')
+  @Permissions({ module: 'financeiro', action: 'visualizar' })
   async findOne(@Param('id') id: string) {
     const movimentacao = await this.movimentacaoService.findOne(id);
 
@@ -245,7 +249,7 @@ export class MovimentacoesBancariasController {
   }
 
   @Put(':id')
-  @Roles('ADMIN', 'FINANCEIRO', 'TESOUREIRO')
+  @Permissions({ module: 'financeiro', action: 'editar' })
   async update(
     @Param('id') id: string,
     @Body() dto: UpdateMovimentacoesBancariasDto,
@@ -259,7 +263,7 @@ export class MovimentacoesBancariasController {
   }
 
   @Delete(':id')
-  @Roles('ADMIN', 'FINANCEIRO')
+  @Permissions({ module: 'financeiro', action: 'excluir' })
   @HttpCode(HttpStatus.OK)
   async delete(@Param('id') id: string) {
     await this.movimentacaoService.softDelete(id);
@@ -270,7 +274,7 @@ export class MovimentacoesBancariasController {
   }
 
   @Post('conciliar')
-  @Roles('Administrador', 'Financeiro')
+  @Permissions({ module: 'financeiro', action: 'editar' })
   @HttpCode(HttpStatus.OK)
   async conciliar(
     @Body() dto: ConciliarMovimentacoesDto,
@@ -289,7 +293,7 @@ export class MovimentacoesBancariasController {
   }
 
   @Post('desconciliar')
-  @Roles('Administrador', 'Financeiro')
+  @Permissions({ module: 'financeiro', action: 'editar' })
   @HttpCode(HttpStatus.OK)
   async desconciliar(
     @Body() dto: ConciliarMovimentacoesDto,

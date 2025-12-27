@@ -7,7 +7,6 @@ import {
   Put,
   Delete,
   UseGuards,
-  SetMetadata,
   HttpStatus,
 } from '@nestjs/common';
 import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
@@ -16,8 +15,10 @@ import { CreateEmpresaDto } from './dto/create-empresa.dto';
 import { UpdateEmpresaDto } from './dto/update-empresa.dto';
 import { CreateFilialDto } from './dto/create-filial.dto';
 import { UpdateFilialDto } from './dto/update-filial.dto';
-import { RolesGuard } from '../auth/roles.guard';
+import { PermissionsGuard } from '../auth/permissions.guard';
+import { Permissions } from '../decorators/permissions.decorator';
 import { EmpresaGuard } from '../auth/empresa.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CurrentClienteIds } from '../auth/decorators/current-empresa.decorator';
 import { CurrentUser } from '../decorators/current-user.decorator';
 import {
@@ -39,8 +40,8 @@ export class EmpresaController {
   }
 
   @Get('cliente/:clienteId')
-  @UseGuards(RolesGuard, EmpresaGuard)
-  @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
+  @UseGuards(JwtAuthGuard, PermissionsGuard, EmpresaGuard)
+  @Permissions({ module: 'empresas', action: 'listar' }, { module: 'empresas', action: 'visualizar' })
   @ApiOperation({ summary: 'Listar empresas por cliente' })
   @ApiResponse({ status: HttpStatus.OK, description: 'Empresas encontradas' })
   async findByCliente(
@@ -66,8 +67,8 @@ export class EmpresaController {
   }
 
   @Get(':id')
-  @UseGuards(RolesGuard, EmpresaGuard)
-  @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
+  @UseGuards(JwtAuthGuard, PermissionsGuard, EmpresaGuard)
+  @Permissions({ module: 'empresas', action: 'listar' }, { module: 'empresas', action: 'visualizar' })
   @ApiOperation({ summary: 'Obter empresa por id' })
   @ApiResponse({ status: HttpStatus.OK, description: 'Empresa encontrada' })
   async findOne(@Param('id') id: string) {
@@ -80,8 +81,8 @@ export class EmpresaController {
   }
 
   @Get('/document/:cnpj')
-  @UseGuards(RolesGuard, EmpresaGuard)
-  @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
+  @UseGuards(JwtAuthGuard, PermissionsGuard, EmpresaGuard)
+  @Permissions({ module: 'empresas', action: 'listar' }, { module: 'empresas', action: 'visualizar' })
   @ApiOperation({ summary: 'Obter empresa por cnpj' })
   @ApiResponse({ status: HttpStatus.OK, description: 'Empresa encontrada' })
   async findByDocument(@Param('cnpj') cnpj: string) {
@@ -94,8 +95,8 @@ export class EmpresaController {
   }
 
   @Put(':id')
-  @UseGuards(RolesGuard)
-  @SetMetadata('roles', ['Administrador', 'Editor'])
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions({ module: 'empresas', action: 'editar' })
   @ApiOperation({ summary: 'Atualizar empresa' })
   @ApiResponse({ status: HttpStatus.OK, description: 'Empresa atualizada' })
   async update(@Param('id') id: string, @Body() dto: UpdateEmpresaDto) {
@@ -108,8 +109,8 @@ export class EmpresaController {
   }
 
   @Delete(':id')
-  @UseGuards(RolesGuard, EmpresaGuard)
-  @SetMetadata('roles', ['Administrador'])
+  @UseGuards(JwtAuthGuard, PermissionsGuard, EmpresaGuard)
+  @Permissions({ module: 'empresas', action: 'excluir' })
   @ApiOperation({ summary: 'Remover (soft) empresa' })
   @ApiResponse({ status: HttpStatus.OK, description: 'Empresa removida' })
   async remove(@Param('id') id: string, @CurrentUser() user: any) {
@@ -118,7 +119,8 @@ export class EmpresaController {
   }
 
   @Post(':id/filiais')
-  @SetMetadata('roles', ['Administrador'])
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions({ module: 'empresas', action: 'criar' })
   @ApiOperation({ summary: 'Criar filial para empresa (com contato opcional)' })
   @ApiResponse({ status: 201, description: 'Filial criada' })
   async createFilial(
@@ -139,8 +141,8 @@ export class EmpresaController {
   }
 
   @Get(':id/filiais')
-  @UseGuards(RolesGuard, EmpresaGuard)
-  @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
+  @UseGuards(JwtAuthGuard, PermissionsGuard, EmpresaGuard)
+  @Permissions({ module: 'empresas', action: 'listar' }, { module: 'empresas', action: 'visualizar' })
   @ApiOperation({ summary: 'Listar filiais por empresa' })
   @ApiResponse({ status: HttpStatus.OK, description: 'Filiais encontradas' })
   async listFiliais(@Param('id') id: string) {
@@ -153,8 +155,8 @@ export class EmpresaController {
   }
 
   @Put('filiais/:filialId')
-  @UseGuards(RolesGuard, EmpresaGuard)
-  @SetMetadata('roles', ['Administrador', 'Editor'])
+  @UseGuards(JwtAuthGuard, PermissionsGuard, EmpresaGuard)
+  @Permissions({ module: 'empresas', action: 'editar' })
   @ApiOperation({ summary: 'Atualizar filial' })
   @ApiResponse({ status: HttpStatus.OK, description: 'Filial atualizada' })
   async updateFilial(
@@ -170,8 +172,8 @@ export class EmpresaController {
   }
 
   @Delete('filiais/:filialId')
-  @UseGuards(RolesGuard, EmpresaGuard)
-  @SetMetadata('roles', ['Administrador'])
+  @UseGuards(JwtAuthGuard, PermissionsGuard, EmpresaGuard)
+  @Permissions({ module: 'empresas', action: 'excluir' })
   @ApiOperation({ summary: 'Remover (soft) filial' })
   @ApiResponse({ status: HttpStatus.OK, description: 'Filial removida' })
   async removeFilial(

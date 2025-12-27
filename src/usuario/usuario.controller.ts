@@ -7,6 +7,7 @@ import {
   Post,
   Patch,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UsuarioCreateRequestDto } from './dto/usuario-create-request.dto';
@@ -17,8 +18,9 @@ import { BaseResponse } from '../dto/base-response.dto';
 import { UsuarioEmpresaFilial } from '../entities/usuario-empresa-filial/usuario-empresa-filial.entity';
 import { AssociarEmpresaFilialRequestDto } from './dto/associar-empresa-filial-request.dto';
 
-import { RolesGuard } from 'src/auth/roles.guard';
-import { SetMetadata, UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { PermissionsGuard } from 'src/auth/permissions.guard';
+import { Permissions } from '../decorators/permissions.decorator';
 import { CurrentCliente } from '../auth/decorators/current-cliente.decorator';
 import {
   sanitizeUserResponse,
@@ -55,8 +57,11 @@ export class UsuarioController {
     description: 'Usuário',
   })
   @Get()
-  @UseGuards(RolesGuard)
-  @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions(
+    { module: 'usuarios', action: 'listar' },
+    { module: 'usuarios', action: 'visualizar' },
+  )
   async getById(
     @CurrentCliente() cliente: string,
   ): Promise<BaseResponse<Usuario>> {
@@ -74,8 +79,11 @@ export class UsuarioController {
     description: 'Usuários',
   })
   @Get('all')
-  @UseGuards(RolesGuard, EmpresaGuard)
-  @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
+  @UseGuards(JwtAuthGuard, PermissionsGuard, EmpresaGuard)
+  @Permissions(
+    { module: 'usuarios', action: 'listar' },
+    { module: 'usuarios', action: 'visualizar' },
+  )
   async getAll(
     @CurrentEmpresaIds() empresaIds: string[],
   ): Promise<BaseResponse<Usuario[]>> {
@@ -93,8 +101,11 @@ export class UsuarioController {
     description: 'Usuário por ID',
   })
   @Get('id/:id')
-  @UseGuards(RolesGuard)
-  @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions(
+    { module: 'usuarios', action: 'listar' },
+    { module: 'usuarios', action: 'visualizar' },
+  )
   async getOne(@Param('id') id: string): Promise<BaseResponse<Usuario>> {
     const usuario = await this.usuarioService.findOne(id);
     return {
@@ -110,8 +121,8 @@ export class UsuarioController {
     description: 'Usuário atualizado',
   })
   @Patch(':id')
-  @UseGuards(RolesGuard)
-  @SetMetadata('roles', ['Administrador'])
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions({ module: 'usuarios', action: 'editar' })
   async updateUsuario(
     @Param('id') id: string,
     @Body() dto: UsuarioUpdateRequestDto,
@@ -130,8 +141,8 @@ export class UsuarioController {
     description: 'Associar usuario a empresa ou filial',
   })
   @Post(':id/empresas')
-  @UseGuards(RolesGuard)
-  @SetMetadata('roles', ['Administrador'])
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions({ module: 'usuarios', action: 'criar' })
   async associarEmpresaOuFilial(
     @Param('id') usuarioId: string,
     @Body() dto: AssociarEmpresaFilialRequestDto,
@@ -155,8 +166,11 @@ export class UsuarioController {
     description: 'Listar usuarios associados a empresa',
   })
   @Get(':id/empresas')
-  @UseGuards(RolesGuard)
-  @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions(
+    { module: 'usuarios', action: 'listar' },
+    { module: 'usuarios', action: 'visualizar' },
+  )
   async listarAssociacoes(
     @Param('id') usuarioId: string,
   ): Promise<BaseResponse<UsuarioEmpresaFilial[]>> {
@@ -169,8 +183,8 @@ export class UsuarioController {
   }
 
   @Delete(':id/empresas/:assocId')
-  @UseGuards(RolesGuard)
-  @SetMetadata('roles', ['Administrador'])
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions({ module: 'usuarios', action: 'excluir' })
   async removerAssociacao(
     @Param('id') usuarioId: string,
     @Param('assocId') assocId: string,
@@ -178,6 +192,19 @@ export class UsuarioController {
     await this.usuarioService.removerAssociacao(usuarioId, assocId);
     return new BaseResponse<void>(
       'Associação removida com sucesso!',
+      HttpStatus.OK,
+    );
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions({ module: 'usuarios', action: 'excluir' })
+  async deleteUsuario(
+    @Param('id') usuarioId: string,
+  ): Promise<BaseResponse<void>> {
+    await this.usuarioService.update(usuarioId, { ativo: false });
+    return new BaseResponse<void>(
+      'Usuário excluido com sucesso!',
       HttpStatus.OK,
     );
   }
