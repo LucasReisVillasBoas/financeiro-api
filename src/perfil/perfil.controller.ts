@@ -7,22 +7,24 @@ import {
   Patch,
   Delete,
   UseGuards,
-  SetMetadata,
   HttpStatus,
 } from '@nestjs/common';
 import { ApiTags, ApiResponse } from '@nestjs/swagger';
 import { PerfilService } from './perfil.service';
 import { CreatePerfilDto } from './dto/create-perfil.dto';
 import { UpdatePerfilDto } from './dto/update-perfil.dto';
-import { RolesGuard } from '../auth/roles.guard';
+import { PermissionsGuard } from '../auth/permissions.guard';
+import { Permissions } from '../decorators/permissions.decorator';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @ApiTags('Perfis')
 @Controller('perfis')
-@UseGuards(RolesGuard)
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 export class PerfilController {
   constructor(private readonly perfilService: PerfilService) {}
 
   @Post()
+  @Permissions({ module: 'usuarios', action: 'criar' })
   @ApiResponse({ status: HttpStatus.CREATED })
   async create(@Body() dto: CreatePerfilDto) {
     const perfil = await this.perfilService.create(dto);
@@ -34,7 +36,7 @@ export class PerfilController {
   }
 
   @Get(':clienteId')
-  @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
+  @Permissions({ module: 'usuarios', action: 'listar' }, { module: 'usuarios', action: 'visualizar' })
   @ApiResponse({ status: HttpStatus.OK })
   async findAll(@Param('clienteId') clienteId: string) {
     const perfis = await this.perfilService.findAll(clienteId);
@@ -46,7 +48,7 @@ export class PerfilController {
   }
 
   @Get(':clienteId/:id')
-  @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
+  @Permissions({ module: 'usuarios', action: 'listar' }, { module: 'usuarios', action: 'visualizar' })
   @ApiResponse({ status: HttpStatus.OK })
   async findOne(
     @Param('clienteId') clienteId: string,
@@ -61,7 +63,7 @@ export class PerfilController {
   }
 
   @Patch(':clienteId/:id')
-  @SetMetadata('roles', ['Administrador', 'Editor'])
+  @Permissions({ module: 'usuarios', action: 'editar' })
   @ApiResponse({ status: HttpStatus.OK })
   async update(
     @Param('clienteId') clienteId: string,
@@ -77,7 +79,7 @@ export class PerfilController {
   }
 
   @Delete(':clienteId/:id')
-  @SetMetadata('roles', ['Administrador'])
+  @Permissions({ module: 'usuarios', action: 'excluir' })
   @ApiResponse({ status: HttpStatus.OK })
   async remove(@Param('clienteId') clienteId: string, @Param('id') id: string) {
     await this.perfilService.softDelete(id, clienteId);

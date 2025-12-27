@@ -10,7 +10,11 @@ import {
   HttpCode,
   HttpStatus,
   Req,
+  UseGuards,
 } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { PermissionsGuard } from '../auth/permissions.guard';
+import { Permissions } from '../decorators/permissions.decorator';
 import { ContasPagarService } from './conta-pagar.service';
 import { CreateContaPagarDto } from './dto/create-conta-pagar.dto';
 import { UpdateContaPagarDto } from './dto/update-conta-pagar.dto';
@@ -20,11 +24,13 @@ import { RegistrarBaixaDto } from './dto/registrar-baixa.dto';
 import { CurrentCliente } from '../auth/decorators/current-cliente.decorator';
 
 @Controller('contas-pagar')
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 export class ContasPagarController {
   constructor(private readonly contaPagarService: ContasPagarService) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
+  @Permissions({ module: 'financeiro', action: 'criar' })
   async create(@Body() dto: CreateContaPagarDto, @Req() req: any) {
     const userId = req.user?.sub;
     const userEmail = req.user?.email || 'desconhecido@system.com';
@@ -38,6 +44,7 @@ export class ContasPagarController {
   }
 
   @Get()
+  @Permissions({ module: 'financeiro', action: 'listar' }, { module: 'financeiro', action: 'visualizar' })
   async findAll() {
     const contas = await this.contaPagarService.findAll();
     return {
@@ -48,6 +55,7 @@ export class ContasPagarController {
   }
 
   @Get('empresa/:empresaId')
+  @Permissions({ module: 'financeiro', action: 'listar' }, { module: 'financeiro', action: 'visualizar' })
   async findByEmpresa(@Param('empresaId') empresaId: string) {
     const contas = await this.contaPagarService.findByEmpresa(empresaId);
     return {
@@ -58,6 +66,7 @@ export class ContasPagarController {
   }
 
   @Get(':id')
+  @Permissions({ module: 'financeiro', action: 'visualizar' })
   async findOne(@Param('id') id: string) {
     const conta = await this.contaPagarService.findOne(id);
     return {
@@ -68,6 +77,7 @@ export class ContasPagarController {
   }
 
   @Put(':id')
+  @Permissions({ module: 'financeiro', action: 'editar' })
   async update(
     @Param('id') id: string,
     @Body() dto: UpdateContaPagarDto,
@@ -85,6 +95,7 @@ export class ContasPagarController {
   }
 
   @Patch(':id/pagar')
+  @Permissions({ module: 'financeiro', action: 'editar' })
   async marcarComoPaga(@Param('id') id: string) {
     const conta = await this.contaPagarService.marcarComoPaga(id);
     return {
@@ -96,6 +107,7 @@ export class ContasPagarController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
+  @Permissions({ module: 'financeiro', action: 'excluir' })
   async delete(@Param('id') id: string) {
     await this.contaPagarService.softDelete(id);
     return {
@@ -105,6 +117,7 @@ export class ContasPagarController {
   }
 
   @Post(':id/cancelar')
+  @Permissions({ module: 'financeiro', action: 'editar' })
   async cancelar(
     @Param('id') id: string,
     @Body() dto: CancelarContaPagarDto,
@@ -128,6 +141,7 @@ export class ContasPagarController {
 
   @Post('gerar-parcelas')
   @HttpCode(HttpStatus.CREATED)
+  @Permissions({ module: 'financeiro', action: 'criar' })
   async gerarParcelas(@Body() dto: GerarParcelasDto) {
     const parcelas = await this.contaPagarService.gerarParcelas(dto);
     return {
@@ -138,6 +152,7 @@ export class ContasPagarController {
   }
 
   @Post(':id/registrar-baixa')
+  @Permissions({ module: 'financeiro', action: 'criar' })
   async registrarBaixa(
     @Param('id') id: string,
     @Body() dto: RegistrarBaixaDto,
@@ -160,6 +175,7 @@ export class ContasPagarController {
   }
 
   @Post(':id/estornar-baixa')
+  @Permissions({ module: 'financeiro', action: 'editar' })
   async estornarBaixa(
     @Param('id') id: string,
     @Body() body: { justificativa: string },

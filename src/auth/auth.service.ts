@@ -7,6 +7,7 @@ import { UsuarioService } from '../usuario/usuario.service';
 import { Usuario } from '../entities/usuario/usuario.entity';
 import { EntityManager } from '@mikro-orm/postgresql';
 import { UsuarioEmpresaFilial } from '../entities/usuario-empresa-filial/usuario-empresa-filial.entity';
+import { UsuarioPerfil } from '../entities/usuario-perfil/usuario-perfil.entity';
 import { AuditService } from '../audit/audit.service';
 
 @Injectable()
@@ -57,14 +58,19 @@ export class AuthService {
       sedeId: ue.empresa.sede?.id || null,
     }));
 
+    // Busca permissões do usuário
+    const permissoes = await this.getUserPermissions(user.id);
+
     const payload = {
       username: user.email,
       sub: user.id,
       empresas,
+      permissoes,
     };
 
     const loginResponseDto = new LoginResponseDto();
     loginResponseDto.token = this.jwtService.sign(payload);
+    loginResponseDto.permissoes = permissoes;
 
     await this.auditService.logLoginAttempt(
       loginDto.email,
@@ -114,5 +120,45 @@ export class AuthService {
     hashedPassword: string,
   ): Promise<boolean> {
     return bcrypt.compare(plainPassword, hashedPassword);
+  }
+
+  /**
+   * Obtém todas as permissões do usuário combinando todos os seus perfis
+   */
+  async getUserPermissions(
+    userId: string,
+  ): Promise<Record<string, string[]>> {
+    const userPerfis = await this.em.find(
+      UsuarioPerfil,
+      { usuario: userId, ativo: true },
+      { populate: ['perfil'] },
+    );
+
+    // Combina permissões de todos os perfis do usuário
+    const combinedPermissions: Record<string, Set<string>> = {};
+
+    for (const usuarioPerfil of userPerfis) {
+      const permissoes = usuarioPerfil.perfil?.permissoes;
+      if (permissoes && typeof permissoes === 'object') {
+        for (const [module, actions] of Object.entries(permissoes)) {
+          if (Array.isArray(actions)) {
+            if (!combinedPermissions[module]) {
+              combinedPermissions[module] = new Set();
+            }
+            actions.forEach((action: string) =>
+              combinedPermissions[module].add(action),
+            );
+          }
+        }
+      }
+    }
+
+    // Converte Sets para arrays
+    const result: Record<string, string[]> = {};
+    for (const [module, actions] of Object.entries(combinedPermissions)) {
+      result[module] = Array.from(actions);
+    }
+
+    return result;
   }
 }

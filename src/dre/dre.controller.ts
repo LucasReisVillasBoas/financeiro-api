@@ -8,16 +8,16 @@ import {
 import { DreService } from './dre.service';
 import { FilterDreDto } from './dto/filter-dre.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { RolesGuard } from '../auth/roles.guard';
-import { Roles } from '../decorators/roles.decorator';
+import { PermissionsGuard } from '../auth/permissions.guard';
+import { Permissions } from '../decorators/permissions.decorator';
 
 @Controller('dre')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 export class DreController {
   constructor(private readonly dreService: DreService) {}
 
   @Get()
-  @Roles('Administrador', 'Financeiro', 'Contador', 'Visualizador')
+  @Permissions({ module: 'relatorios', action: 'visualizar' })
   async gerarDre(@Query() filtro: FilterDreDto) {
     if (!filtro.empresaId || !filtro.dataInicio || !filtro.dataFim) {
       throw new BadRequestException(
@@ -35,7 +35,7 @@ export class DreController {
   }
 
   @Get('consolidado')
-  @Roles('Administrador', 'Financeiro', 'Contador')
+  @Permissions({ module: 'relatorios', action: 'visualizar' })
   async gerarDreConsolidado(
     @Query('empresaIds') empresaIds: string,
     @Query('dataInicio') dataInicio: string,
@@ -63,7 +63,7 @@ export class DreController {
   }
 
   @Get('comparativo')
-  @Roles('Administrador', 'Financeiro', 'Contador', 'Visualizador')
+  @Permissions({ module: 'relatorios', action: 'visualizar' })
   async gerarComparativo(
     @Query('empresaId') empresaId: string,
     @Query('periodo1Inicio') periodo1Inicio: string,

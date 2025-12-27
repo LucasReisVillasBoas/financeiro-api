@@ -16,13 +16,13 @@ import { ContasBancariasService } from './conta-bancaria.service';
 import { CreateContaBancariaDto } from './dto/create-conta-bancaria.dto';
 import { UpdateContaBancariaDto } from './dto/update-conta-bancaria.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { RolesGuard } from '../auth/roles.guard';
-import { Roles } from '../decorators/roles.decorator';
+import { PermissionsGuard } from '../auth/permissions.guard';
+import { Permissions } from '../decorators/permissions.decorator';
 
 @ApiTags('Contas Bancárias')
 @ApiBearerAuth()
 @Controller('contas-bancarias')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 export class ContaBancariaController {
   constructor(
     private readonly contasBancariasService: ContasBancariasService,
@@ -30,11 +30,11 @@ export class ContaBancariaController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @Roles('Administrador', 'Financeiro')
+  @Permissions({ module: 'financeiro', action: 'criar' })
   @ApiOperation({
     summary: 'Criar nova conta bancária',
     description:
-      'Cria uma nova conta bancária. Requer perfil Administrador ou Financeiro.',
+      'Cria uma nova conta bancária. Requer permissão financeiro:criar.',
   })
   async create(@Body() dto: CreateContaBancariaDto) {
     const conta = await this.contasBancariasService.create(dto);
@@ -46,11 +46,11 @@ export class ContaBancariaController {
   }
 
   @Get()
-  @Roles('Administrador', 'Financeiro', 'Visualizador')
+  @Permissions({ module: 'financeiro', action: 'listar' }, { module: 'financeiro', action: 'visualizar' })
   @ApiOperation({
     summary: 'Listar todas as contas bancárias',
     description:
-      'Lista todas as contas bancárias. Requer perfil Administrador, Financeiro ou Visualizador.',
+      'Lista todas as contas bancárias. Requer permissão financeiro:listar ou financeiro:visualizar.',
   })
   async findAll() {
     const contas = await this.contasBancariasService.findAll();
@@ -62,7 +62,7 @@ export class ContaBancariaController {
   }
 
   @Get('empresa/:empresaId')
-  @Roles('Administrador', 'Financeiro', 'Visualizador')
+  @Permissions({ module: 'financeiro', action: 'listar' }, { module: 'financeiro', action: 'visualizar' })
   @ApiOperation({
     summary: 'Listar contas bancárias por empresa',
     description: 'Lista contas bancárias de uma empresa específica.',
@@ -77,7 +77,7 @@ export class ContaBancariaController {
   }
 
   @Get(':id')
-  @Roles('Administrador', 'Financeiro', 'Visualizador')
+  @Permissions({ module: 'financeiro', action: 'visualizar' })
   @ApiOperation({
     summary: 'Buscar conta bancária por ID',
     description: 'Retorna uma conta bancária específica.',
@@ -92,11 +92,11 @@ export class ContaBancariaController {
   }
 
   @Put(':id')
-  @Roles('Administrador', 'Financeiro')
+  @Permissions({ module: 'financeiro', action: 'editar' })
   @ApiOperation({
     summary: 'Atualizar conta bancária',
     description:
-      'Atualiza os dados de uma conta bancária. Requer perfil Administrador ou Financeiro.',
+      'Atualiza os dados de uma conta bancária. Requer permissão financeiro:editar.',
   })
   async update(@Param('id') id: string, @Body() dto: UpdateContaBancariaDto) {
     const conta = await this.contasBancariasService.update(id, dto);
@@ -108,11 +108,11 @@ export class ContaBancariaController {
   }
 
   @Patch(':id/toggle-status')
-  @Roles('Administrador', 'Financeiro')
+  @Permissions({ module: 'financeiro', action: 'editar' })
   @ApiOperation({
     summary: 'Ativar/Inativar conta bancária',
     description:
-      'Altera o status ativo/inativo de uma conta bancária. Requer perfil Administrador ou Financeiro. Operação auditada.',
+      'Altera o status ativo/inativo de uma conta bancária. Requer permissão financeiro:editar. Operação auditada.',
   })
   async toggleStatus(@Param('id') id: string) {
     const conta = await this.contasBancariasService.toggleStatus(id);
@@ -125,11 +125,11 @@ export class ContaBancariaController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
-  @Roles('Administrador')
+  @Permissions({ module: 'financeiro', action: 'excluir' })
   @ApiOperation({
     summary: 'Excluir conta bancária (soft delete)',
     description:
-      'Exclui logicamente uma conta bancária. Requer perfil Administrador. Operação auditada como CRÍTICA.',
+      'Exclui logicamente uma conta bancária. Requer permissão financeiro:excluir. Operação auditada como CRÍTICA.',
   })
   async delete(@Param('id') id: string) {
     await this.contasBancariasService.softDelete(id);

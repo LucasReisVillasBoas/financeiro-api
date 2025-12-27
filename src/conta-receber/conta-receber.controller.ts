@@ -10,7 +10,11 @@ import {
   HttpCode,
   HttpStatus,
   Req,
+  UseGuards,
 } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { PermissionsGuard } from '../auth/permissions.guard';
+import { Permissions } from '../decorators/permissions.decorator';
 import { ContasReceberService } from './conta-receber.service';
 import { CreateContaReceberDto } from './dto/create-conta-receber.dto';
 import { UpdateContaReceberDto } from './dto/update-conta-receber.dto';
@@ -19,11 +23,13 @@ import { CancelarContaReceberDto } from './dto/cancelar-conta-receber.dto';
 import { Request } from 'express';
 
 @Controller('contas-receber')
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 export class ContasReceberController {
   constructor(private readonly contaReceberService: ContasReceberService) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
+  @Permissions({ module: 'financeiro', action: 'criar' })
   async create(@Body() dto: CreateContaReceberDto, @Req() req: Request) {
     const userId = (req as any).user?.id || (req as any).user?.sub;
     const userEmail = (req as any).user?.email || 'desconhecido@system.com';
@@ -37,6 +43,7 @@ export class ContasReceberController {
   }
 
   @Get()
+  @Permissions({ module: 'financeiro', action: 'listar' }, { module: 'financeiro', action: 'visualizar' })
   async findAll() {
     const contas = await this.contaReceberService.findAll();
     return {
@@ -47,6 +54,7 @@ export class ContasReceberController {
   }
 
   @Get('empresa/:empresaId')
+  @Permissions({ module: 'financeiro', action: 'listar' }, { module: 'financeiro', action: 'visualizar' })
   async findByEmpresa(@Param('empresaId') empresaId: string) {
     const contas = await this.contaReceberService.findByEmpresa(empresaId);
     return {
@@ -57,6 +65,7 @@ export class ContasReceberController {
   }
 
   @Get(':id')
+  @Permissions({ module: 'financeiro', action: 'visualizar' })
   async findOne(@Param('id') id: string) {
     const conta = await this.contaReceberService.findOne(id);
     return {
@@ -67,6 +76,7 @@ export class ContasReceberController {
   }
 
   @Put(':id')
+  @Permissions({ module: 'financeiro', action: 'editar' })
   async update(
     @Param('id') id: string,
     @Body() dto: UpdateContaReceberDto,
@@ -84,6 +94,7 @@ export class ContasReceberController {
   }
 
   @Patch(':id/liquidar')
+  @Permissions({ module: 'financeiro', action: 'editar' })
   async liquidar(
     @Param('id') id: string,
     @Body() body: { valorRecebido: number; dataLiquidacao?: string },
@@ -111,6 +122,7 @@ export class ContasReceberController {
 
   @Post('parcelado')
   @HttpCode(HttpStatus.CREATED)
+  @Permissions({ module: 'financeiro', action: 'criar' })
   async createParcelado(
     @Body() dto: CreateContaReceberParceladaDto,
     @Req() req: Request,
@@ -128,6 +140,7 @@ export class ContasReceberController {
   }
 
   @Patch(':id/cancelar')
+  @Permissions({ module: 'financeiro', action: 'editar' })
   async cancelar(
     @Param('id') id: string,
     @Body() dto: CancelarContaReceberDto,
@@ -144,6 +157,7 @@ export class ContasReceberController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
+  @Permissions({ module: 'financeiro', action: 'excluir' })
   async delete(@Param('id') id: string) {
     await this.contaReceberService.softDelete(id);
     return {

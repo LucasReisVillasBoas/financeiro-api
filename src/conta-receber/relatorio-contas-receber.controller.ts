@@ -6,12 +6,17 @@ import {
   HttpStatus,
   Res,
   Header,
+  UseGuards,
 } from '@nestjs/common';
 import { Response } from 'express';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { PermissionsGuard } from '../auth/permissions.guard';
+import { Permissions } from '../decorators/permissions.decorator';
 import { RelatorioContasReceberService } from './relatorio-contas-receber.service';
 import { RelatorioContasReceberDto } from './dto/relatorio-contas-receber.dto';
 
 @Controller('relatorios/contas-receber')
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 export class RelatorioContasReceberController {
   constructor(
     private readonly relatorioService: RelatorioContasReceberService,
@@ -23,6 +28,7 @@ export class RelatorioContasReceberController {
    */
   @Get()
   @HttpCode(HttpStatus.OK)
+  @Permissions({ module: 'relatorios', action: 'visualizar' })
   async gerarRelatorio(@Query() filtros: RelatorioContasReceberDto) {
     const resultado = await this.relatorioService.gerarRelatorio(filtros);
     return {
@@ -38,6 +44,7 @@ export class RelatorioContasReceberController {
    */
   @Get('exportar/csv')
   @HttpCode(HttpStatus.OK)
+  @Permissions({ module: 'relatorios', action: 'exportar' })
   @Header('Content-Type', 'text/csv; charset=utf-8')
   @Header('Content-Disposition', 'attachment; filename="relatorio-contas-receber.csv"')
   async exportarCSV(
@@ -54,6 +61,7 @@ export class RelatorioContasReceberController {
    */
   @Get('exportar/excel')
   @HttpCode(HttpStatus.OK)
+  @Permissions({ module: 'relatorios', action: 'exportar' })
   @Header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
   @Header('Content-Disposition', 'attachment; filename="relatorio-contas-receber.xlsx"')
   async exportarExcel(
@@ -70,6 +78,7 @@ export class RelatorioContasReceberController {
    */
   @Get('exportar/pdf')
   @HttpCode(HttpStatus.OK)
+  @Permissions({ module: 'relatorios', action: 'exportar' })
   @Header('Content-Type', 'application/pdf')
   @Header('Content-Disposition', 'attachment; filename="relatorio-contas-receber.pdf"')
   async exportarPDF(

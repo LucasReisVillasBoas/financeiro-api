@@ -7,12 +7,12 @@ import {
   Param,
   Delete,
   UseGuards,
-  SetMetadata,
   HttpStatus,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { EmpresaGuard } from '../auth/empresa.guard';
-import { RolesGuard } from '../auth/roles.guard';
+import { PermissionsGuard } from '../auth/permissions.guard';
+import { Permissions } from '../decorators/permissions.decorator';
 import { CurrentCliente } from '../auth/decorators/current-cliente.decorator';
 import { UpdateContatoDto } from './dto/update-contato.dto';
 import { ContatoService } from './contato.service';
@@ -23,12 +23,12 @@ import {
 } from '../utils/contato.util';
 
 @Controller('contatos')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 export class ContatoController {
   constructor(private readonly contatoService: ContatoService) {}
 
   @Post()
-  @SetMetadata('roles', ['Administrador', 'Editor'])
+  @Permissions({ module: 'contatos', action: 'criar' })
   async create(
     @Body() createContatoDto: CreateContatoDto,
     @CurrentCliente() clienteId: string,
@@ -46,7 +46,7 @@ export class ContatoController {
 
   @Get()
   @UseGuards(EmpresaGuard)
-  @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
+  @Permissions({ module: 'contatos', action: 'listar' }, { module: 'contatos', action: 'visualizar' })
   async findAll(@CurrentCliente() clienteId: string) {
     const contatos = await this.contatoService.findAll(clienteId);
     return {
@@ -58,7 +58,7 @@ export class ContatoController {
 
   @Get(':id')
   @UseGuards(EmpresaGuard)
-  @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
+  @Permissions({ module: 'contatos', action: 'visualizar' })
   async findOne(@Param('id') id: string, @CurrentCliente() clienteId: string) {
     const contato = await this.contatoService.findOne(id, clienteId);
     return {
@@ -70,7 +70,7 @@ export class ContatoController {
 
   @Get('/telefone/:telefone')
   @UseGuards(EmpresaGuard)
-  @SetMetadata('roles', ['Administrador', 'Editor', 'Visualizador'])
+  @Permissions({ module: 'contatos', action: 'listar' }, { module: 'contatos', action: 'visualizar' })
   async findOneByTelefone(
     @Param('telefone') telefone: string,
     @CurrentCliente() clienteId: string,
@@ -88,7 +88,7 @@ export class ContatoController {
 
   @Patch(':id')
   @UseGuards(EmpresaGuard)
-  @SetMetadata('roles', ['Administrador', 'Editor'])
+  @Permissions({ module: 'contatos', action: 'editar' })
   async update(
     @Param('id') id: string,
     @Body() updateContatoDto: UpdateContatoDto,
@@ -108,7 +108,7 @@ export class ContatoController {
 
   @Delete(':id')
   @UseGuards(EmpresaGuard)
-  @SetMetadata('roles', ['Administrador', 'Editor'])
+  @Permissions({ module: 'contatos', action: 'excluir' })
   async remove(@Param('id') id: string, @CurrentCliente() clienteId: string) {
     await this.contatoService.remove(id, clienteId);
     return { message: 'Contato removido', statusCode: HttpStatus.OK };
