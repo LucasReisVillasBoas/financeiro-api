@@ -13,6 +13,8 @@ import { UsuarioPerfilRepository } from '../usuario-perfil/usuario-perfil.reposi
 import { Usuario } from '../entities/usuario/usuario.entity';
 import { UsuarioService } from '../usuario/usuario.service';
 import { EmpresaService } from '../empresa/empresa.service';
+import { UsuarioEmpresaFilial } from '../entities/usuario-empresa-filial/usuario-empresa-filial.entity';
+import { UsuarioEmpresaFilialRepository } from '../usuario/usuario-empresa-filial.repository';
 
 @Injectable()
 export class PerfilService {
@@ -25,6 +27,9 @@ export class PerfilService {
 
     @InjectRepository(Usuario)
     private readonly usuarioService: UsuarioService,
+
+    @InjectRepository(UsuarioEmpresaFilial)
+    private readonly usuarioEmpresaFilialRepository: UsuarioEmpresaFilialRepository,
 
     private readonly empresaService: EmpresaService,
   ) {}
@@ -126,6 +131,117 @@ export class PerfilService {
     const filial = await this.findOne(id, clienteId);
     filial.ativo = false;
     filial.deletadoEm = new Date();
+    await this.perfilRepository.flush();
+  }
+
+  /**
+   * Verifica se o usuário possui perfil de Administrador
+   */
+  async isAdmin(usuarioId: string): Promise<boolean> {
+    const usuarioPerfis = await this.usuarioPerfilRepository.find(
+      { usuario: { id: usuarioId }, ativo: true },
+      { populate: ['perfil'] },
+    );
+
+    return usuarioPerfis.some(
+      (up) => up.perfil?.nome?.toLowerCase() === 'administrador',
+    );
+  }
+
+  /**
+   * Busca todos os perfis vinculados às empresas que o usuário tem acesso
+   * Usado quando o usuário é administrador
+   */
+  async findAllByUsuarioEmpresas(usuarioId: string): Promise<Perfil[]> {
+    // Busca todas as empresas que o usuário tem acesso
+    const usuarioEmpresas = await this.usuarioEmpresaFilialRepository.find(
+      { usuario: { id: usuarioId } },
+      { populate: ['empresa'] },
+    );
+
+    if (usuarioEmpresas.length === 0) {
+      return [];
+    }
+
+    const empresaIds = usuarioEmpresas.map((ue) => ue.empresa.id);
+
+    // Busca todos os UsuarioPerfil vinculados às empresas do usuário
+    const usuarioPerfis = await this.usuarioPerfilRepository.find(
+      {
+        empresa: { id: { $in: empresaIds } },
+        ativo: true,
+      },
+      { populate: ['perfil'] },
+    );
+
+    // Extrai os perfis únicos (sem duplicatas)
+    const perfisMap = new Map<string, Perfil>();
+    for (const up of usuarioPerfis) {
+      if (up.perfil && up.perfil.ativo && !perfisMap.has(up.perfil.id)) {
+        perfisMap.set(up.perfil.id, up.perfil);
+      }
+    }
+
+    return Array.from(perfisMap.values());
+  }
+
+  /**
+   * Busca um perfil específico se estiver vinculado às empresas do usuário admin
+   */
+  async findOneByUsuarioEmpresas(
+    perfilId: string,
+    usuarioId: string,
+  ): Promise<Perfil> {
+    // Busca todas as empresas que o usuário tem acesso
+    const usuarioEmpresas = await this.usuarioEmpresaFilialRepository.find(
+      { usuario: { id: usuarioId } },
+      { populate: ['empresa'] },
+    );
+
+    if (usuarioEmpresas.length === 0) {
+      throw new NotFoundException('Perfil não encontrado');
+    }
+
+    const empresaIds = usuarioEmpresas.map((ue) => ue.empresa.id);
+
+    // Verifica se o perfil está vinculado a alguma das empresas do usuário
+    const usuarioPerfil = await this.usuarioPerfilRepository.findOne(
+      {
+        perfil: { id: perfilId },
+        empresa: { id: { $in: empresaIds } },
+        ativo: true,
+      },
+      { populate: ['perfil'] },
+    );
+
+    if (!usuarioPerfil || !usuarioPerfil.perfil || !usuarioPerfil.perfil.ativo) {
+      throw new NotFoundException('Perfil não encontrado');
+    }
+
+    return usuarioPerfil.perfil;
+  }
+
+  /**
+   * Atualiza um perfil como administrador (verifica se está vinculado às empresas do admin)
+   */
+  async updateAsAdmin(
+    id: string,
+    dto: UpdatePerfilDto,
+    usuarioId: string,
+  ): Promise<Perfil> {
+    const perfil = await this.findOneByUsuarioEmpresas(id, usuarioId);
+    this.perfilRepository.assign(perfil, dto);
+    await this.perfilRepository.flush();
+    return perfil;
+  }
+
+  /**
+   * Soft delete de um perfil como administrador (verifica se está vinculado às empresas do admin)
+   */
+  async softDeleteAsAdmin(id: string, usuarioId: string): Promise<void> {
+    const perfil = await this.findOneByUsuarioEmpresas(id, usuarioId);
+    perfil.ativo = false;
+    perfil.deletadoEm = new Date();
     await this.perfilRepository.flush();
   }
 }
