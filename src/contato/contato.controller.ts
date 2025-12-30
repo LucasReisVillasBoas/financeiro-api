@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   HttpStatus,
+  SetMetadata,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { EmpresaGuard } from '../auth/empresa.guard';
@@ -46,7 +47,10 @@ export class ContatoController {
 
   @Get()
   @UseGuards(EmpresaGuard)
-  @Permissions({ module: 'contatos', action: 'listar' }, { module: 'contatos', action: 'visualizar' })
+  @Permissions(
+    { module: 'contatos', action: 'listar' },
+    { module: 'contatos', action: 'visualizar' },
+  )
   async findAll(@CurrentCliente() clienteId: string) {
     const contatos = await this.contatoService.findAll(clienteId);
     return {
@@ -58,7 +62,11 @@ export class ContatoController {
 
   @Get(':id')
   @UseGuards(EmpresaGuard)
-  @Permissions({ module: 'contatos', action: 'visualizar' })
+  @SetMetadata('skipEmpresaValidation', true)
+  @Permissions(
+    { module: 'contatos', action: 'visualizar' },
+    { module: 'contatos', action: 'listar' },
+  )
   async findOne(@Param('id') id: string, @CurrentCliente() clienteId: string) {
     const contato = await this.contatoService.findOne(id, clienteId);
     return {
@@ -70,7 +78,10 @@ export class ContatoController {
 
   @Get('/telefone/:telefone')
   @UseGuards(EmpresaGuard)
-  @Permissions({ module: 'contatos', action: 'listar' }, { module: 'contatos', action: 'visualizar' })
+  @Permissions(
+    { module: 'contatos', action: 'listar' },
+    { module: 'contatos', action: 'visualizar' },
+  )
   async findOneByTelefone(
     @Param('telefone') telefone: string,
     @CurrentCliente() clienteId: string,
@@ -88,6 +99,7 @@ export class ContatoController {
 
   @Patch(':id')
   @UseGuards(EmpresaGuard)
+  @SetMetadata('skipEmpresaValidation', true)
   @Permissions({ module: 'contatos', action: 'editar' })
   async update(
     @Param('id') id: string,
@@ -108,6 +120,7 @@ export class ContatoController {
 
   @Delete(':id')
   @UseGuards(EmpresaGuard)
+  @SetMetadata('skipEmpresaValidation', true)
   @Permissions({ module: 'contatos', action: 'excluir' })
   async remove(@Param('id') id: string, @CurrentCliente() clienteId: string) {
     await this.contatoService.remove(id, clienteId);

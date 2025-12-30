@@ -131,8 +131,21 @@ export class EmpresaService {
   }
 
   async findAllByCliente(cliente_id: string): Promise<Empresa[]> {
-    const empresa = await this.empresaRepo.find({ cliente_id, ativo: true });
-    return empresa;
+    const associacoes = await this.usuarioEmpresaFilialRepository.find(
+      { usuario: { id: cliente_id } },
+      { populate: ['empresa'] },
+    );
+    if (!associacoes.length) {
+      return [];
+    }
+
+    const empresaIds = associacoes.map((assoc: any) => assoc.empresa);
+    const empresas = await this.empresaRepo.find({
+      id: { $in: empresaIds },
+      ativo: true,
+    });
+
+    return empresas;
   }
 
   async findByUsuarioId(usuarioId: string): Promise<Empresa[]> {
