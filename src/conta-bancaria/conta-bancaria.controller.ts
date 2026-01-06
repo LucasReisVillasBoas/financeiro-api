@@ -18,6 +18,7 @@ import { UpdateContaBancariaDto } from './dto/update-conta-bancaria.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { PermissionsGuard } from '../auth/permissions.guard';
 import { Permissions } from '../decorators/permissions.decorator';
+import { CurrentUser } from '../decorators/current-user.decorator';
 
 @ApiTags('Contas Bancárias')
 @ApiBearerAuth()
@@ -98,8 +99,12 @@ export class ContaBancariaController {
     description:
       'Atualiza os dados de uma conta bancária. Requer permissão financeiro:editar.',
   })
-  async update(@Param('id') id: string, @Body() dto: UpdateContaBancariaDto) {
-    const conta = await this.contasBancariasService.update(id, dto);
+  async update(
+    @Param('id') id: string,
+    @Body() dto: UpdateContaBancariaDto,
+    @CurrentUser() user: any,
+  ) {
+    const conta = await this.contasBancariasService.update(id, dto, user);
     return {
       message: 'Conta bancária atualizada com sucesso',
       statusCode: HttpStatus.OK,
