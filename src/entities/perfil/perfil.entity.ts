@@ -26,6 +26,13 @@ export class Perfil {
   })
   permissoes!: Record<string, string[]>;
 
+  @Property({ default: false })
+  @ApiProperty({
+    example: false,
+    description: 'Indica se é o perfil master admin (criador da conta). Não pode ser editado ou excluído.',
+  })
+  masterAdmin: boolean = false;
+
   @Property({ default: true })
   ativo: boolean = true;
 

@@ -8,6 +8,7 @@ import { UsuarioPerfil } from '../entities/usuario-perfil/usuario-perfil.entity'
 import { UsuarioEmpresaFilial } from '../entities/usuario-empresa-filial/usuario-empresa-filial.entity';
 import { Usuario } from '../entities/usuario/usuario.entity';
 import { normalizeCnpjCpf } from '../utils/empresa.util';
+import { MASTER_ADMIN_PERMISSIONS } from '../common/constants/permissions.constant';
 
 export interface OnboardingResult {
   empresa: Empresa;
@@ -56,11 +57,12 @@ export class OnboardingService {
       });
       em.persist(empresa);
 
-      // 4. Criar perfil
+      // 4. Criar perfil Master Admin (criador da conta tem acesso total)
       const perfil = em.create(Perfil, {
         clienteId: clienteId,
-        nome: dto.perfil.nome,
-        permissoes: dto.perfil.permissoes,
+        nome: dto.perfil.nome || 'Administrador Master',
+        permissoes: MASTER_ADMIN_PERMISSIONS, // Sempre usa permissões totais para o criador
+        masterAdmin: true, // Marca como master admin (não pode ser editado/excluído)
         ativo: true,
       });
       em.persist(perfil);

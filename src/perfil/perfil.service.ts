@@ -122,15 +122,31 @@ export class PerfilService {
     clienteId: string,
   ): Promise<Perfil> {
     const perfil = await this.findOne(id, clienteId);
+
+    // Não permite editar perfil Master Admin
+    if (perfil.masterAdmin) {
+      throw new BadRequestException(
+        'Não é possível editar o perfil do Administrador Master. Este perfil possui acesso total e não pode ser modificado.',
+      );
+    }
+
     this.perfilRepository.assign(perfil, dto);
     await this.perfilRepository.flush();
     return perfil;
   }
 
   async softDelete(id: string, clienteId: string): Promise<void> {
-    const filial = await this.findOne(id, clienteId);
-    filial.ativo = false;
-    filial.deletadoEm = new Date();
+    const perfil = await this.findOne(id, clienteId);
+
+    // Não permite excluir perfil Master Admin
+    if (perfil.masterAdmin) {
+      throw new BadRequestException(
+        'Não é possível excluir o perfil do Administrador Master. Este perfil possui acesso total e não pode ser removido.',
+      );
+    }
+
+    perfil.ativo = false;
+    perfil.deletadoEm = new Date();
     await this.perfilRepository.flush();
   }
 
@@ -230,6 +246,14 @@ export class PerfilService {
     usuarioId: string,
   ): Promise<Perfil> {
     const perfil = await this.findOneByUsuarioEmpresas(id, usuarioId);
+
+    // Não permite editar perfil Master Admin
+    if (perfil.masterAdmin) {
+      throw new BadRequestException(
+        'Não é possível editar o perfil do Administrador Master. Este perfil possui acesso total e não pode ser modificado.',
+      );
+    }
+
     this.perfilRepository.assign(perfil, dto);
     await this.perfilRepository.flush();
     return perfil;
@@ -240,8 +264,24 @@ export class PerfilService {
    */
   async softDeleteAsAdmin(id: string, usuarioId: string): Promise<void> {
     const perfil = await this.findOneByUsuarioEmpresas(id, usuarioId);
+
+    // Não permite excluir perfil Master Admin
+    if (perfil.masterAdmin) {
+      throw new BadRequestException(
+        'Não é possível excluir o perfil do Administrador Master. Este perfil possui acesso total e não pode ser removido.',
+      );
+    }
+
     perfil.ativo = false;
     perfil.deletadoEm = new Date();
     await this.perfilRepository.flush();
+  }
+
+  /**
+   * Verifica se um perfil é Master Admin
+   */
+  async isMasterAdmin(perfilId: string): Promise<boolean> {
+    const perfil = await this.perfilRepository.findOne({ id: perfilId });
+    return perfil?.masterAdmin || false;
   }
 }

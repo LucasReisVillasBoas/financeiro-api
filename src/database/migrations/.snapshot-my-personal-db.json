@@ -301,53 +301,48 @@
         },
         "banco": {
           "name": "banco",
-          "type": "varchar(255)",
+          "type": "text",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 255,
-          "mappedType": "string"
+          "mappedType": "text"
         },
         "agencia": {
           "name": "agencia",
-          "type": "varchar(50)",
+          "type": "text",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 50,
-          "mappedType": "string"
+          "mappedType": "text"
         },
         "agencia_digito": {
           "name": "agencia_digito",
-          "type": "varchar(5)",
+          "type": "text",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": true,
-          "length": 5,
-          "mappedType": "string"
+          "mappedType": "text"
         },
         "conta": {
           "name": "conta",
-          "type": "varchar(50)",
+          "type": "text",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 50,
-          "mappedType": "string"
+          "mappedType": "text"
         },
         "conta_digito": {
           "name": "conta_digito",
-          "type": "varchar(5)",
+          "type": "text",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": true,
-          "length": 5,
-          "mappedType": "string"
+          "mappedType": "text"
         },
         "descricao": {
           "name": "descricao",
@@ -371,25 +366,21 @@
         },
         "saldo_inicial": {
           "name": "saldo_inicial",
-          "type": "numeric(15,2)",
+          "type": "text",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "precision": 15,
-          "scale": 2,
-          "mappedType": "decimal"
+          "mappedType": "text"
         },
         "saldo_atual": {
           "name": "saldo_atual",
-          "type": "numeric(15,2)",
+          "type": "text",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "precision": 15,
-          "scale": 2,
-          "mappedType": "decimal"
+          "mappedType": "text"
         },
         "data_referencia_saldo": {
           "name": "data_referencia_saldo",
@@ -759,6 +750,16 @@
           "primary": false,
           "nullable": false,
           "mappedType": "json"
+        },
+        "master_admin": {
+          "name": "master_admin",
+          "type": "boolean",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "false",
+          "mappedType": "boolean"
         },
         "ativo": {
           "name": "ativo",
@@ -1539,14 +1540,12 @@
         },
         "valor": {
           "name": "valor",
-          "type": "numeric(15,2)",
+          "type": "text",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "precision": 15,
-          "scale": 2,
-          "mappedType": "decimal"
+          "mappedType": "text"
         },
         "tipo_movimento": {
           "name": "tipo_movimento",
@@ -1762,14 +1761,12 @@
         },
         "valor": {
           "name": "valor",
-          "type": "numeric(15,2)",
+          "type": "text",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "precision": 15,
-          "scale": 2,
-          "mappedType": "decimal"
+          "mappedType": "text"
         },
         "tipo_transacao": {
           "name": "tipo_transacao",
@@ -2089,60 +2086,50 @@
         },
         "valor_principal": {
           "name": "valor_principal",
-          "type": "numeric(15,2)",
+          "type": "text",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "precision": 15,
-          "scale": 2,
-          "mappedType": "decimal"
+          "mappedType": "text"
         },
         "valor_acrescimos": {
           "name": "valor_acrescimos",
-          "type": "numeric(15,2)",
+          "type": "text",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "precision": 15,
-          "scale": 2,
           "default": "0",
-          "mappedType": "decimal"
+          "mappedType": "text"
         },
         "valor_descontos": {
           "name": "valor_descontos",
-          "type": "numeric(15,2)",
+          "type": "text",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "precision": 15,
-          "scale": 2,
           "default": "0",
-          "mappedType": "decimal"
+          "mappedType": "text"
         },
         "valor_total": {
           "name": "valor_total",
-          "type": "numeric(15,2)",
+          "type": "text",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "precision": 15,
-          "scale": 2,
-          "mappedType": "decimal"
+          "mappedType": "text"
         },
         "saldo": {
           "name": "saldo",
-          "type": "numeric(15,2)",
+          "type": "text",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "precision": 15,
-          "scale": 2,
-          "mappedType": "decimal"
+          "mappedType": "text"
         },
         "status": {
           "name": "status",
@@ -2299,6 +2286,233 @@
           "default": "gen_random_uuid()",
           "mappedType": "uuid"
         },
+        "conta_receber_id": {
+          "name": "conta_receber_id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "uuid"
+        },
+        "conta_bancaria_id": {
+          "name": "conta_bancaria_id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "uuid"
+        },
+        "data": {
+          "name": "data",
+          "type": "date",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 0,
+          "mappedType": "date"
+        },
+        "valor": {
+          "name": "valor",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "text"
+        },
+        "acrescimos": {
+          "name": "acrescimos",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "0",
+          "mappedType": "text"
+        },
+        "descontos": {
+          "name": "descontos",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "0",
+          "mappedType": "text"
+        },
+        "total": {
+          "name": "total",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "text"
+        },
+        "tipo": {
+          "name": "tipo",
+          "type": "varchar(20)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 20,
+          "mappedType": "string"
+        },
+        "observacao": {
+          "name": "observacao",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "text"
+        },
+        "movimentacao_bancaria_id": {
+          "name": "movimentacao_bancaria_id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "uuid"
+        },
+        "saldo_anterior": {
+          "name": "saldo_anterior",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "text"
+        },
+        "saldo_posterior": {
+          "name": "saldo_posterior",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "text"
+        },
+        "criado_em": {
+          "name": "criado_em",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "mappedType": "datetime"
+        },
+        "atualizado_em": {
+          "name": "atualizado_em",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "mappedType": "datetime"
+        },
+        "deletado_em": {
+          "name": "deletado_em",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 6,
+          "mappedType": "datetime"
+        },
+        "criado_por_id": {
+          "name": "criado_por_id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "uuid"
+        }
+      },
+      "name": "baixas_recebimento",
+      "schema": "public",
+      "indexes": [
+        {
+          "columnNames": [
+            "conta_receber_id"
+          ],
+          "composite": false,
+          "keyName": "baixas_recebimento_conta_receber_id_index",
+          "constraint": false,
+          "primary": false,
+          "unique": false
+        },
+        {
+          "columnNames": [
+            "conta_bancaria_id"
+          ],
+          "composite": false,
+          "keyName": "baixas_recebimento_conta_bancaria_id_index",
+          "constraint": false,
+          "primary": false,
+          "unique": false
+        },
+        {
+          "keyName": "baixas_recebimento_pkey",
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "constraint": true,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "baixas_recebimento_conta_receber_id_foreign": {
+          "constraintName": "baixas_recebimento_conta_receber_id_foreign",
+          "columnNames": [
+            "conta_receber_id"
+          ],
+          "localTableName": "public.baixas_recebimento",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.contas_receber",
+          "updateRule": "cascade"
+        },
+        "baixas_recebimento_conta_bancaria_id_foreign": {
+          "constraintName": "baixas_recebimento_conta_bancaria_id_foreign",
+          "columnNames": [
+            "conta_bancaria_id"
+          ],
+          "localTableName": "public.baixas_recebimento",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.contas_bancarias",
+          "updateRule": "cascade"
+        }
+      },
+      "nativeEnums": {}
+    },
+    {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "gen_random_uuid()",
+          "mappedType": "uuid"
+        },
         "documento": {
           "name": "documento",
           "type": "varchar(100)",
@@ -2390,60 +2604,50 @@
         },
         "valor_principal": {
           "name": "valor_principal",
-          "type": "numeric(15,2)",
+          "type": "text",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "precision": 15,
-          "scale": 2,
-          "mappedType": "decimal"
+          "mappedType": "text"
         },
         "acrescimos": {
           "name": "acrescimos",
-          "type": "numeric(15,2)",
+          "type": "text",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "precision": 15,
-          "scale": 2,
           "default": "0",
-          "mappedType": "decimal"
+          "mappedType": "text"
         },
         "descontos": {
           "name": "descontos",
-          "type": "numeric(15,2)",
+          "type": "text",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "precision": 15,
-          "scale": 2,
           "default": "0",
-          "mappedType": "decimal"
+          "mappedType": "text"
         },
         "valor_total": {
           "name": "valor_total",
-          "type": "numeric(15,2)",
+          "type": "text",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "precision": 15,
-          "scale": 2,
-          "mappedType": "decimal"
+          "mappedType": "text"
         },
         "saldo": {
           "name": "saldo",
-          "type": "numeric(15,2)",
+          "type": "text",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "precision": 15,
-          "scale": 2,
-          "mappedType": "decimal"
+          "mappedType": "text"
         },
         "status": {
           "name": "status",
@@ -2639,49 +2843,41 @@
         },
         "valor": {
           "name": "valor",
-          "type": "numeric(15,2)",
+          "type": "text",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "precision": 15,
-          "scale": 2,
-          "mappedType": "decimal"
+          "mappedType": "text"
         },
         "acrescimos": {
           "name": "acrescimos",
-          "type": "numeric(15,2)",
+          "type": "text",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "precision": 15,
-          "scale": 2,
           "default": "0",
-          "mappedType": "decimal"
+          "mappedType": "text"
         },
         "descontos": {
           "name": "descontos",
-          "type": "numeric(15,2)",
+          "type": "text",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "precision": 15,
-          "scale": 2,
           "default": "0",
-          "mappedType": "decimal"
+          "mappedType": "text"
         },
         "total": {
           "name": "total",
-          "type": "numeric(15,2)",
+          "type": "text",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "precision": 15,
-          "scale": 2,
-          "mappedType": "decimal"
+          "mappedType": "text"
         },
         "tipo": {
           "name": "tipo",
@@ -2713,25 +2909,21 @@
         },
         "saldo_anterior": {
           "name": "saldo_anterior",
-          "type": "numeric(15,2)",
+          "type": "text",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "precision": 15,
-          "scale": 2,
-          "mappedType": "decimal"
+          "mappedType": "text"
         },
         "saldo_posterior": {
           "name": "saldo_posterior",
-          "type": "numeric(15,2)",
+          "type": "text",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "precision": 15,
-          "scale": 2,
-          "mappedType": "decimal"
+          "mappedType": "text"
         },
         "criado_em": {
           "name": "criado_em",
