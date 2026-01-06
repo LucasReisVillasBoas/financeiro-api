@@ -112,20 +112,21 @@ export class ContasBancariasService {
   async update(
     id: string,
     dto: UpdateContaBancariaDto,
+    user?: { id: string; email: string },
   ): Promise<ContasBancarias> {
     const conta = await this.findOne(id);
-    const usuario = await this.usuarioService.getById(dto.cliente_id);
 
     if (
       dto.saldo_inicial !== undefined &&
-      dto.saldo_inicial !== conta.saldo_inicial
+      dto.saldo_inicial !== conta.saldo_inicial &&
+      user
     ) {
       const saldoAnterior = conta.saldo_inicial;
 
       await this.auditService.logSaldoInicialUpdated(
         conta.id,
-        usuario.id,
-        usuario.email,
+        user.id,
+        user.email,
         conta.empresa.id,
         saldoAnterior,
         dto.saldo_inicial,
