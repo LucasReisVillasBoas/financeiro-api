@@ -15,7 +15,10 @@ import {
   ContasPagar,
   StatusContaPagar,
 } from '../entities/conta-pagar/conta-pagar.entity';
-import { MovimentacoesBancarias } from '../entities/movimentacao-bancaria/movimentacao-bancaria.entity';
+import {
+  MovimentacoesBancarias,
+  TipoMovimento,
+} from '../entities/movimentacao-bancaria/movimentacao-bancaria.entity';
 import { ContasBancarias } from '../entities/conta-bancaria/conta-bancaria.entity';
 import { BaixaPagamento } from '../entities/baixa-pagamento/baixa-pagamento.entity';
 import { MovimentacoesBancariasRepository } from '../movimentacao-bancaria/movimentacao-bancaria.repository';
@@ -477,14 +480,14 @@ export class ContasPagarService {
     const saldoAnterior = conta.saldo;
 
     const movimentacao = this.movimentacaoRepository.create({
-      data: new Date(dto.dataPagamento),
+      dataMovimento: new Date(dto.dataPagamento),
       descricao:
         dto.observacao ||
         `Pagamento ${conta.documento} - Parcela ${conta.parcela}`,
       conta: contaBancaria.banco,
       categoria: 'Pagamento Fornecedor',
       valor: dto.valorPago,
-      tipo: 'Saída', // Débito
+      tipoMovimento: TipoMovimento.SAIDA,
       contaBancaria,
       empresaId: conta.empresa.id,
       planoContas: conta.planoContas,
