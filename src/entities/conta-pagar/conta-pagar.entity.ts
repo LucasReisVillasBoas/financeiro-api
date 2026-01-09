@@ -130,6 +130,11 @@ export class ContasPagar {
       this.saldo = this.valor_total;
     }
 
+    // Não recalcula status se a conta foi cancelada
+    if (this.canceladoEm) {
+      return;
+    }
+
     // Atualiza status baseado no saldo
     if (this.saldo === 0) {
       this.status = StatusContaPagar.PAGA;

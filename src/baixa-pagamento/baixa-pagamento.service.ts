@@ -14,6 +14,7 @@ import {
 import { ContasBancarias } from '../entities/conta-bancaria/conta-bancaria.entity';
 import {
   MovimentacoesBancarias,
+  TipoMovimento,
   TipoReferencia,
 } from '../entities/movimentacao-bancaria/movimentacao-bancaria.entity';
 import { ContasPagarRepository } from '../conta-pagar/conta-pagar.repository';
@@ -101,14 +102,14 @@ export class BaixaPagamentoService {
     }
 
     const movimentacao = this.movimentacaoRepository.create({
-      data: new Date(dto.data),
+      dataMovimento: new Date(dto.data),
       descricao:
         dto.observacao ||
         `Baixa de pagamento ${contaPagar.documento} - Parcela ${contaPagar.parcela}`,
       conta: contaBancaria.banco,
       categoria: 'Pagamento Fornecedor',
       valor: totalBaixa,
-      tipo: 'Saída',
+      tipoMovimento: TipoMovimento.SAIDA,
       contaBancaria,
       empresaId: contaPagar.empresa.id,
       planoContas: contaPagar.planoContas,
@@ -231,12 +232,12 @@ export class BaixaPagamentoService {
     // Cria movimentação de ENTRADA para registrar o estorno
     // A movimentação original de saída permanece no histórico
     const movimentacaoEstorno = this.movimentacaoRepository.create({
-      data: new Date(),
+      dataMovimento: new Date(),
       descricao: `Estorno - ${contaPagar.documento} - Parcela ${contaPagar.parcela}${justificativa ? ` - ${justificativa}` : ''}`,
       conta: contaBancaria.banco,
       categoria: 'Estorno de Pagamento',
       valor: baixa.total,
-      tipo: 'Entrada',
+      tipoMovimento: TipoMovimento.ENTRADA,
       contaBancaria,
       empresaId: contaPagar.empresa.id,
       planoContas: contaPagar.planoContas,
