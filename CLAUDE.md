@@ -4,190 +4,172 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a financial management API built with NestJS, MikroORM, and PostgreSQL. The API manages multi-tenant financial operations including accounts payable/receivable, bank accounts, bank transactions, chart of accounts, and financial statements (DRE).
-
-## Technology Stack
-
-- **Framework**: NestJS 10.x
-- **ORM**: MikroORM 6.x with PostgreSQL driver
-- **Database**: PostgreSQL
-- **Authentication**: JWT with passport-jwt
-- **Validation**: class-validator + class-transformer
-- **Documentation**: Swagger/OpenAPI
-- **Testing**: Jest
+Multi-tenant financial management API (NestJS 10 + MikroORM 6 + PostgreSQL). Manages accounts payable/receivable, bank accounts/transactions, chart of accounts, payment settlements, and financial reports (DRE, cash flow). All financial values and sensitive bank data are encrypted at rest with AES-256-GCM.
 
 ## Development Commands
 
-### Running the Application
 ```bash
-npm run start:dev          # Development mode with watch
+npm run start:dev          # Dev mode with watch (default port 3002)
 npm run start:debug        # Debug mode with watch
-npm run build              # Build for production
-npm run start:prod         # Run production build
-```
+npm run build && npm run start:prod  # Production
 
-### Database Operations
-```bash
-npm run migration:create   # Create a new migration
+npm run migration:create   # Create migration
 npm run migration:up       # Run pending migrations
 npm run migration:down     # Rollback last migration
-npm run seeder:run         # Run database seeders
+
+npm test                   # All unit tests
+npm test -- --testPathPattern=plano-contas  # Run tests for a specific module
+npm run test:watch         # Watch mode
+npm run test:cov           # Coverage report
+npm run test:e2e           # E2E tests
+
+npm run lint               # ESLint with auto-fix
+npm run format             # Prettier
 ```
 
-### Testing
-```bash
-npm test                   # Run all unit tests
-npm run test:watch         # Run tests in watch mode
-npm run test:cov           # Run tests with coverage
-npm run test:e2e           # Run end-to-end tests
-npm run test:debug         # Debug tests with Node inspector
-```
-
-### Code Quality
-```bash
-npm run lint               # Lint and fix code
-npm run format             # Format code with Prettier
-```
+Swagger UI: `http://localhost:3002/api` | OpenAPI JSON: `/api-json` | YAML: `/api-yaml`
 
 ## Architecture
 
-### Multi-Tenancy System
+### Request Flow (all authenticated endpoints)
 
-The application implements a sophisticated multi-tenancy architecture:
-
-1. **AuthMiddleware** (`src/middlewares/auth.middleware.ts`): Validates JWT tokens and injects `user` and `userEmpresas` into the request object. The `userEmpresas` array contains all companies the user has access to.
-
-2. **EmpresaGuard** (`src/auth/empresa.guard.ts`): Enforces company-level access control. Validates that users can only access data from companies they're associated with. Checks both `empresaId` and `cliente_id` in request parameters/body.
-
-3. **RolesGuard** (`src/auth/roles.guard.ts`): Enforces role-based access control (RBAC). Uses the `@Roles()` decorator to restrict endpoints to specific user profiles.
-
-4. **Request Flow**: Most authenticated endpoints follow this pattern:
-   ```
-   Request → AuthMiddleware → EmpresaGuard → RolesGuard → Controller
-   ```
-
-### Entity Architecture
-
-- **Base Entity**: All entities extend `DeafultEntity` which provides `createdAt` and `updatedAt` timestamps
-- **Multi-tenant Relations**: Most entities have `empresa_id` or `cliente_id` foreign keys for tenant isolation
-- **Audit Trail**: The `Auditoria` entity tracks authentication, authorization, and business operation events
-
-### Key Business Entities
-
-- **Empresa**: Companies/tenants with support for headquarters (sede) and branches (filiais)
-- **Usuario**: Users with many-to-many relationships to companies via `UsuarioEmpresaFilial`
-- **ContasPagar/ContasReceber**: Accounts payable and receivable with installment support
-- **BaixaPagamento**: Payment settlements with support for partial payments, discounts, and penalties
-- **PlanoContas**: Chart of accounts following standard accounting structure
-- **MovimentacoesBancarias**: Bank transactions linked to accounts payable/receivable
-- **ExtratoBancario**: Bank statements with automatic import and reconciliation support
-
-### Service Layer Patterns
-
-Services typically inject repositories and other services. Complex operations like payment settlements involve multiple entities:
-
-- `ContasPagarService` handles account creation, installment generation, and status management
-- `BaixaPagamentoService` handles payment processing with automatic bank transaction creation
-- `MovimentacoesBancariasService` manages bank account balance updates
-- `AuditService` is injected across services to log all significant operations
-
-## Important Conventions
-
-### Authentication & Authorization
-
-- Unauthenticated routes: `/auth/login`, `/usuario/cadastro`, `POST /empresas`
-- All other routes require JWT authentication
-- Use `@CurrentUser()` decorator to access the authenticated user
-- Use `@Roles('ADMIN', 'MANAGER')` decorator for role-based restrictions
-- The `EmpresaGuard` is applied globally; use `@SetMetadata('skipEmpresaValidation', true)` to bypass it
-
-### API Documentation
-
-- Swagger is available at `http://localhost:3000/api` after starting the app
-- All endpoints use Bearer token authentication
-- DTOs are documented with class-validator decorators which appear in Swagger
-
-### Database Migrations
-
-- Migrations are in `src/database/migrations/`
-- MikroORM config is in `src/config/mikro-orm.config.ts`
-- All entities must be registered in the config file
-- Migration naming: `Migration{YYYYMMDDHHMMSS}_description.ts`
-
-### Testing Strategy
-
-- Unit tests use `.spec.ts` suffix and are co-located with source files
-- E2E tests use `.e2e-spec.ts` suffix and live in `test/` directory
-- Integration tests validate complex workflows (e.g., payment settlements, multi-entity operations)
-- Tests extensively mock repositories and services
-
-### Import Path Aliases
-
-- Use absolute imports like `import { Usuario } from 'src/entities/usuario/usuario.entity'`
-- TypeScript paths are configured in `tsconfig.json` with base `./`
-
-## Environment Configuration
-
-Required environment variables (see `.env.example`):
 ```
-DATABASE_NAME=database-name
-DATABASE_USER=database-user
-DATABASE_PASSWORD=database-password
-JWT_SECRET=your_super_secret_key
-PORT_NUMBER=3000
+Request → AuthMiddleware → CsrfGuard → EmpresaGuard → PermissionsGuard → Controller → Service
 ```
 
-## Common Patterns
+- **AuthMiddleware** (`src/middlewares/auth.middleware.ts`): Validates JWT, injects `req.user` and `req.userEmpresas` (array of `{empresaId, clienteId, isFilial, sedeId}`). Excluded routes: `/auth/login`, `POST /usuario/cadastro`, `POST /empresas`, `GET /cep/*`.
+- **EmpresaGuard** (`src/auth/empresa.guard.ts`): Global guard. Validates user has access to the empresa in params/body (`empresaId`, `empresa_id`, `cliente_id`). Supports sede/filial hierarchy. Skip with `@SetMetadata('skipEmpresaValidation', true)`.
+- **PermissionsGuard** (`src/auth/permissions.guard.ts`): Checks granular permissions from user's profiles. Permissions are stored as JSONB in `Perfil.permissoes`: `{ "financeiro": ["criar", "editar", "listar"] }`. Multiple permissions in decorator use OR logic.
 
-### Repository Pattern
+### Module Structure
+
+Each domain module follows the same layout:
+```
+src/<module>/
+  ├── <module>.module.ts       # Imports, controllers, providers, exports
+  ├── <module>.controller.ts   # HTTP layer with guards and decorators
+  ├── <module>.service.ts      # Business logic, audit logging
+  ├── <module>.repository.ts   # Custom repository (when needed)
+  └── dto/                     # Create/Update/Filter DTOs with class-validator
+```
+
+Entities live separately in `src/entities/<entity>/`. Every new entity must be registered in `src/config/mikro-orm.config.ts`.
+
+### Key Decorators
+
 ```typescript
-@InjectRepository(EntityName)
-private readonly repository: EntityNameRepository
+@CurrentUser()         // Extracts authenticated user from request
+@CurrentEmpresas()     // Extracts user's empresas array
+@CurrentCliente()      // Extracts current client info
+@Roles('ADMIN')        // Role-based access (RolesGuard)
+@Permissions({ module: 'financeiro', action: 'criar' })  // Granular permissions
+// Shortcuts: @CanCreate('module'), @CanEdit('module'), @CanList('module'), @CanDelete('module'), @CanView('module')
 ```
 
-### Query with Multi-Tenancy
+### Entity Conventions
+
+- All entities extend `DeafultEntity` (note: intentional misspelling in codebase) which provides `createdAt`/`updatedAt`
+- IDs are UUIDs generated via `gen_random_uuid()`
+- Multi-tenant isolation: entities have `empresa_id` and/or `cliente_id` foreign keys
+- Soft delete pattern: `deletadoEm?: Date` field
+- Cancellation: `canceladoEm?: Date` + `justificativaCancelamento?: string`
+- Sensitive fields (bank data, financial values) use AES-256-GCM encryption via `EncryptionService`
+- Encrypted format: `iv:encryptedData:authTag` (all base64)
+
+### Controller Response Format
+
+All controllers return a consistent shape:
 ```typescript
-// Filter by empresa_id for tenant isolation
+{
+  message: string,        // Human-readable message in Portuguese
+  statusCode: number,     // HTTP status code
+  data?: any              // Response payload
+}
+```
+
+### Service Patterns
+
+Services inject repositories via `@InjectRepository(Entity)`, plus `AuditService` and `EntityManager`. Standard methods:
+- `create(dto, userId, userEmail)` — create with audit log
+- `findAll()` / `findByEmpresa(empresaId)` — list with soft-delete filter and tenant isolation
+- `findOne(id)` — get by ID, throws `NotFoundException`
+- `update(id, dto, userId, userEmail)` — update with change tracking and audit
+- `softDelete(id)` — sets `deletadoEm` timestamp
+
+Audit logging tracks before/after values for updates:
+```typescript
+await this.auditService.log({
+  timestamp: new Date(),
+  eventType: AuditEventType.OPERATION_NAME,
+  severity: AuditSeverity.INFO,
+  userId, userEmail, empresaId,
+  success: true,
+  details: { valoresAnteriores, valoresPosteriores, camposAlterados }
+});
+```
+
+### Multi-Tenancy Query Pattern
+
+Always filter by `empresa_id` for tenant isolation:
+```typescript
 await this.repository.find(
-  { empresa_id: empresaId },
+  { empresa_id: empresaId, deletadoEm: null },
   { populate: ['relatedEntity'] }
 );
 ```
 
-### Audit Logging
-```typescript
-await this.auditService.log(
-  AuditEventType.OPERATION_NAME,
-  userId,
-  { /* context data */ },
-  AuditSeverity.INFO,
-  empresaId
-);
+## Adding New Features
+
+### New Module Checklist
+
+1. Create entity in `src/entities/<name>/` extending `DeafultEntity`
+2. Register entity in `src/config/mikro-orm.config.ts` entities array
+3. Create migration: `npm run migration:create`
+4. Create module directory `src/<name>/` with module, controller, service, and DTOs
+5. Import module in `src/app.module.ts`
+6. Apply guards: `@UseGuards(JwtAuthGuard, PermissionsGuard)` on controller
+7. Use `@Permissions()` on each endpoint
+8. Inject `AuditService` in service and log all significant operations
+9. Filter queries by `empresa_id` for tenant isolation
+
+### New Migration
+
+```bash
+npm run migration:create
 ```
 
-### Error Handling
-- Use NestJS built-in exceptions: `NotFoundException`, `BadRequestException`, `ForbiddenException`
-- Business logic validations throw appropriate HTTP exceptions
-- Guards throw `ForbiddenException` for authorization failures
+- Add columns as NULLABLE first, populate defaults, then add NOT NULL constraint
+- Always implement both `up()` and `down()`
+- Naming: `Migration{YYYYMMDDHHMMSS}_description.ts`
+
+## Environment Variables
+
+Required (see `src/settings.ts` and `src/config/configuration.ts`):
+```
+DATABASE_NAME, DATABASE_USER, DATABASE_PASSWORD, JWT_SECRET, ENCRYPTION_KEY
+```
+
+Optional: `PORT_NUMBER` (default 3002), `JWT_EXPIRES_IN` (default 7d), `CORS_ORIGIN` (default http://localhost:3003), `ENABLE_HTTPS`, `SSL_CERT_PATH`, `SSL_KEY_PATH`, backup config vars.
+
+Generate encryption key: `openssl rand -hex 32`
 
 ## Domain-Specific Notes
 
 ### Payment Settlement (Baixa de Pagamento)
 
-The payment settlement system is complex and involves:
-1. Validating the payment date against the due date
-2. Calculating discounts (if paid early) and penalties (if paid late)
-3. Creating bank transactions (`MovimentacoesBancarias`)
-4. Updating account status and remaining balances
-5. Supporting partial payments and multiple settlements per account
-6. Audit logging of all operations
-
-### Bank Statement Import
-
-The system supports importing bank statements (OFX format) via the `banking` npm package and automatically reconciling them with existing transactions.
+The most complex flow: validates payment against due date → calculates discounts/penalties → creates `MovimentacoesBancarias` → updates bank account balance (`saldo_atual`) → updates payable status and remaining balance (`saldo`) → creates `BaixaPagamento` record → audit logs everything. Supports partial payments and reversal (estorno).
 
 ### Chart of Accounts (Plano de Contas)
 
-- Follows hierarchical structure with parent-child relationships
-- Validation prevents deletion of accounts with existing transactions
-- Supports both expense and revenue classification
+Hierarchical parent-child structure with `codigo` validation. Cannot delete accounts that have associated transactions. Types: RECEITA, DESPESA, CUSTO.
+
+### Bank Statement Import (Extrato Bancario)
+
+OFX file parsing via `banking` npm package with automatic reconciliation against existing `MovimentacoesBancarias`.
+
+## Import Paths
+
+Use absolute imports with `src/` prefix:
+```typescript
+import { Usuario } from 'src/entities/usuario/usuario.entity';
+```

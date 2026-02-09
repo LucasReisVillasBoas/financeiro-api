@@ -9,6 +9,7 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { EmpresaRepository } from '../../empresa/empresa.repository';
 import { Cidade } from '../cidade/cidade.entity';
+import { Contato } from '../contato/contato.entity';
 
 @Entity({ repository: () => EmpresaRepository })
 export class Empresa {
@@ -96,4 +97,8 @@ export class Empresa {
 
   @OneToMany(() => Cidade, (cidade) => cidade.filial)
   cidades = new Collection<Cidade>(this);
+
+  @OneToMany(() => Contato, (contato) => contato.filial)
+  @ApiProperty({ type: () => [Contato], description: 'Contatos da filial' })
+  contatos = new Collection<Contato>(this);
 }

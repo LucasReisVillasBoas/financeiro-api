@@ -39,6 +39,28 @@ export class EmpresaController {
     return { message: 'Empresa criada', statusCode: HttpStatus.CREATED, data };
   }
 
+  /**
+   * Endpoint para verificar se o usuário tem empresas (para fluxo de onboarding)
+   * Não requer permissões - apenas autenticação
+   * Usuário só pode verificar suas próprias empresas
+   */
+  @Get('minhas-empresas')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Verificar minhas empresas (onboarding)' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Empresas do usuário' })
+  async findMinhasEmpresas(@CurrentUser() user: any) {
+    const userId = user.sub || user.id;
+    const empresas = await this.service.findByUsuarioId(userId);
+    return {
+      message: 'Empresas encontradas',
+      statusCode: HttpStatus.OK,
+      data: {
+        hasEmpresas: empresas.length > 0,
+        empresas: sanitizeEmpresasResponse(empresas),
+      },
+    };
+  }
+
   @Get('cliente/:clienteId')
   @UseGuards(JwtAuthGuard, PermissionsGuard, EmpresaGuard)
   @Permissions({ module: 'empresas', action: 'listar' }, { module: 'empresas', action: 'visualizar' })

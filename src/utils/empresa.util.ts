@@ -32,18 +32,50 @@ function maskPhone(phone?: string): string | undefined {
   return `${maskedPart}${lastFour}`;
 }
 
+function sanitizeContato(contato: any): any {
+  if (!contato) return contato;
+
+  return {
+    id: contato.id,
+    nome: contato.nome,
+    funcao: contato.funcao,
+    email: maskEmail(contato.email),
+    telefone: maskPhone(contato.telefone),
+    celular: maskPhone(contato.celular),
+    criadoEm: contato.criadoEm,
+    atualizadoEm: contato.atualizadoEm,
+  };
+}
+
 export function sanitizeEmpresaResponse(empresa: Empresa): any {
   if (!empresa) return empresa;
 
-  const { email, telefone, celular, sede, ...rest } = empresa;
+  const { email, telefone, celular, sede, contatos, ...rest } = empresa as any;
 
-  return {
+  const result: any = {
     ...rest,
     sede: sede ? sede.id : null,
     email: maskEmail(email),
     telefone: maskPhone(telefone),
     celular: maskPhone(celular),
   };
+
+  // Inclui contatos se existirem (Collection do MikroORM)
+  if (contatos) {
+    const contatosArray = contatos.isInitialized?.()
+      ? contatos.getItems()
+      : Array.isArray(contatos)
+        ? contatos
+        : [];
+
+    if (contatosArray.length > 0) {
+      result.contatos = contatosArray
+        .filter((c: any) => !c.deletadoEm)
+        .map(sanitizeContato);
+    }
+  }
+
+  return result;
 }
 
 export function sanitizeEmpresasResponse(empresas: Empresa[]): any[] {

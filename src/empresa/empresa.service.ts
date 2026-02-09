@@ -223,7 +223,10 @@ export class EmpresaService {
   }
 
   async findFiliaisBySede(sedeId: string): Promise<Empresa[]> {
-    return this.empresaRepo.find({ sede: sedeId, ativo: true });
+    return this.empresaRepo.find(
+      { sede: sedeId, ativo: true },
+      { populate: ['contatos'] },
+    );
   }
 
   async update(id: string, dto: UpdateEmpresaDto): Promise<Empresa> {
