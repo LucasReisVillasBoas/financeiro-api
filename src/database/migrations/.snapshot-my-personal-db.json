@@ -366,21 +366,25 @@
         },
         "saldo_inicial": {
           "name": "saldo_inicial",
-          "type": "text",
+          "type": "numeric(10,0)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "mappedType": "text"
+          "precision": 10,
+          "scale": 0,
+          "mappedType": "decimal"
         },
         "saldo_atual": {
           "name": "saldo_atual",
-          "type": "text",
+          "type": "numeric(10,0)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "mappedType": "text"
+          "precision": 10,
+          "scale": 0,
+          "mappedType": "decimal"
         },
         "data_referencia_saldo": {
           "name": "data_referencia_saldo",
@@ -1540,12 +1544,14 @@
         },
         "valor": {
           "name": "valor",
-          "type": "text",
+          "type": "numeric(10,0)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "mappedType": "text"
+          "precision": 10,
+          "scale": 0,
+          "mappedType": "decimal"
         },
         "tipo_movimento": {
           "name": "tipo_movimento",
@@ -1761,12 +1767,14 @@
         },
         "valor": {
           "name": "valor",
-          "type": "text",
+          "type": "numeric(10,0)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "mappedType": "text"
+          "precision": 10,
+          "scale": 0,
+          "mappedType": "decimal"
         },
         "tipo_transacao": {
           "name": "tipo_transacao",
@@ -2086,12 +2094,14 @@
         },
         "valor_principal": {
           "name": "valor_principal",
-          "type": "text",
+          "type": "numeric(10,0)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "mappedType": "text"
+          "precision": 10,
+          "scale": 0,
+          "mappedType": "decimal"
         },
         "valor_acrescimos": {
           "name": "valor_acrescimos",
@@ -2115,21 +2125,25 @@
         },
         "valor_total": {
           "name": "valor_total",
-          "type": "text",
+          "type": "numeric(10,0)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "mappedType": "text"
+          "precision": 10,
+          "scale": 0,
+          "mappedType": "decimal"
         },
         "saldo": {
           "name": "saldo",
-          "type": "text",
+          "type": "numeric(10,0)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "mappedType": "text"
+          "precision": 10,
+          "scale": 0,
+          "mappedType": "decimal"
         },
         "status": {
           "name": "status",
@@ -2316,12 +2330,14 @@
         },
         "valor": {
           "name": "valor",
-          "type": "text",
+          "type": "numeric(10,0)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "mappedType": "text"
+          "precision": 10,
+          "scale": 0,
+          "mappedType": "decimal"
         },
         "acrescimos": {
           "name": "acrescimos",
@@ -2345,12 +2361,14 @@
         },
         "total": {
           "name": "total",
-          "type": "text",
+          "type": "numeric(10,0)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "mappedType": "text"
+          "precision": 10,
+          "scale": 0,
+          "mappedType": "decimal"
         },
         "tipo": {
           "name": "tipo",
@@ -2382,21 +2400,25 @@
         },
         "saldo_anterior": {
           "name": "saldo_anterior",
-          "type": "text",
+          "type": "numeric(10,0)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "mappedType": "text"
+          "precision": 10,
+          "scale": 0,
+          "mappedType": "decimal"
         },
         "saldo_posterior": {
           "name": "saldo_posterior",
-          "type": "text",
+          "type": "numeric(10,0)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "mappedType": "text"
+          "precision": 10,
+          "scale": 0,
+          "mappedType": "decimal"
         },
         "criado_em": {
           "name": "criado_em",
@@ -2604,12 +2626,14 @@
         },
         "valor_principal": {
           "name": "valor_principal",
-          "type": "text",
+          "type": "numeric(10,0)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "mappedType": "text"
+          "precision": 10,
+          "scale": 0,
+          "mappedType": "decimal"
         },
         "acrescimos": {
           "name": "acrescimos",
@@ -2633,21 +2657,25 @@
         },
         "valor_total": {
           "name": "valor_total",
-          "type": "text",
+          "type": "numeric(10,0)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "mappedType": "text"
+          "precision": 10,
+          "scale": 0,
+          "mappedType": "decimal"
         },
         "saldo": {
           "name": "saldo",
-          "type": "text",
+          "type": "numeric(10,0)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "mappedType": "text"
+          "precision": 10,
+          "scale": 0,
+          "mappedType": "decimal"
         },
         "status": {
           "name": "status",
@@ -2843,12 +2871,14 @@
         },
         "valor": {
           "name": "valor",
-          "type": "text",
+          "type": "numeric(10,0)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "mappedType": "text"
+          "precision": 10,
+          "scale": 0,
+          "mappedType": "decimal"
         },
         "acrescimos": {
           "name": "acrescimos",
@@ -2872,12 +2902,14 @@
         },
         "total": {
           "name": "total",
-          "type": "text",
+          "type": "numeric(10,0)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "mappedType": "text"
+          "precision": 10,
+          "scale": 0,
+          "mappedType": "decimal"
         },
         "tipo": {
           "name": "tipo",
@@ -2909,21 +2941,25 @@
         },
         "saldo_anterior": {
           "name": "saldo_anterior",
-          "type": "text",
+          "type": "numeric(10,0)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "mappedType": "text"
+          "precision": 10,
+          "scale": 0,
+          "mappedType": "decimal"
         },
         "saldo_posterior": {
           "name": "saldo_posterior",
-          "type": "text",
+          "type": "numeric(10,0)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "mappedType": "text"
+          "precision": 10,
+          "scale": 0,
+          "mappedType": "decimal"
         },
         "criado_em": {
           "name": "criado_em",

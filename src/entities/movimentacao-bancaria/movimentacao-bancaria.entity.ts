@@ -35,7 +35,7 @@ export class MovimentacoesBancarias {
   @Property({ type: 'varchar', length: 255 })
   categoria!: string;
 
-  @Property({ type: EncryptedDecimalType })
+  @Property({ type: 'numeric' })
   valor!: number;
 
   @Property({ type: 'varchar', length: 20, fieldName: 'tipo_movimento' })

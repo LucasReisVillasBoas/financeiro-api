@@ -64,7 +64,7 @@ export class ContasPagar {
   data_liquidacao?: Date;
 
   // Valores
-  @Property({ type: EncryptedDecimalType })
+  @Property({ type: 'numeric' })
   valor_principal!: number;
 
   @Property({ type: EncryptedDecimalType, default: 0 })
@@ -73,10 +73,10 @@ export class ContasPagar {
   @Property({ type: EncryptedDecimalType, default: 0 })
   descontos: number = 0;
 
-  @Property({ type: EncryptedDecimalType })
+  @Property({ type: 'numeric' })
   valor_total!: number;
 
-  @Property({ type: EncryptedDecimalType })
+  @Property({ type: 'numeric' })
   saldo!: number;
 
   @Property({ type: 'varchar', length: 50 })

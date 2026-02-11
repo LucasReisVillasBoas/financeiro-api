@@ -1,4 +1,11 @@
-import { Entity, Property, PrimaryKey, ManyToOne, Index, Enum } from '@mikro-orm/core';
+import {
+  Entity,
+  Property,
+  PrimaryKey,
+  ManyToOne,
+  Index,
+  Enum,
+} from '@mikro-orm/core';
 import { ContasReceberRepository } from '../../conta-receber/conta-receber.repository';
 import { PlanoContas } from '../plano-contas/plano-contas.entity';
 import { Pessoa } from '../pessoa/pessoa.entity';
@@ -25,7 +32,10 @@ export enum StatusContaReceber {
   VENCIDO = 'VENCIDO',
 }
 
-@Entity({ tableName: 'contas_receber', repository: () => ContasReceberRepository })
+@Entity({
+  tableName: 'contas_receber',
+  repository: () => ContasReceberRepository,
+})
 export class ContasReceber {
   @PrimaryKey({ type: 'uuid', defaultRaw: 'gen_random_uuid()' })
   id!: string;
@@ -77,7 +87,7 @@ export class ContasReceber {
   dataLiquidacao?: Date;
 
   // Campos monetários
-  @Property({ type: EncryptedDecimalType })
+  @Property({ type: 'numeric' })
   valorPrincipal!: number;
 
   @Property({ type: EncryptedDecimalType, default: 0 })
@@ -86,15 +96,19 @@ export class ContasReceber {
   @Property({ type: EncryptedDecimalType, default: 0 })
   valorDescontos: number = 0;
 
-  @Property({ type: EncryptedDecimalType })
+  @Property({ type: 'numeric' })
   valorTotal!: number;
 
-  @Property({ type: EncryptedDecimalType })
+  @Property({ type: 'numeric' })
   saldo!: number;
 
   // Status
   @Enum(() => StatusContaReceber)
-  @Property({ type: 'varchar', length: 50, default: StatusContaReceber.PENDENTE })
+  @Property({
+    type: 'varchar',
+    length: 50,
+    default: StatusContaReceber.PENDENTE,
+  })
   status: StatusContaReceber = StatusContaReceber.PENDENTE;
 
   // Multi-tenancy

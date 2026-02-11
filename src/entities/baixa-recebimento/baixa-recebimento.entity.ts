@@ -26,17 +26,23 @@ export class BaixaRecebimento {
   id!: string;
 
   @Index()
-  @ManyToOne(() => ContasReceber, { fieldName: 'conta_receber_id', nullable: false })
+  @ManyToOne(() => ContasReceber, {
+    fieldName: 'conta_receber_id',
+    nullable: false,
+  })
   contaReceber!: ContasReceber;
 
   @Index()
-  @ManyToOne(() => ContasBancarias, { fieldName: 'conta_bancaria_id', nullable: false })
+  @ManyToOne(() => ContasBancarias, {
+    fieldName: 'conta_bancaria_id',
+    nullable: false,
+  })
   contaBancaria!: ContasBancarias;
 
   @Property({ type: 'date' })
   data!: Date;
 
-  @Property({ type: EncryptedDecimalType })
+  @Property({ type: 'numeric' })
   valor!: number;
 
   @Property({ type: EncryptedDecimalType, default: 0 })
@@ -45,7 +51,7 @@ export class BaixaRecebimento {
   @Property({ type: EncryptedDecimalType, default: 0 })
   descontos: number = 0;
 
-  @Property({ type: EncryptedDecimalType })
+  @Property({ type: 'numeric' })
   total!: number;
 
   @Property({ type: 'varchar', length: 20 })
@@ -59,10 +65,10 @@ export class BaixaRecebimento {
   movimentacaoBancariaId?: string;
 
   // Saldos para controle e auditoria
-  @Property({ type: EncryptedDecimalType })
+  @Property({ type: 'numeric' })
   saldoAnterior!: number;
 
-  @Property({ type: EncryptedDecimalType })
+  @Property({ type: 'numeric' })
   saldoPosterior!: number;
 
   // Campos de auditoria
@@ -90,7 +96,9 @@ export class BaixaRecebimento {
   @BeforeUpdate()
   calcularTotal() {
     // Total da baixa = valor + acréscimos - descontos
-    this.total = Number((this.valor + this.acrescimos - this.descontos).toFixed(2));
+    this.total = Number(
+      (this.valor + this.acrescimos - this.descontos).toFixed(2),
+    );
 
     // Define tipo baseado no saldo posterior
     if (this.saldoPosterior === 0) {

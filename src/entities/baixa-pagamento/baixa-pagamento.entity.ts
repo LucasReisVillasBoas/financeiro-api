@@ -34,7 +34,7 @@ export class BaixaPagamento {
   @Property({ type: 'date' })
   data!: Date;
 
-  @Property({ type: EncryptedDecimalType })
+  @Property({ type: 'numeric' })
   valor!: number;
 
   @Property({ type: EncryptedDecimalType, default: 0 })
@@ -43,7 +43,7 @@ export class BaixaPagamento {
   @Property({ type: EncryptedDecimalType, default: 0 })
   descontos: number = 0;
 
-  @Property({ type: EncryptedDecimalType })
+  @Property({ type: 'numeric' })
   total!: number;
 
   @Property({ type: 'varchar', length: 10 })
@@ -55,10 +55,10 @@ export class BaixaPagamento {
   @Property({ type: 'uuid', nullable: true })
   movimentacaoBancariaId?: string;
 
-  @Property({ type: EncryptedDecimalType })
+  @Property({ type: 'numeric' })
   saldo_anterior!: number;
 
-  @Property({ type: EncryptedDecimalType })
+  @Property({ type: 'numeric' })
   saldo_posterior!: number;
 
   @Property({ type: 'timestamp', onCreate: () => new Date() })

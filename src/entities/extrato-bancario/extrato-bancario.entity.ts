@@ -36,7 +36,7 @@ export class ExtratoBancario {
   @Property({ type: 'varchar', length: 255, nullable: true })
   documento?: string;
 
-  @Property({ type: EncryptedDecimalType })
+  @Property({ type: 'numeric' })
   valor!: number;
 
   @Property({ type: 'varchar', length: 20, fieldName: 'tipo_transacao' })

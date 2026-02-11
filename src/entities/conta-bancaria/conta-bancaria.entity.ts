@@ -63,10 +63,10 @@ export class ContasBancarias {
   @Property({ type: 'varchar', length: 50 })
   tipo!: string;
 
-  @Property({ type: EncryptedDecimalType })
+  @Property({ type: 'numeric' })
   saldo_inicial!: number;
 
-  @Property({ type: EncryptedDecimalType })
+  @Property({ type: 'numeric' })
   saldo_atual!: number;
 
   @Property({ type: 'date' })
