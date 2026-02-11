@@ -60,7 +60,10 @@ export class PlanoContasController {
   }
 
   @Get()
-  @Permissions({ module: 'financeiro', action: 'listar' }, { module: 'financeiro', action: 'visualizar' })
+  @Permissions(
+    { module: 'financeiro', action: 'listar' },
+    { module: 'financeiro', action: 'visualizar' },
+  )
   async findAll() {
     const contas = await this.planoContasService.findAll();
     return {
@@ -71,7 +74,10 @@ export class PlanoContasController {
   }
 
   @Get('empresa/:empresaId')
-  @Permissions({ module: 'financeiro', action: 'listar' }, { module: 'financeiro', action: 'visualizar' })
+  @Permissions(
+    { module: 'financeiro', action: 'listar' },
+    { module: 'financeiro', action: 'visualizar' },
+  )
   async findByEmpresa(@Param('empresaId') empresaId: string) {
     const contas = await this.planoContasService.findByEmpresa(empresaId);
     return {
@@ -82,7 +88,10 @@ export class PlanoContasController {
   }
 
   @Get('empresa/:empresaId/tipo/:tipo')
-  @Permissions({ module: 'financeiro', action: 'listar' }, { module: 'financeiro', action: 'visualizar' })
+  @Permissions(
+    { module: 'financeiro', action: 'listar' },
+    { module: 'financeiro', action: 'visualizar' },
+  )
   async findByTipo(
     @Param('empresaId') empresaId: string,
     @Param('tipo') tipo: string,
@@ -96,7 +105,10 @@ export class PlanoContasController {
   }
 
   @Get('empresa/:empresaId/analiticas')
-  @Permissions({ module: 'financeiro', action: 'listar' }, { module: 'financeiro', action: 'visualizar' })
+  @Permissions(
+    { module: 'financeiro', action: 'listar' },
+    { module: 'financeiro', action: 'visualizar' },
+  )
   async findAnaliticas(@Param('empresaId') empresaId: string) {
     const contas = await this.planoContasService.findAnaliticas(empresaId);
     return {
@@ -107,7 +119,10 @@ export class PlanoContasController {
   }
 
   @Get('empresa/:empresaId/analiticas-ativas')
-  @Permissions({ module: 'financeiro', action: 'listar' }, { module: 'financeiro', action: 'visualizar' })
+  @Permissions(
+    { module: 'financeiro', action: 'listar' },
+    { module: 'financeiro', action: 'visualizar' },
+  )
   async findAnaliticasAtivas(@Param('empresaId') empresaId: string) {
     const contas =
       await this.planoContasService.findAnaliticasAtivas(empresaId);
@@ -119,7 +134,10 @@ export class PlanoContasController {
   }
 
   @Get('empresa/:empresaId/tree')
-  @Permissions({ module: 'financeiro', action: 'listar' }, { module: 'financeiro', action: 'visualizar' })
+  @Permissions(
+    { module: 'financeiro', action: 'listar' },
+    { module: 'financeiro', action: 'visualizar' },
+  )
   async findTree(@Param('empresaId') empresaId: string) {
     const tree = await this.planoContasService.findTree(empresaId);
     return {
@@ -130,7 +148,10 @@ export class PlanoContasController {
   }
 
   @Get('empresa/:empresaId/search')
-  @Permissions({ module: 'financeiro', action: 'listar' }, { module: 'financeiro', action: 'visualizar' })
+  @Permissions(
+    { module: 'financeiro', action: 'listar' },
+    { module: 'financeiro', action: 'visualizar' },
+  )
   async search(
     @Param('empresaId') empresaId: string,
     @Query('term') term: string,
@@ -168,26 +189,36 @@ export class PlanoContasController {
   @Post('empresa/:empresaId/import/csv')
   @Permissions({ module: 'financeiro', action: 'editar' })
   @UseInterceptors(FileInterceptor('file'))
-  async importCSV(
+  async importCsv(
     @Param('empresaId') empresaId: string,
-    @UploadedFile() file: any,
-    @Body('sobrescrever') sobrescrever?: string | boolean,
-    @Body('dryRun') dryRun?: string | boolean,
-    @CurrentUser() user?: any,
+    @UploadedFile() file: Express.Multer.File,
+    @Body('sobrescrever') sobrescrever: string,
+    @Body('dryRun') dryRun: string,
   ) {
     if (!file) {
-      throw new BadRequestException('Arquivo CSV é obrigatório');
+      throw new BadRequestException('Arquivo não enviado');
     }
 
-    // Parse CSV
-    const csvContent = file.buffer.toString('utf-8');
+    let realBuffer: Buffer;
+
+    if (Buffer.isBuffer(file.buffer)) {
+      realBuffer = file.buffer;
+    } else {
+      realBuffer = Buffer.from(
+        Object.values(file.buffer as Record<string, number>),
+      );
+    }
+
+    const csvContent = realBuffer.toString('utf-8');
+
+    // 1️⃣ Parse do CSV
     const linhas = this.importService.parseCSV(csvContent);
 
-    // Converter strings para boolean
-    const sobrescreverBool = sobrescrever === true || sobrescrever === 'true';
-    const dryRunBool = dryRun === true || dryRun === 'true';
+    // 2️⃣ Converter flags string -> boolean
+    const sobrescreverBool = sobrescrever === 'true';
+    const dryRunBool = dryRun === 'true';
 
-    // Importar
+    // 3️⃣ Chamar serviço de importação
     const result = await this.importService.import({
       empresaId,
       linhas,
@@ -198,27 +229,7 @@ export class PlanoContasController {
     return {
       message: result.mensagem,
       statusCode: result.sucesso ? 200 : 400,
-      ...result,
-    };
-  }
-
-  @Post('empresa/:empresaId/import/validate')
-  @Permissions({ module: 'financeiro', action: 'editar' })
-  async validateImport(
-    @Param('empresaId') empresaId: string,
-    @Body() dto: ImportPlanoContasDto,
-  ) {
-    // Sempre executar em modo dry-run
-    const result = await this.importService.import({
-      ...dto,
-      empresaId,
-      dryRun: true,
-    });
-
-    return {
-      message: 'Validação concluída',
-      statusCode: 200,
-      ...result,
+      data: result,
     };
   }
 
@@ -241,7 +252,10 @@ export class PlanoContasController {
   }
 
   @Get(':id/filhos')
-  @Permissions({ module: 'financeiro', action: 'listar' }, { module: 'financeiro', action: 'visualizar' })
+  @Permissions(
+    { module: 'financeiro', action: 'listar' },
+    { module: 'financeiro', action: 'visualizar' },
+  )
   async findChildren(@Param('id') id: string) {
     const children = await this.planoContasService.findChildren(id);
     return {
@@ -252,7 +266,10 @@ export class PlanoContasController {
   }
 
   @Get(':id/breadcrumb')
-  @Permissions({ module: 'financeiro', action: 'listar' }, { module: 'financeiro', action: 'visualizar' })
+  @Permissions(
+    { module: 'financeiro', action: 'listar' },
+    { module: 'financeiro', action: 'visualizar' },
+  )
   async getBreadcrumb(@Param('id') id: string) {
     const breadcrumb = await this.planoContasService.getBreadcrumb(id);
     return {
@@ -263,7 +280,10 @@ export class PlanoContasController {
   }
 
   @Get(':id')
-  @Permissions({ module: 'financeiro', action: 'listar' }, { module: 'financeiro', action: 'visualizar' })
+  @Permissions(
+    { module: 'financeiro', action: 'listar' },
+    { module: 'financeiro', action: 'visualizar' },
+  )
   async findOne(@Param('id') id: string) {
     const conta = await this.planoContasService.findOne(id);
     return {
