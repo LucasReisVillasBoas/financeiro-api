@@ -12,8 +12,6 @@ import {
   TipoPlanoContas,
 } from '../entities/plano-contas/plano-contas.entity';
 import { EmpresaService } from '../empresa/empresa.service';
-import { HierarquiaValidator } from './validators/hierarquia.validator';
-
 @Injectable()
 export class PlanoContasImportService {
   constructor(
@@ -22,26 +20,36 @@ export class PlanoContasImportService {
     private readonly empresaService: EmpresaService,
   ) {}
 
-  /**
-   * Parse CSV para array de linhas
-   */
   parseCSV(csvContent: string): ImportPlanoContasRowDto[] {
-    const lines = csvContent.split('\n').filter((line) => line.trim());
+    if (!csvContent || !csvContent.trim()) {
+      throw new BadRequestException('Arquivo CSV vazio ou inválido');
+    }
+
+    // Remove BOM se existir
+    csvContent = csvContent.replace(/^\uFEFF/, '');
+
+    const lines = csvContent.split(/\r?\n/).filter((line) => line.trim());
+
     if (lines.length < 2) {
       throw new BadRequestException('Arquivo CSV vazio ou inválido');
     }
 
     const dataLines = lines.slice(1);
 
-    return dataLines.map((line) => {
+    return dataLines.map((line, idx) => {
       const values = line.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g) || [];
+
       const cleanValues = values.map((v) => v.replace(/^"|"$/g, '').trim());
+
+      if (idx === 0) {
+        console.log('Primeira linha parseada:', cleanValues);
+      }
 
       return {
         codigo: cleanValues[0] || '',
         descricao: cleanValues[1] || '',
         tipo: cleanValues[2] || '',
-        codigoPai: cleanValues[6] || undefined, // Coluna "Código Pai"
+        codigoPai: cleanValues[6] || undefined,
         permite_lancamento: cleanValues[4] || 'Não',
         ativo: cleanValues[5] || 'Ativo',
       };
