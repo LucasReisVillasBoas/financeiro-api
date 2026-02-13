@@ -10,7 +10,6 @@ import {
 import { ContasReceber } from '../conta-receber/conta-receber.entity';
 import { ContasBancarias } from '../conta-bancaria/conta-bancaria.entity';
 import { BaixaRecebimentoRepository } from '../../baixa-recebimento/baixa-recebimento.repository';
-import { EncryptedDecimalType } from '../../common/encryption';
 
 export enum TipoBaixaRecebimento {
   PARCIAL = 'PARCIAL',
@@ -45,10 +44,10 @@ export class BaixaRecebimento {
   @Property({ type: 'numeric' })
   valor!: number;
 
-  @Property({ type: EncryptedDecimalType, default: 0 })
+  @Property({ type: 'numeric' })
   acrescimos: number = 0;
 
-  @Property({ type: EncryptedDecimalType, default: 0 })
+  @Property({ type: 'numeric' })
   descontos: number = 0;
 
   @Property({ type: 'numeric' })

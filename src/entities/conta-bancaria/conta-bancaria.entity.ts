@@ -8,10 +8,6 @@ import {
 } from '@mikro-orm/core';
 import { Empresa } from '../empresa/empresa.entity';
 import { ContasBancariasRepository } from '../../conta-bancaria/conta-bancaria.repository';
-import {
-  EncryptedStringType,
-  EncryptedDecimalType,
-} from '../../common/encryption';
 
 @Entity({ repository: () => ContasBancariasRepository })
 @Unique({
@@ -24,9 +20,6 @@ import {
     'conta_digito',
   ],
 })
-@Index({ properties: ['descricao'] })
-@Index({ properties: ['banco'] })
-@Index({ properties: ['agencia'] })
 export class ContasBancarias {
   @PrimaryKey({ type: 'uuid', defaultRaw: 'gen_random_uuid()' })
   id!: string;
@@ -39,25 +32,22 @@ export class ContasBancarias {
   @Index()
   empresa!: Empresa;
 
-  @Property({ type: EncryptedStringType })
-  @Index()
+  @Property({ type: 'varchar', length: 50 })
   banco!: string;
 
-  @Property({ type: EncryptedStringType })
-  @Index()
+  @Property({ type: 'varchar', length: 50 })
   agencia!: string;
 
-  @Property({ type: EncryptedStringType, nullable: true })
+  @Property({ type: 'varchar', length: 50 })
   agencia_digito?: string;
 
-  @Property({ type: EncryptedStringType })
+  @Property({ type: 'varchar', length: 50 })
   conta!: string;
 
-  @Property({ type: EncryptedStringType, nullable: true })
+  @Property({ type: 'varchar', length: 5 })
   conta_digito?: string;
 
   @Property({ type: 'varchar', length: 255 })
-  @Index()
   descricao!: string;
 
   @Property({ type: 'varchar', length: 50 })

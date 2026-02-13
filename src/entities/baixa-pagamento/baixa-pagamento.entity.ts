@@ -8,9 +8,7 @@ import {
 } from '@mikro-orm/core';
 import { ContasPagar } from '../conta-pagar/conta-pagar.entity';
 import { ContasBancarias } from '../conta-bancaria/conta-bancaria.entity';
-import { MovimentacoesBancarias } from '../movimentacao-bancaria/movimentacao-bancaria.entity';
 import { BaixaPagamentoRepository } from '../../baixa-pagamento/baixa-pagamento.repository';
-import { EncryptedDecimalType } from '../../common/encryption';
 
 export enum TipoBaixa {
   PARCIAL = 'Parcial',
@@ -37,10 +35,10 @@ export class BaixaPagamento {
   @Property({ type: 'numeric' })
   valor!: number;
 
-  @Property({ type: EncryptedDecimalType, default: 0 })
+  @Property({ type: 'numeric' })
   acrescimos: number = 0;
 
-  @Property({ type: EncryptedDecimalType, default: 0 })
+  @Property({ type: 'numeric' })
   descontos: number = 0;
 
   @Property({ type: 'numeric' })

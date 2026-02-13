@@ -10,7 +10,6 @@ import { ContasReceberRepository } from '../../conta-receber/conta-receber.repos
 import { PlanoContas } from '../plano-contas/plano-contas.entity';
 import { Pessoa } from '../pessoa/pessoa.entity';
 import { Empresa } from '../empresa/empresa.entity';
-import { EncryptedDecimalType } from '../../common/encryption';
 
 export enum TipoContaReceber {
   BOLETO = 'BOLETO',
@@ -90,10 +89,10 @@ export class ContasReceber {
   @Property({ type: 'numeric' })
   valorPrincipal!: number;
 
-  @Property({ type: EncryptedDecimalType, default: 0 })
+  @Property({ type: 'numeric' })
   valorAcrescimos: number = 0;
 
-  @Property({ type: EncryptedDecimalType, default: 0 })
+  @Property({ type: 'numeric' })
   valorDescontos: number = 0;
 
   @Property({ type: 'numeric' })
