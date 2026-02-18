@@ -7,6 +7,11 @@ import { PipeTransform, Injectable, ArgumentMetadata } from '@nestjs/common';
 @Injectable()
 export class SanitizePipe implements PipeTransform {
   transform(value: any, metadata: ArgumentMetadata) {
+    // Skip sanitização para uploads de arquivos (Multer File objects)
+    if (this.isFileUpload(value)) {
+      return value;
+    }
+
     if (typeof value === 'string') {
       return this.sanitizeString(value);
     }
@@ -16,6 +21,18 @@ export class SanitizePipe implements PipeTransform {
     }
 
     return value;
+  }
+
+  /**
+   * Verifica se o valor é um objeto de upload de arquivo do Multer
+   */
+  private isFileUpload(value: any): boolean {
+    return (
+      value &&
+      typeof value === 'object' &&
+      Buffer.isBuffer(value.buffer) &&
+      typeof value.fieldname === 'string'
+    );
   }
 
   /**
@@ -49,6 +66,11 @@ export class SanitizePipe implements PipeTransform {
     // Proteção contra referências circulares
     if (seen.has(obj)) {
       return undefined;
+    }
+
+    // Não processar Buffers ou Uint8Arrays
+    if (Buffer.isBuffer(obj) || obj instanceof Uint8Array) {
+      return obj;
     }
 
     if (Array.isArray(obj)) {

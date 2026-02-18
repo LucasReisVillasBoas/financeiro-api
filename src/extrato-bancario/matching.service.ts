@@ -44,6 +44,10 @@ export class MatchingService {
       deletadoEm: null,
     });
 
+    console.log(
+      `[Matching] Transação: ${transacao.descricao} | Data: ${transacao.data.toISOString().split('T')[0]} | Valor: ${transacao.valor} | Conta: ${contaBancariaId} | Período: ${dataInicio.toISOString().split('T')[0]} a ${dataFim.toISOString().split('T')[0]} | Movimentações encontradas: ${movimentacoes.length}`,
+    );
+
     if (movimentacoes.length === 0) {
       return null;
     }
@@ -261,12 +265,12 @@ export class MatchingService {
     tipoTransacao: 'debito' | 'credito',
     tipoMovimentacao: string,
   ): boolean {
-    const tipoMovNormalizado = tipoMovimentacao.toLowerCase();
+    const tipoMovNormalizado = this.normalizarTexto(tipoMovimentacao);
 
     if (tipoTransacao === 'debito') {
       return (
         tipoMovNormalizado.includes('debito') ||
-        tipoMovNormalizado.includes('saída')
+        tipoMovNormalizado.includes('saida')
       );
     } else {
       return (

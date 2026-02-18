@@ -12,12 +12,23 @@ export class CsvParser {
     try {
       const csvString = conteudo.toString('utf-8');
 
+      // Verificar se o arquivo está em formato RTF (comum no macOS TextEdit)
+      if (csvString.trimStart().startsWith('{\\rtf')) {
+        throw new BadRequestException(
+          'O arquivo está em formato RTF, não CSV. Salve o arquivo como texto puro (Plain Text)',
+        );
+      }
+
+      // Auto-detectar delimitador pela primeira linha
+      const delimiter = this.detectarDelimitador(csvString);
+
       // Parse do CSV
       const records: CsvRow[] = parse(csvString, {
         columns: true,
         skip_empty_lines: true,
         trim: true,
         bom: true,
+        delimiter,
       });
 
       if (!records || records.length === 0) {
@@ -55,6 +66,21 @@ export class CsvParser {
     } catch (error) {
       throw new BadRequestException(`Erro ao processar CSV: ${error.message}`);
     }
+  }
+
+  private detectarDelimitador(csvString: string): string {
+    const primeiraLinha = csvString.split(/\r?\n/)[0] || '';
+    const contaPontoVirgula = (primeiraLinha.match(/;/g) || []).length;
+    const contaVirgula = (primeiraLinha.match(/,/g) || []).length;
+    const contaTab = (primeiraLinha.match(/\t/g) || []).length;
+
+    if (contaPontoVirgula > contaVirgula && contaPontoVirgula > contaTab) {
+      return ';';
+    }
+    if (contaTab > contaVirgula && contaTab > contaPontoVirgula) {
+      return '\t';
+    }
+    return ',';
   }
 
   private detectarColunas(colunas: string[]): {
@@ -173,43 +199,38 @@ export class CsvParser {
   }
 
   private parseData(dataStr: string): Date | null {
-    // Tentar vários formatos de data
-    const formatos = [
-      // DD/MM/YYYY
-      /^(\d{2})\/(\d{2})\/(\d{4})$/,
-      // YYYY-MM-DD
-      /^(\d{4})-(\d{2})-(\d{2})$/,
-      // DD-MM-YYYY
-      /^(\d{2})-(\d{2})-(\d{4})$/,
-      // YYYYMMDD
-      /^(\d{4})(\d{2})(\d{2})$/,
-    ];
+    let ano: number, mes: number, dia: number;
+    let match: RegExpMatchArray | null;
 
-    for (const formato of formatos) {
-      const match = dataStr.match(formato);
-      if (match) {
-        let ano: number, mes: number, dia: number;
-
-        if (formato.source.startsWith('^\\(\\d{4}')) {
-          // Formato YYYY-MM-DD ou YYYYMMDD
-          ano = parseInt(match[1]);
-          mes = parseInt(match[2]) - 1;
-          dia = parseInt(match[3]);
-        } else {
-          // Formato DD/MM/YYYY ou DD-MM-YYYY
-          dia = parseInt(match[1]);
-          mes = parseInt(match[2]) - 1;
-          ano = parseInt(match[3]);
-        }
-
-        const data = new Date(ano, mes, dia);
-        if (!isNaN(data.getTime())) {
-          return data;
-        }
-      }
+    // DD/MM/YYYY
+    if ((match = dataStr.match(/^(\d{2})\/(\d{2})\/(\d{4})$/))) {
+      dia = parseInt(match[1]);
+      mes = parseInt(match[2]) - 1;
+      ano = parseInt(match[3]);
+    }
+    // YYYY-MM-DD
+    else if ((match = dataStr.match(/^(\d{4})-(\d{2})-(\d{2})$/))) {
+      ano = parseInt(match[1]);
+      mes = parseInt(match[2]) - 1;
+      dia = parseInt(match[3]);
+    }
+    // DD-MM-YYYY
+    else if ((match = dataStr.match(/^(\d{2})-(\d{2})-(\d{4})$/))) {
+      dia = parseInt(match[1]);
+      mes = parseInt(match[2]) - 1;
+      ano = parseInt(match[3]);
+    }
+    // YYYYMMDD
+    else if ((match = dataStr.match(/^(\d{4})(\d{2})(\d{2})$/))) {
+      ano = parseInt(match[1]);
+      mes = parseInt(match[2]) - 1;
+      dia = parseInt(match[3]);
+    } else {
+      return null;
     }
 
-    return null;
+    const data = new Date(ano, mes, dia);
+    return isNaN(data.getTime()) ? null : data;
   }
 
   private parseValor(valorStr: string): number | null {

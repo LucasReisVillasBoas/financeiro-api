@@ -42,9 +42,11 @@ export class ExtratoBancarioController {
       throw new BadRequestException('Conta bancária não informada');
     }
 
+    const formatoNormalizado = formato?.toUpperCase() as FormatoExtrato;
+
     if (
-      !formato ||
-      !Object.values(FormatoExtrato).includes(formato as FormatoExtrato)
+      !formatoNormalizado ||
+      !Object.values(FormatoExtrato).includes(formatoNormalizado)
     ) {
       throw new BadRequestException('Formato inválido. Use OFX ou CSV');
     }
@@ -52,7 +54,7 @@ export class ExtratoBancarioController {
     const resultado = await this.extratoService.importar(
       {
         contaBancariaId,
-        formato: formato as FormatoExtrato,
+        formato: formatoNormalizado,
         nomeArquivo: arquivo.originalname,
         conteudo: arquivo.buffer,
       },
