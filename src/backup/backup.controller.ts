@@ -44,7 +44,7 @@ export class BackupController {
   constructor(private readonly backupService: BackupService) {}
 
   @Post()
-  @Roles('ADMIN')
+  @Roles('Administrador')
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Criar backup manual do banco de dados' })
   @ApiResponse({
@@ -83,7 +83,7 @@ export class BackupController {
   }
 
   @Get()
-  @Roles('ADMIN')
+  @Roles('Administrador')
   @ApiOperation({ summary: 'Listar todos os backups disponíveis' })
   @ApiResponse({
     status: 200,
@@ -103,7 +103,7 @@ export class BackupController {
   }
 
   @Post('restore')
-  @Roles('ADMIN')
+  @Roles('Administrador')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Restaurar backup do banco de dados',
@@ -125,7 +125,7 @@ export class BackupController {
   }
 
   @Post('test-restore')
-  @Roles('ADMIN')
+  @Roles('Administrador')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Testar restauração de backup (sem aplicar)',
@@ -143,7 +143,7 @@ export class BackupController {
   }
 
   @Delete()
-  @Roles('ADMIN')
+  @Roles('Administrador')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Excluir um backup específico' })
   @ApiResponse({ status: 200, description: 'Backup excluído' })
@@ -159,11 +159,12 @@ export class BackupController {
   }
 
   @Post('retention')
-  @Roles('ADMIN')
+  @Roles('Administrador')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Executar política de retenção manualmente',
-    description: 'Remove backups expirados de acordo com a política configurada',
+    description:
+      'Remove backups expirados de acordo com a política configurada',
   })
   @ApiResponse({
     status: 200,
@@ -175,7 +176,7 @@ export class BackupController {
   }
 
   @Get('status')
-  @Roles('ADMIN')
+  @Roles('Administrador')
   @ApiOperation({ summary: 'Obter status do sistema de backup' })
   @ApiResponse({ status: 200, description: 'Status do sistema' })
   async getStatus(): Promise<{
@@ -198,7 +199,7 @@ export class BackupController {
     const lastBackup = backups.length > 0 ? backups[0] : null;
 
     return {
-      enabled: true,
+      enabled: this.backupService.getIsEnabled(),
       lastBackup,
       totalBackups: {
         local: localBackups.length,

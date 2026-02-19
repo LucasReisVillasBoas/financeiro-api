@@ -49,6 +49,9 @@ ssl/
 *.pem
 *.crt
 
+# Backup files
+/backups
+
 # temp directory
 .temp
 .tmp

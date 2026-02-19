@@ -700,6 +700,13 @@ export class BackupService implements OnModuleInit {
     };
   }
 
+  /**
+   * Retorna se o sistema de backup está habilitado
+   */
+  getIsEnabled(): boolean {
+    return this.isEnabled;
+  }
+
   private disabledResult(): BackupResult {
     return {
       success: false,
